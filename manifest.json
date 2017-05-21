@@ -1,0 +1,146 @@
+{
+  "name": "TruckersMP Improved",
+  "version": "1.5.10",
+  "manifest_version": 2,
+  "description": "Useful functions for IGAs",
+  "homepage_url": "http://bigmp.ru/improved/",
+  "icons": {
+    "16": "icons/icon16.png",
+    "19": "icons/icon19.png",
+    "48": "icons/icon48.png",
+    "64": "icons/icon64.png",
+    "128": "icons/icon128.png"
+  },
+  "minimum_chrome_version": "42",
+  "permissions": [
+    "*://*.truckersmp.com/*",
+    "*://*.jmdev.ca/*",
+    "*://*.steampowered.com/*",
+    "*://*.steamcommunity.com/*",
+    "notifications",
+    "tabs",
+    "storage",
+    "webRequest",
+    "clipboardRead",
+    "clipboardWrite"
+  ],
+
+  "background": {
+    "page": "src/bg/background.html",
+    "persistent": true
+  },
+
+  "options_page": "src/options/index.html",
+  "web_accessible_resources": [
+    "src/options/*"
+  ],
+
+  "browser_action": {
+    "default_icon": {
+        "16": "icons/icon16.png",
+        "19": "icons/icon19.png",
+        "48": "icons/icon48.png",
+        "64": "icons/icon64.png",
+        "128": "icons/icon128.png"
+    },
+    "default_popup": "src/popup/index.html"
+  },
+
+  "content_scripts": [
+    {
+        "matches": [
+            "https://truckersmp.com/reports/view/*"
+        ],
+        "css": [
+            "css/waves.min.css",
+            "src/inject/reports/inject.css"
+        ],
+        "js": [
+            "js/jquery.min.js",
+            "js/youtubepopup.js",
+            "js/bootstrap.min.js",
+            "js/moment-with-locales.min.js",
+            "js/clipboard.min.js",
+            "js/underscore-min.js",
+            "src/inject/reports/inject.js"
+        ]
+    },
+
+    {
+        "matches": [
+            "https://truckersmp.com/admin"
+        ],
+        "css": [],
+        "js": [
+            "js/jquery.min.js",
+            "src/inject/admin/inject.js"
+        ]
+    },
+
+    {
+      "matches": [
+        "https://truckersmp.com/reports*"
+      ],
+      "exclude_matches": [
+        "https://truckersmp.com/reports/view/*"
+      ],
+      "css": [
+        "css/datatables.min.css",
+        "css/waves.min.css",
+        "src/inject/reports-table/inject.css"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/bootstrap.min.js",
+        "js/jquery.dataTables.min.js",
+        "js/dataTables.bootstrap.min.js",
+        "js/moment-with-locales.min.js",
+        "src/inject/reports-table/inject.js"
+      ]
+    },
+
+    {
+      "matches": [
+        "https://truckersmp.com/admin/ban/edit/*",
+        "https://truckersmp.com/admin/ban/add/*"
+      ],
+      "css": [
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/bootstrap.min.js",
+        "js/moment-with-locales.min.js",
+        "src/inject/ban-edit/inject.js"
+      ]
+    },
+
+    {
+      "matches": [
+        "https://truckersmp.com/user/*"
+      ],
+      "css": [
+        "src/inject/profile/inject.css"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/bootstrap.min.js",
+        "src/inject/profile/inject.js"
+      ]
+    },
+
+    {
+      "matches": [
+        "https://truckersmp.com/appeals/view/*"
+      ],
+      "css": [
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/bootstrap.min.js",
+        "js/youtubepopup.js",
+        "js/moment-with-locales.min.js",
+        "src/inject/appeals/inject.js"
+      ]
+    }
+  ]
+}

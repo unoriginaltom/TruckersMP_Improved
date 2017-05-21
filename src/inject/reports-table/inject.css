@@ -1,0 +1,33 @@
+.clicked {
+    color: #fff !important;
+    background-color: #902828 !important;
+    border-color: #401212 !important;
+}
+
+.sorting::after,
+.sorting_asc::after,
+.sorting_desc::after,
+.sorting_asc_disabled::after,
+.sorting_desc_disabled::after {
+    font-family: 'FontAwesome' !important;
+}
+
+.sorting::after {
+    content: "\f0dc";
+}
+
+.sorting_asc::after {
+    content: "\f160" !important;
+}
+
+.sorting_desc::after {
+    content: "\f161";
+}
+
+a.toggle-vis {
+    cursor: pointer !important;
+}
+
+a.hiddenToggle {
+    color: red !important;
+}
