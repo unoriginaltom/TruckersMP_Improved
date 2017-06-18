@@ -431,17 +431,21 @@ function inject_init(browser) {
             url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
             type: 'GET',
             success: function(val) {
-                copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
-
-                if (paste) {
-                    msg = "Steam info just saved! Check your clipboard for the link!"
+                if (val.result.url_short == "undefined") {
+                  alert('Looks like we have a problem with URL shortener... Try again!');
                 } else {
-                    msg = "URL just being shorted! Check your clipboard!";
-                }
+                  copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
 
-                chrome.runtime.sendMessage({
-                    msg: msg
-                });
+                  if (paste) {
+                      msg = "Steam info just saved! Check your clipboard for the link!"
+                  } else {
+                      msg = "URL just being shorted! Check your clipboard!";
+                  }
+
+                  chrome.runtime.sendMessage({
+                      msg: msg
+                  });
+                }
             },
             error: function() {
                 if (paste) {
@@ -501,9 +505,6 @@ function inject_init(browser) {
                     break;
                 case 'French':
                     comment = 'Merci pour le rapport :)';
-                    break;
-                case 'Lithuanian':
-                    comment = '';
                     break;
                 default:
                     comment = 'Thank you for the report :)';
