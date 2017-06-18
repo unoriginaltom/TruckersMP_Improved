@@ -293,14 +293,20 @@ function inject_init(browser) {
                 });
                 $("#loading-spinner").hide();
             } else {
+
                 $.ajax({
                     url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + link,
                     type: 'GET',
                     success: function(val) {
-                        copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
-                        chrome.runtime.sendMessage({
-                            msg: "URL just being shorted! Check your clipboard!"
-                        });
+                        if (val.result.url_short == "undefined") {
+                          alert('Looks like we have a problem with URL shortener... Try again!');
+                        } else {
+                          copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
+
+                          chrome.runtime.sendMessage({
+                              msg: "URL just being shorted! Check your clipboard!"
+                          });;
+                        }
                     },
                     error: function() {
                         alert('Looks like we have a problem with URL shortener... Try again!');
