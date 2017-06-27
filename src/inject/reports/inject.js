@@ -431,7 +431,7 @@ function inject_init(browser) {
             url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
             type: 'GET',
             success: function(val) {
-                if (val.result.url_short == "undefined") {
+                if (val.result.url_short === undefined || val.result.url_short === null) {
                   alert('Looks like we have a problem with URL shortener... Try again!');
                 } else {
                   copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
