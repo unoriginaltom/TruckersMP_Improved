@@ -15,7 +15,6 @@ if (!chrome.extension.sendMessage) {
 
 function inject_init(browser) {
     // console.log(browser);
-
     var storage;
     if (chrome.storage.sync) {
         storage = chrome.storage.sync;
@@ -23,6 +22,95 @@ function inject_init(browser) {
         storage = chrome.storage.local;
     }
     var steam_id = $('input[name="steam_id"]').val();
+
+
+    function construct_buttons(OwnReasons, if_decline, isComments) {
+        var html = '';
+         //console.log(OwnReasons);
+         if(!isComments){
+             if(typeof OwnReasons.declinesAppeals !== 'undefined' && typeof OwnReasons.acceptsAppeals !== 'undefined'){
+                 if(if_decline){
+                     var declines = OwnReasons.declinesAppeals.split(';');
+                     html += each_type_new('Declines', declines);
+                     html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+                 }else{
+                     var accepts = OwnReasons.acceptsAppeals.split(';');
+                     html += each_type_new('Accepts', accepts);
+                     html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
+                 };
+             };
+         }else{
+             if(typeof OwnReasons.commentsAppeals !== 'undefined'){
+                 var comments = OwnReasons.commentsAppeals.split(';');
+                 html += each_type_new('Comments', comments);
+                 html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
+             };
+         };
+         function each_type_new(type, buttons) {
+             var place, color, change;
+             if (type == 'Prefixes') {
+                 place = 'before';
+                 color = 'warning';
+                 change = 'reason';
+             } else if (type == 'Reasons') {
+                 place = 'after';
+                 color = 'default';
+                 change = 'reason';
+             } else if (type == 'Postfixes') {
+                 place = 'after-wo';
+                 color = 'danger';
+                 change = 'reason';
+             } else if (type == 'Declines') {
+                 place = 'after';
+                 color = 'info';
+                 change = 'decline';
+             } else if (type == 'Accepts') {
+                 place = 'after';
+                 color = 'u';
+                 change = 'accept';
+             } else if (type == 'Comments') {
+                 place = 'after';
+                 color = 'u';
+                 change = 'comment';
+             };
+             var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
+             var count = 0;
+             // console.log(buttons);
+             var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
+             buttons.forEach(function(item, i, arr) {
+                 if (count === 0) {
+                     snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+                 }
+                 if (item.trim() == '|') {
+                     snippet += '</ul></div>';
+                     count = 0;
+                 } else {
+                     snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
+                     ++count;
+                 }
+             });
+             snippet += '</div></div></div></li></ul></div>     ';
+             return snippet;
+         }
+         return html;
+    };
+
+    function dropdown_enchancements() {
+        $('ul.dropdown-menu').css('top', '95%');
+        $(".dropdown").hover(function() {
+            $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
+            $(this).toggleClass('open');
+            $('b', this).toggleClass("caret caret-up");
+        }, function() {
+            $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
+            $(this).toggleClass('open');
+            $('b', this).toggleClass("caret caret-up");
+        });
+        $("a.hovery").hover(function(e) {
+            $(this).css("background", e.type === "mouseenter" ? "#303030" : "transparent");
+            $(this).css("color", e.type === "mouseenter" ? "#999!important" : "");
+        });
+    }
 
     val_init().then(function(v) {
             if (v.OwnReasons == null) {
@@ -38,6 +126,38 @@ function inject_init(browser) {
                 steamapi = v.steamapi;
                 settings = v.settings;
                 init();
+                dropdown_enchancements();
+
+                function setReason(reason, reason_val){
+                    $(reason).val($(reason).val() + ' ' + reason_val + ' ');
+                    $(reason).focus();
+                };
+                $('.pluscomment').on('click', function(event) {
+                    event.preventDefault();
+                    setReason($('form').find('textarea[name=comment]'), $(this).html());
+                });
+                $('.plusaccept').on('click', function(event) {
+                    event.preventDefault();
+                    setReason($('#confirm-accept').find('textarea[name=comment]'), $(this).html());
+                });
+                $('.plusdecline').on('click', function(event) {
+                    event.preventDefault();
+                    setReason($('#confirm-decline').find('textarea[name=comment]'), $(this).html());
+                });
+
+                $('button#comments_clear').on('click', function(event) {
+                    event.preventDefault();
+                    $('form').find('textarea[name=comment]').val("");
+                });
+                $('button#accept_clear').on('click', function(event) {
+                    event.preventDefault();
+                    $('#confirm-accept').find('textarea[name=comment]').val("");
+                });
+                $('button#decline_clear').on('click', function(event) {
+                    event.preventDefault();
+                    $('#confirm-decline').find('textarea[name=comment]').val("");
+                });
+
             }
         }).catch(function(v) {
         console.error(v);
@@ -131,6 +251,17 @@ function inject_init(browser) {
                 // console.log(val);
             }
         });
+
+        function addButtons(textArea, html){
+            if(typeof textArea !== 'undefined' && html.length > 0){
+                $(textArea).css('margin-bottom', '10px');
+                $(textArea).parent().append(html);
+            };
+        };
+
+        addButtons($('#confirm-accept').find('textarea[name=comment]') , construct_buttons(OwnReasons, false));
+        addButtons($('#confirm-decline').find('textarea[name=comment]') , construct_buttons(OwnReasons, true));
+        addButtons($('form[method=post]').find('textarea[name=comment]') , construct_buttons(OwnReasons, false, true));
     };
 
     function escapeHTML(s) {
