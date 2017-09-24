@@ -3,10 +3,10 @@ var default_OwnReasons = {
     reasons: "Ramming; Blocking; Incorrect Way; Insulting Users; Insulting Administration; |; Change your TruckersMP name and make a ban appeal; |; Horn Spamming; Inappropriate License/Interior Plates; Impressionating Administration; Racing; Inappropriate Overtaking; Profanity; Chat Spamming; Hacking; Speedhacking; Bug Abusing; Inappropriate Parking; Unsupported Mods; Ban Evading; Driving w/o lights; Exiting Map Boundaries; Inappropriate Convoy Management; Bullying/Harrassment; Trolling; CB Abuse; Car w/ trailer; Excessive Save Editing; Reckless Driving",
     postfixes: "// 1 m due to history; // 3 m due to history; |; // Perma due to history",
     declines: "Insufficient Evidence; No evidence; Only a kickable offence; Wrong ID; No offence; Already banned for this evidence",
-    comments: "",
-    declinesAppeals: "",
-    acceptsAppeals: "",
-    commentsAppeals: ""
+    comments: "Passed to the right admin",
+    declinesAppeals: "This time I will give you a chance but don't do this again in the feauture!; The ban will be marked with \"@BANBYMISTAKE\" and will be removed; You were banned for reckless driving.\n\nHere is a copy of the rules you broke:\n\n§2.18 Reckless Driving\nDriving in such a way that is considered unsafe, driving backwards, wrong way, failing to yield, ignoring other players and rules.\n\nYou can find these rules here: https://truckersmp.com/rules \n\nDeclined.",
+    acceptsAppeals: "This time I will give you a chance, however be careful in the future!",
+    commentsAppeals: "Change your tag and prove with a screenshot that it was changed"
 };
 var default_OwnDates = {
     white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
