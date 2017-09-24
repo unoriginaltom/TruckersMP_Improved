@@ -128,7 +128,7 @@ function inject_init(browser) {
     var injects = {
         header: 'body > div.wrapper > div.breadcrumbs > div > h1',
         date_buttons: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)',
-        report_language: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(7) > td:nth-child(2)',
+        report_language: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)',
         accept_comment: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(7) > textarea',
         bans: {
             table: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr',
@@ -166,11 +166,18 @@ function inject_init(browser) {
     }
 
     function accept_modal_init() {
-        var reason_buttons = construct_buttons(OwnReasons, false);
-        var decline_buttons = construct_buttons(OwnReasons, true);
+        var reason_buttons = construct_buttons(OwnReasons, false),
+            decline_buttons = construct_buttons(OwnReasons, true),
+            comments_buttons = construct_buttons(OwnReasons, false, true);
 
         $(reason_buttons).insertAfter('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input');
         $(decline_buttons).insertAfter('#confirm-decline > div > div > form > div.modal-body > div > textarea');
+
+        if(comments_buttons.length > 0){
+            var textArea = $('form[method=post]').find('textarea[name=comment]');
+            $(textArea).css('margin-bottom', '10px');
+            $(textArea).parent().append(comments_buttons);
+        };
 
         templates.date_buttons = construct_dates(OwnDates);
         $(templates.date_buttons).insertAfter(injects.date_buttons);
@@ -275,9 +282,21 @@ function inject_init(browser) {
             }
             $('#confirm-decline > div > div > form > div.modal-body > div > textarea').focus();
         });
+        function setReason(reason, reason_val){
+           $(reason).val($(reason).val() + ' ' + reason_val + ' ');
+           $(reason).focus();
+        };
+        $('.pluscomment').on('click', function(event) {
+           event.preventDefault();
+           setReason($('form').find('textarea[name=comment]'), $(this).html());
+        });
         $('button#decline_clear').on('click', function(event) {
             event.preventDefault();
             $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val("");
+        });
+        $('button#comments_clear').on('click', function(event) {
+            event.preventDefault();
+            $('form').find('textarea[name=comment]').val("");
         });
     }
 
@@ -756,23 +775,32 @@ function inject_init(browser) {
         }
     }
 
-    function construct_buttons(OwnReasons, if_decline) {
-        var html = '<br>';
-        if (if_decline) {
-            // console.log(typeof OwnReasons);
-            var declines = OwnReasons.declines.split(';');
-            html += each_type_new('Declines', declines);
-            html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
-        } else {
-            // console.log(typeof OwnReasons);
-            var prefixes = OwnReasons.prefixes.split(';');
-            var reasons = OwnReasons.reasons.split(';');
-            var postfixes = OwnReasons.postfixes.split(';');
-            html += each_type_new('Reasons', reasons);
-            html += each_type_new('Prefixes', prefixes);
-            html += each_type_new('Postfixes', postfixes);
-            html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
-        }
+    function construct_buttons(OwnReasons, if_decline, isComments) {
+        var html = '';
+        if(!isComments){
+            html = '<br>';
+            if (if_decline) {
+                // console.log(typeof OwnReasons);
+                var declines = OwnReasons.declines.split(';');
+                html += each_type_new('Declines', declines);
+                html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+            } else {
+                // console.log(typeof OwnReasons);
+                var prefixes = OwnReasons.prefixes.split(';');
+                var reasons = OwnReasons.reasons.split(';');
+                var postfixes = OwnReasons.postfixes.split(';');
+                html += each_type_new('Reasons', reasons);
+                html += each_type_new('Prefixes', prefixes);
+                html += each_type_new('Postfixes', postfixes);
+                html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
+            }
+        }else{
+            if(typeof OwnReasons.comments !== 'undefined'){
+                var comments = OwnReasons.comments.split(';');
+                html += each_type_new('Comments', comments);
+                html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
+            };
+        };
         return html;
 
         function each_type_new(type, buttons) {
@@ -793,7 +821,11 @@ function inject_init(browser) {
                 place = 'after';
                 color = 'info';
                 change = 'decline';
-            }
+            } else if (type == 'Comments') {
+                place = 'after';
+                color = 'u';
+                change = 'comment';
+            };
             var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
             var count = 0;
             // console.log(buttons);
