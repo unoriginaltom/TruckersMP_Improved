@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.5.11",
+  "version": "1.5.12",
   "manifest_version": 2,
   "description": "Useful functions for IGAs",
   "homepage_url": "http://bigmp.ru/improved/",
@@ -133,6 +133,7 @@
         "https://truckersmp.com/appeals/view/*"
       ],
       "css": [
+        "src/inject/profile/inject.css"
       ],
       "js": [
         "js/jquery.min.js",
