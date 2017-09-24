@@ -2,7 +2,11 @@ var default_OwnReasons = {
     prefixes: "Intentional",
     reasons: "Ramming; Blocking; Incorrect Way; Insulting Users; Insulting Administration; |; Change your TruckersMP name and make a ban appeal; |; Horn Spamming; Inappropriate License/Interior Plates; Impressionating Administration; Racing; Inappropriate Overtaking; Profanity; Chat Spamming; Hacking; Speedhacking; Bug Abusing; Inappropriate Parking; Unsupported Mods; Ban Evading; Driving w/o lights; Exiting Map Boundaries; Inappropriate Convoy Management; Bullying/Harrassment; Trolling; CB Abuse; Car w/ trailer; Excessive Save Editing; Reckless Driving",
     postfixes: "// 1 m due to history; // 3 m due to history; |; // Perma due to history",
-    declines: "Insufficient Evidence; No evidence; Only a kickable offence; Wrong ID; No offence; Already banned for this evidence"
+    declines: "Insufficient Evidence; No evidence; Only a kickable offence; Wrong ID; No offence; Already banned for this evidence",
+    comments: "",
+    declinesAppeals: "",
+    acceptsAppeals: "",
+    commentsAppeals: ""
 };
 var default_OwnDates = {
     white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
@@ -37,6 +41,10 @@ function save_options(with_message = true, data = false) {
             reasons: $('#reasons').val().trim(),
             postfixes: $('#postfixes').val().trim(),
             declines: $('#declines').val().trim(),
+            comments: $('#comments').val().trim(),
+            declinesAppeals: $('#declinesAppeals').val().trim(),
+            commentsAppeals: $('#commentsAppeals').val().trim(),
+            acceptsAppeals: $('#acceptsAppeals').val().trim(),
         };
 
         data.OwnDates = {
@@ -109,6 +117,10 @@ function restore_options() {
         $('#reasons').val(items.OwnReasons.reasons);
         $('#postfixes').val(items.OwnReasons.postfixes);
         $('#declines').val(items.OwnReasons.declines);
+        $('#comments').val(items.OwnReasons.comments);
+        $('#declinesAppeals').val(items.OwnReasons.declinesAppeals);
+        $('#acceptsAppeals').val(items.OwnReasons.acceptsAppeals);
+        $('#commentsAppeals').val(items.OwnReasons.commentsAppeals);
 
         $('#white').val(items.OwnDates.white);
         $('#yellow').val(items.OwnDates.yellow);
