@@ -129,6 +129,7 @@ function inject_init(browser) {
         header: 'body > div.wrapper > div.breadcrumbs > div > h1',
         date_buttons: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)',
         report_language: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)',
+        claim_report: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(10) > td:nth-child(2) > a',
         accept_comment: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(7) > textarea',
         bans: {
             table: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr',
@@ -174,7 +175,7 @@ function inject_init(browser) {
         $(decline_buttons).insertAfter('#confirm-decline > div > div > form > div.modal-body > div > textarea');
 
         if(comments_buttons.length > 0){
-            var textArea = $('form[method=post]').find('textarea[name=comment]');
+            var textArea = $('div.container.content').find('textarea[name=comment]');
             $(textArea).css('margin-bottom', '10px');
             $(textArea).parent().append(comments_buttons);
         };
@@ -847,6 +848,14 @@ function inject_init(browser) {
         }
     }
 
+    function supportInit(){
+    	if($(injects.claim_report).length == 0){
+    		var select = $('select[name=visibility]');
+    		$(select).find('option:selected').removeProp('selected');
+    		$(select).find('option[value=Private]').prop('selected', 'selected');
+    	}
+    }
+
     function val_init() {
         var steamapi, OwnReasons, OwnDates, last_version;
         return new Promise(function(resolve, reject) {
@@ -892,6 +901,7 @@ function inject_init(browser) {
                 accept_modal_init();
                 decline_modal_init();
                 dropdown_enchancements();
+                supportInit();
                 final_init();
             }
         }).catch(function(v) {
