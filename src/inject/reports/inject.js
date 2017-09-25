@@ -673,7 +673,7 @@ function inject_init(browser) {
             //         window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
             //     }
         }
-        if (perpetrator_id <= 3200) {
+        if (perpetrator_id <= 3500) {
             low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check Steam aliases! If you want to change Perpetrator ID, please send request to CMs/team leads">Low ID! <strong>' + perpetrator_id + '</strong></span>';
         } else {
             low_id = ' <span class="badge badge-u" data-toggle="tooltip" title="ID is legit">ID ' + perpetrator_id + '</span>';
