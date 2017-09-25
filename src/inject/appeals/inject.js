@@ -183,7 +183,7 @@ function inject_init(browser) {
         $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>');
 
         var bans_template = `<div class="col-md-6 col-xs-12">
-            <h2>Lastest 5 bans</h2>
+            <h2>Latest 5 bans</h2>
             <h1 id="loading" class="text-center">Loading...</h1>
                 <div class="table-responsive">
                     <table class="table table-condensed table-hover" id="bans-table">
