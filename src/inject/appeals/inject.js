@@ -262,6 +262,12 @@ function inject_init(browser) {
         addButtons($('#confirm-accept').find('textarea[name=comment]') , construct_buttons(OwnReasons, false));
         addButtons($('#confirm-decline').find('textarea[name=comment]') , construct_buttons(OwnReasons, true));
         addButtons($('div.container.content').find('textarea[name=comment]') , construct_buttons(OwnReasons, false, true));
+
+        if($('div.container.content > div.row').children('a.btn').length == 0){
+    		var select = $('select[name=visibility]');
+    		$(select).find('option:selected').removeProp('selected');
+    		$(select).find('option[value=Private]').prop('selected', 'selected');
+        }
     };
 
     function escapeHTML(s) {
