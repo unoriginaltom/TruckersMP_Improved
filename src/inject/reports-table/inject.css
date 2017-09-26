@@ -33,3 +33,9 @@ a.toggle-vis {
 a.hiddenToggle {
     color: red !important;
 }
+
+a.btn.btn-default:focus{
+	background-color: #989898;
+	border-color: #a5a5a5;
+	color: white;
+}
