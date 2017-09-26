@@ -19,7 +19,7 @@ function init() {
 
     // INIT
     var version = chrome.runtime.getManifest().version;
-
+	
     $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Table Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>');
 
     // ===== Bootstrapping =====
@@ -28,6 +28,9 @@ function init() {
     $('table.table > tbody > :first(tr)').wrap('<thead class="TEMP"></thead>');
     $('table.table > tbody > thead').clone().prependTo('table.table').removeClass('TEMP');
     $('.TEMP').remove();
+
+    $('body > div.wrapper > div.container.content > div > table > thead > tr').append('<th class="no-sort"></th>');
+    $('body > div.wrapper > div.container.content > div > table > thead > tr > th:nth-child(9)').addClass('no-sort');
 
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function(index, el) {
         $(this).addClass('btn btn-default btn-block btn-sm');
@@ -92,7 +95,11 @@ function init() {
         paging: false,
         stateSave: true,
         fixedHeader: true,
-        "order": [[ 7, "desc" ]]
+		order: [[ 7, "desc" ]],
+		columnDefs: [{
+			"targets": 'no-sort',
+			"orderable": false,
+		}]
         // responsive: true
     });
 
