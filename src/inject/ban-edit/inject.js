@@ -1,3 +1,5 @@
+var storage, OwnReasons, settings;
+
 if (!chrome.extension.sendMessage) {
     init();
     // alert("Firefox");
@@ -6,13 +8,48 @@ if (!chrome.extension.sendMessage) {
     	var readyStateCheckInterval = setInterval(function() {
         	if (document.readyState === "complete") {
         		clearInterval(readyStateCheckInterval);
-                init();
+
+                if (chrome.storage.sync) {
+                    storage = chrome.storage.sync;
+                } else {
+                    storage = chrome.storage.local;
+                };
+
+                function val_init() {
+                    return new Promise(function(resolve, reject) {
+                        storage.get({
+                            steamapi: null,
+                            OwnReasons: null,
+                            OwnDates: null,
+                            settings: {}
+                        }, function(items) {
+                            resolve(items);
+                        });
+                    });
+                };
+
+                val_init().then(function(v) {
+                    if (v.OwnReasons == null) {
+                        alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
+                        if (chrome.runtime.openOptionsPage) {
+                            chrome.runtime.openOptionsPage();
+                        } else {
+                            window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
+                        }
+                    } else {
+                        // console.log(v);
+                        OwnReasons = v.OwnReasons;
+                        settings = v.settings;
+                    }
+                    init();
+                }).catch(function(v) {
+                    console.log(v)
+                });
                 // alert("Chrome");
         	}
     	}, 10);
     });
 }
-
 
 function init() {
     var date_buttons = `<div id="ownreasons_buttons">
@@ -138,6 +175,102 @@ function init() {
 
     $('[data-toggle="tooltip"]').tooltip();
     $("#loading-spinner").remove();
+
+    if(typeof OwnReasons !== 'undefined'){
+        function construct_buttons(OwnReasons) {
+            var html = '';
+            html = '';
+            // console.log(typeof OwnReasons);
+            var prefixes = OwnReasons.prefixes.split(';');
+            var reasons = OwnReasons.reasons.split(';');
+            var postfixes = OwnReasons.postfixes.split(';');
+            html += each_type_new('Reasons', reasons);
+            html += each_type_new('Prefixes', prefixes);
+            html += each_type_new('Postfixes', postfixes);
+            html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
+            return html;
+
+            function each_type_new(type, buttons) {
+                var place, color, change;
+                if (type == 'Prefixes') {
+                    place = 'before';
+                    color = 'warning';
+                    change = 'reason';
+                } else if (type == 'Reasons') {
+                    place = 'after';
+                    color = 'default';
+                    change = 'reason';
+                } else if (type == 'Postfixes') {
+                    place = 'after-wo';
+                    color = 'danger';
+                    change = 'reason';
+                };
+                var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
+                var count = 0;
+                // console.log(buttons);
+                var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
+                buttons.forEach(function(item, i, arr) {
+                    if (count === 0) {
+                        snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+                    }
+                    if (item.trim() == '|') {
+                        snippet += '</ul></div>';
+                        count = 0;
+                    } else {
+                        snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
+                        ++count;
+                    }
+                });
+                snippet += '</div></div></div></li></ul></div>     ';
+                return snippet;
+            }
+        }
+
+        function dropdown_enchancements() {
+            $('ul.dropdown-menu').css('top', '95%');
+            $(".dropdown").hover(function() {
+                $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");
+            }, function() {
+                $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
+                $(this).toggleClass('open');
+                $('b', this).toggleClass("caret caret-up");
+            });
+            $("a.hovery").hover(function(e) {
+                $(this).css("background", e.type === "mouseenter" ? "#303030" : "transparent");
+                $(this).css("color", e.type === "mouseenter" ? "#999!important" : "");
+            });
+        }
+
+        var reason_buttons = construct_buttons(OwnReasons);
+        $('<div class="ban-reasons">'+reason_buttons+'</div>').insertAfter('input[name=reason]');
+
+        $('.plusreason').on('click', function(event) {
+            event.preventDefault();
+            // console.log(settings);
+
+            var reason_val = $('input[name="reason"]').val();
+            var sp = (settings.separator) ? settings.separator : ',';
+
+            if ($(this).data('place') == 'before') {
+                $('input[name="reason"]').val($(this).html() + ' ' + reason_val.trim() + ' ');
+            } else if (($(this).data('place') == 'after-wo') || (reason_val.trim() == 'Intentional')) {
+                $('input[name="reason"]').val(reason_val.trim() + ' ' + $(this).html() + ' ');
+            } else if (reason_val.length) {
+                $('input[name="reason"]').val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
+            } else {
+                $('input[name="reason"]').val($(this).html() + ' ');
+            }
+            $('input[name="reason"]').focus();
+        });
+        $('button#reason_clear').on('click', function(event) {
+            event.preventDefault();
+            $('input[name="reason"]').val("");
+        });
+
+        dropdown_enchancements();
+    };
 }
 
 function perma_perform(el) {

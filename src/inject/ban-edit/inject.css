@@ -1,0 +1,11 @@
+.ban-reasons{
+	margin: 15px 0;
+}
+
+.ban-reasons a.btn.btn-warning.dropdown-toggle{
+	color:white;
+}
+
+.ban-reasons a.btn.btn-danger.dropdown-toggle{
+	color:white;
+}
