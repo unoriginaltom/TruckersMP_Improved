@@ -32,15 +32,16 @@ function init() {
     var colsHead = $('body > div.wrapper > div.container.content > div > table > thead > tr > th'),
     	colsBody = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td');
 
+    $(colsHead).each(function(idx, item){
+    	if($(item).text().length == 0)
+    		$(item).addClass('no-sort');
+    });
+
     if(colsHead.length < colsBody.length){
     	var colsHeadTr = $('body > div.wrapper > div.container.content > div > table > thead > tr');
     	for (i = 0; i < colsBody.length - colsHead.length; i++)
 		    $(colsHeadTr).append('<th class="no-sort"></th>');
     };
-    $(colsHead).each(function(idx, item){
-    	if($(item).text().length == 0)
-    		$(item).addClass('no-sort');
-    });
     $('body > div.wrapper > div.container.content > div > table > thead > tr > th:nth-child(9)').addClass('no-sort');
 
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function(index, el) {
