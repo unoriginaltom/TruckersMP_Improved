@@ -4,28 +4,6 @@
     border-color: #401212 !important;
 }
 
-.sorting::after,
-.sorting_asc::after,
-.sorting_desc::after,
-.sorting_asc_disabled::after,
-.sorting_desc_disabled::after {
-    font-family: 'FontAwesome' !important;
-    padding-left: 5px;
-    color: rgba(255, 255, 255, 0.4);
-}
-
-.sorting::after {
-    content: "\f0dc";
-}
-
-.sorting_asc::after {
-    content: "\f160" !important;
-}
-
-.sorting_desc::after {
-    content: "\f161";
-}
-
 a.toggle-vis {
     cursor: pointer !important;
 }
