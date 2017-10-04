@@ -24,21 +24,26 @@ function inject_init(browser) {
     var steam_id = $('input[name="steam_id"]').val();
 
 
-    function construct_buttons(OwnReasons, if_decline, isComments) {
+    function construct_buttons(OwnReasons, if_decline, if_modify, isComments) {
         var html = '';
          //console.log(OwnReasons);
          if(!isComments){
-             if(typeof OwnReasons.declinesAppeals !== 'undefined' && typeof OwnReasons.acceptsAppeals !== 'undefined'){
-                 if(if_decline){
-                     var declines = OwnReasons.declinesAppeals.split(';');
-                     html += each_type_new('Declines', declines);
-                     html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
-                 }else{
-                     var accepts = OwnReasons.acceptsAppeals.split(';');
-                     html += each_type_new('Accepts', accepts);
-                     html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
-                 };
-             };
+            if(!if_modify && typeof OwnReasons.declinesAppeals !== 'undefined' && typeof OwnReasons.acceptsAppeals !== 'undefined'){
+                if(if_decline){
+                    var declines = OwnReasons.declinesAppeals.split(';');
+                    html += each_type_new('Declines', declines);
+                    html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+                }else{
+                    var accepts = OwnReasons.acceptsAppeals.split(';');
+                    html += each_type_new('Accepts', accepts);
+                    html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
+                };
+            };
+            if(if_modify && typeof OwnReasons.modifyAppeals !== 'undefined'){
+                var modify = OwnReasons.modifyAppeals.split(';');
+                html += each_type_new('Modify', modify);
+                html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
+            };
          }else{
              if(typeof OwnReasons.commentsAppeals !== 'undefined'){
                  var comments = OwnReasons.commentsAppeals.split(';');
@@ -56,6 +61,10 @@ function inject_init(browser) {
                  place = 'after';
                  color = 'default';
                  change = 'reason';
+             } else if (type == 'Modify') {
+                 place = 'after';
+                 color = 'default';
+                 change = 'modify';
              } else if (type == 'Postfixes') {
                  place = 'after-wo';
                  color = 'danger';
@@ -140,6 +149,10 @@ function inject_init(browser) {
                     event.preventDefault();
                     setReason($('#confirm-accept').find('textarea[name=comment]'), $(this).html());
                 });
+                $('.plusmodify').on('click', function(event) {
+                    event.preventDefault();
+                    setReason($('#confirm-modify').find('textarea[name=comment]'), $(this).html());
+                });
                 $('.plusdecline').on('click', function(event) {
                     event.preventDefault();
                     setReason($('#confirm-decline').find('textarea[name=comment]'), $(this).html());
@@ -152,6 +165,10 @@ function inject_init(browser) {
                 $('button#accept_clear').on('click', function(event) {
                     event.preventDefault();
                     $('#confirm-accept').find('textarea[name=comment]').val("");
+                });
+                $('button#modify_clear').on('click', function(event) {
+                    event.preventDefault();
+                    $('#confirm-modify').find('textarea[name=comment]').val("");
                 });
                 $('button#decline_clear').on('click', function(event) {
                     event.preventDefault();
@@ -260,8 +277,9 @@ function inject_init(browser) {
         };
 
         addButtons($('#confirm-accept').find('textarea[name=comment]') , construct_buttons(OwnReasons, false));
+        addButtons($('#confirm-modify').find('textarea[name=comment]') , construct_buttons(OwnReasons, false, true));
         addButtons($('#confirm-decline').find('textarea[name=comment]') , construct_buttons(OwnReasons, true));
-        addButtons($('div.container.content').find('textarea[name=comment]') , construct_buttons(OwnReasons, false, true));
+        addButtons($('div.container.content').find('textarea[name=comment]') , construct_buttons(OwnReasons, false, false, true));
 
         if($('div.container.content > div.row').children('a.btn').length == 0){
     		var select = $('select[name=visibility]');
