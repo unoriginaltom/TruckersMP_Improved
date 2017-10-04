@@ -6,7 +6,8 @@ var default_OwnReasons = {
     comments: "Passed to the right admin",
     declinesAppeals: "This time I will give you a chance but don't do this again in the feauture!; The ban will be marked with \"@BANBYMISTAKE\" and will be removed; You were banned for reckless driving.\n\nHere is a copy of the rules you broke:\n\n§2.18 Reckless Driving\nDriving in such a way that is considered unsafe, driving backwards, wrong way, failing to yield, ignoring other players and rules.\n\nYou can find these rules here: https://truckersmp.com/rules \n\nDeclined.",
     acceptsAppeals: "This time I will give you a chance, however be careful in the future!",
-    commentsAppeals: "Change your tag and prove with a screenshot that it was changed"
+    commentsAppeals: "Change your tag and prove with a screenshot that it was changed",
+    modifyAppeals: "Due to the lack of violations in your history I shorten your ban period. However be careful in the future and follow the rules of MP.; Due to newly emerged circumstances the period of the ban increased."
 };
 var default_OwnDates = {
     white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
@@ -45,6 +46,7 @@ function save_options(with_message = true, data = false) {
             declinesAppeals: $('#declinesAppeals').val().trim(),
             commentsAppeals: $('#commentsAppeals').val().trim(),
             acceptsAppeals: $('#acceptsAppeals').val().trim(),
+            modifyAppeals: $('#modifyAppeals').val().trim()
         };
 
         data.OwnDates = {
@@ -120,6 +122,7 @@ function restore_options() {
         $('#comments').val(items.OwnReasons.comments);
         $('#declinesAppeals').val(items.OwnReasons.declinesAppeals);
         $('#acceptsAppeals').val(items.OwnReasons.acceptsAppeals);
+        $('#modifyAppeals').val(items.OwnReasons.modifyAppeals);
         $('#commentsAppeals').val(items.OwnReasons.commentsAppeals);
 
         $('#white').val(items.OwnDates.white);

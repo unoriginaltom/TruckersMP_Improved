@@ -5,3 +5,7 @@
 hr.small {
     margin: 10px 0 !important;
 }
+
+.badge.badge-banned{
+	margin-left: 10px;
+}
