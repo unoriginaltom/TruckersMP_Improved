@@ -1,5 +1,5 @@
 # TruckersMP Improved
-For TruckersMP Admins only!
+For TruckersMP Staff members only!
 
 # For Contributors
 1) Check any changes on your clients before submitting a pull request. Grab .zip of this repository, then add the extension in Chrome with enabled Developer Mode ([see how](https://developer.chrome.com/extensions/getstarted#unpacked)).
