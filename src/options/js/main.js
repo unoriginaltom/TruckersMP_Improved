@@ -58,7 +58,7 @@ function save_options(with_message = true, data = false) {
         }
     }
 
-    new_data = {
+    var new_data = {
         steamapi: data.steamapi,
         OwnReasons: data.OwnReasons,
         OwnDates: data.OwnDates,
@@ -135,6 +135,7 @@ function restore_options() {
 
         $('#img_previews').prop("checked", items.settings.img_previews);
         $('#wide').prop("checked", items.settings.wide);
+        $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
     });
 }
 
