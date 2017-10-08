@@ -2,7 +2,6 @@ var storage, OwnReasons, settings;
 
 if (!chrome.extension.sendMessage) {
     init();
-    // alert("Firefox");
 } else {
     chrome.extension.sendMessage({}, function(response) {
     	var readyStateCheckInterval = setInterval(function() {
@@ -13,7 +12,7 @@ if (!chrome.extension.sendMessage) {
                     storage = chrome.storage.sync;
                 } else {
                     storage = chrome.storage.local;
-                };
+                }
 
                 function val_init() {
                     return new Promise(function(resolve, reject) {
@@ -26,7 +25,7 @@ if (!chrome.extension.sendMessage) {
                             resolve(items);
                         });
                     });
-                };
+                }
 
                 val_init().then(function(v) {
                     if (v.OwnReasons == null) {
@@ -82,12 +81,12 @@ function init() {
     if (is_add_ban) {
         if (!ban_time) {
             empty_date = true;
-        };
+        }
         ban_time = moment().utc();
     } else {
         $('<p class="help-block">Only change a Reason? Click <a href="#" class="plusdate" data-plus="string" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a> and do not forget to post this ban in <a href="https://forum.truckersmp.com/index.php?/topic/17815-ban-by-mistake/#replyForm" style="color: #72c02c; text-decoration: underline;" target="_blank"><b>Ban by mistake</b></a> forum topic</p>').insertAfter('input[name=reason]');
         ban_time = $('#datetimeselect').val();
-    };
+    }
 
     if (ban_time) {
         var now = moment(ban_time);
@@ -98,7 +97,7 @@ function init() {
 
         if (empty_date) {
             $('#current_ban_time').remove();
-        };
+        }
 
         $('.plusdate').on("click", function(event) {
             event.preventDefault();
@@ -137,13 +136,12 @@ function init() {
                 $('#ownreasons_buttons').remove();
             } else {
                 $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
-            };
+            }
         });
     } else {
-        console.log("This is a permanent ban!");
         $('#datetimeselect').slideUp('fast');
         $('label[for=\'perma.true\']').addClass('text-uppercase');
-    };
+    }
 
     $('input[type=radio][name=perma]').change(function() {
         perma_perform(this);
@@ -180,7 +178,6 @@ function init() {
         function construct_buttons(OwnReasons) {
             var html = '';
             html = '';
-            // console.log(typeof OwnReasons);
             var prefixes = OwnReasons.prefixes.split(';');
             var reasons = OwnReasons.reasons.split(';');
             var postfixes = OwnReasons.postfixes.split(';');
@@ -204,7 +201,7 @@ function init() {
                     place = 'after-wo';
                     color = 'danger';
                     change = 'reason';
-                };
+                }
                 var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
                 var count = 0;
                 // console.log(buttons);
@@ -248,7 +245,6 @@ function init() {
 
         $('.plusreason').on('click', function(event) {
             event.preventDefault();
-            // console.log(settings);
 
             var reason_val = $('input[name="reason"]').val();
             var sp = (settings.separator) ? settings.separator : ',';
@@ -270,7 +266,7 @@ function init() {
         });
 
         dropdown_enchancements();
-    };
+    }
 }
 
 function perma_perform(el) {
@@ -284,3 +280,81 @@ function perma_perform(el) {
         $('label[for=\'perma.true\']').removeClass('text-uppercase');
     }
 }
+
+function checkDoubleSlash(input) {
+	if (!input) { return; }
+	var val = input.value,
+		valLength = val.length;
+	if(valLength > 1){
+		var strPos = 0;
+		var br = ((input.selectionStart || input.selectionStart == '0') ?
+			"ff" : (document.selection ? "ie" : false ) );
+		if (br == "ie") {
+			input.focus();
+			var range = document.selection.createRange();
+			range.moveStart ('character', -input.value.length);
+			strPos = range.text.length;
+		} else if (br == "ff") {
+			strPos = input.selectionStart;
+		}
+		if(strPos > 1){
+			var result = false;
+			if(strPos > 2)
+				result = val.substring(strPos - 3, strPos) == '// ';
+			if(!result)
+				result = val.substring(strPos - 2, strPos) == '//';
+			return result;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+}
+
+function insertAtCaret(input, text) {
+	if (!input) { return; }
+	
+	var strPos = 0;
+	var br = ((input.selectionStart || input.selectionStart == '0') ?
+		"ff" : (document.selection ? "ie" : false ) );
+	if (br == "ie") {
+		input.focus();
+		var range = document.selection.createRange();
+		range.moveStart ('character', -input.value.length);
+		strPos = range.text.length;
+	} else if (br == "ff") {
+		strPos = input.selectionStart;
+	}
+	
+	var front = (input.value).substring(0, strPos);
+	var back = (input.value).substring(strPos, input.value.length);
+	input.value = front + text + back;
+	strPos = strPos + text.length;
+	if (br == "ie") {
+		input.focus();
+		var ieRange = document.selection.createRange();
+		ieRange.moveStart ('character', -input.value.length);
+		ieRange.moveStart ('character', strPos);
+		ieRange.moveEnd ('character', 0);
+		ieRange.select();
+	} else if (br == "ff") {
+		input.selectionStart = strPos;
+		input.selectionEnd = strPos;
+		input.focus();
+	}
+}
+
+function evidencePasteInit(){
+	$('input[name="reason"]').bind('paste', function(e) {
+		var self = this,
+			data = e.originalEvent.clipboardData.getData('Text').trim(),
+			dataLower = data.toLowerCase();
+		if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
+			e.preventDefault();
+			insertAtCaret($(self)[0], '- ' + data);
+		}
+	});
+}
+
+evidencePasteInit();

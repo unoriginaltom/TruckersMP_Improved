@@ -1,7 +1,7 @@
 if (!chrome.extension.sendMessage) {
     inject_init('firefox');
 } else {
-    chrome.extension.sendMessage({}, function(response) {
+    chrome.extension.sendMessage({}, function() {
         var readyStateCheckInterval = setInterval(function() {
             if (document.readyState === "complete") {
                 clearInterval(readyStateCheckInterval);
@@ -12,8 +12,6 @@ if (!chrome.extension.sendMessage) {
 }
 
 function inject_init(browser) {
-    // console.log(browser);
-
     var storage;
     if (chrome.storage.sync) {
         storage = chrome.storage.sync;
@@ -31,99 +29,11 @@ function inject_init(browser) {
             'Many fixes'
         ]
     };
-    var default_OwnReasons = JSON.stringify({
-        prefixes: "Intentional",
-        reasons: "Ramming; Blocking; Incorrect Way; Insulting Users; Insulting Administration; |; Change your Steam name and make a ban appeal; |; Horn Spamming; Inappropriate License/Interior Plates; Impressionating Administration; Racing; Inappropriate Overtaking; Profanity; Chat Spamming; Hacking; Speedhacking; Bug Abusing; Inappropriate Parking; Unsupported Mods; Ban Evading; Driving w/o lights; Exiting Map Boundaries; Inappropriate Convoy Management; Bullying/Harrassment; Trolling; CB Abuse; Car w/ trailer; Excessive Save Editing; Reckless Driving",
-        postfixes: "// 1 m due to history; // 3 m due to history; |; // Perma due to history",
-        declines: "Insufficient Evidence; No evidence; Only a kickable offence; Wrong ID; No offence; Already banned for this evidence"
-    });
-    var default_OwnDates = JSON.stringify({
-        white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
-        yellow: "1,w,+1 week;",
-        red: "1,M,+1 month; 3,M",
-        other: "current_utc"
-    });
     var templates = {
         /*
             UndescoreJS Templates
          */
         header: _.template(` Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik"> <%= version.number %></span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#new_version_modal" data-toggle="modal" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>  <i class="fa fa-exclamation-triangle" id="loading-error" style="display:none; color: #ac2925;" data-toggle="tooltip" title="Steam has an issue, try again later..."></i>`),
-        modal: {
-            version: _.template(`<div class="modal fade" tabindex="-1" role="dialog" id="new_version_modal">
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                                <h2 class="modal-title">New version <%= version.number %> deployed!</h2>
-                            </div>
-                            <div class="modal-body">
-                                <%= changelog %>
-                                <hr>
-                                <p>Previous changes & all the changes - <a href="http://bit.ly/BlameAnybody" target="_blank">here</a></p>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>`),
-            settings: _.template(`<div class="modal fade ets2mp-modal" id="script-settings" tabindex="-1">
-                <div class="modal-dialog">
-                    <div class="modal-content">
-                        <div class="modal-header">
-                            <h2>Reports Improved Settings</h2>
-                        </div>
-                        <div class="modal-body">
-                            <div class="form-group">
-                                <label for="steamapi_id">Steam Web API Key (<a href="http://jmdev.ca/url?l=12a81" target="_blank">how to get it?</a>)</label> <input class="form-control" name="steamapi_id" id="steamapi_id" placeholder="Paste it here or Kappa" type="text" value="<%= steamapi %>">
-                                This key is needed for Steam integration AND Cloud sync (key is your credentials). If you don't want to use Steam integration, click on Kappa <img src="http://s019.radikal.ru/i600/1603/56/506aefc956d7.png" id="Kappa">
-                            </div>
-                            <hr>
-                            <h3>Own Reasons Buttons <small>Use Semicolon <kbd>;</kbd> to split variants and Vertical slash <kbd>|</kbd> for separator</small></h3>
-                            <div class="form-group">
-                                <label for="plusreason-own-Prefixes">Prefixes</label> <textarea class="form-control" rows="2" id="plusreason-own-Prefixes" name="plusreason-own-Prefixes"></textarea>
-                            </div>
-                            <div class="form-group">
-                               <label for="plusreason-own-Reasons">Reasons</label> <textarea class="form-control" rows="3" id="plusreason-own-Reasons" name="plusreason-own-Reasons"></textarea>
-                            </div>
-                            <div class="form-group">
-                               <label for="plusreason-own-Postfixes">Postfixes</label> <textarea class="form-control" rows="3" id="plusreason-own-Postfixes" name="plusreason-own-Postfixes"></textarea>
-                            </div>
-                            <div class="form-group">
-                               <label for="plusreason-own-Declines">Declines</label> <textarea class="form-control" rows="3" id="plusreason-own-Declines" name="plusreason-own-Declines"></textarea>
-                            </div>
-                        </div>
-                        <div class="modal-footer">
-                            <div class="btn-toolbar pull-right">
-                                <button class="btn btn-danger" id="script-settings-submit">Save & Reload page</button>
-                                <button class="btn btn-primary" id="script-settings-read-data" data-toggle="tooltip" title="Download OwnReasons from Cloud"><i class="fa fa-cloud-download"></i></button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>`),
-        },
-        /*
-            Pure templates
-         */
-        date_buttons: `<br>
-            <div id="ownreasons_buttons">
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default plusdate" data-plus="3hrs">+3 hrs</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default plusdate" data-plus="1day">+1 day</button>
-                    <button type="button" class="btn btn-default plusdate" data-plus="3day">+3</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-warning plusdate" data-plus="1week">+1 week</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-danger plusdate" data-plus="1month">+1 month</button>
-                    <button type="button" class="btn btn-danger plusdate" data-plus="3month">+3</button>
-                    <button type="button" class="btn btn-link plusdate" data-plus="clear">Current UTC time</button>
-                </div>
-            </div>`,
     };
     var injects = {
         header: 'body > div.wrapper > div.breadcrumbs > div > h1',
@@ -173,10 +83,10 @@ function inject_init(browser) {
 				return result;
 			}else{
 				return false;
-			};
+			}
 		}else{
 			return false;
-		};
+		}
 	}
 
     /*
@@ -194,8 +104,8 @@ function inject_init(browser) {
                 storage.set({
                     last_version: chrome.runtime.getManifest().version
                 });
-            };
-        };
+            }
+        }
     }
 
     function accept_modal_init() {
@@ -210,9 +120,8 @@ function inject_init(browser) {
             var textArea = $('div.container.content').find('textarea[name=comment]');
             $(textArea).css('margin-bottom', '10px');
             $(textArea).parent().append(comments_buttons);
-        };
-
-        templates.date_buttons = construct_dates(OwnDates);
+        }
+	    templates.date_buttons = construct_dates(OwnDates);
         $(templates.date_buttons).insertAfter(injects.date_buttons);
         $('input[id="perma.false"]').prop("checked", true);
         // ===== DateTime and Reason inputs checking =====
@@ -321,8 +230,8 @@ function inject_init(browser) {
         function setReason(reason, reason_val){
            $(reason).val($(reason).val() + ' ' + reason_val + ' ');
            $(reason).focus();
-        };
-        $('.pluscomment').on('click', function(event) {
+        }
+	    $('.pluscomment').on('click', function(event) {
            event.preventDefault();
            setReason($('form').find('textarea[name=comment]'), $(this).html());
         });
@@ -340,8 +249,8 @@ function inject_init(browser) {
         for (var i = needle.length - 1; i >= 0; i--) {
             if (this.includes(needle[i])) {
                 return true;
-            };
-        };
+            }
+        }
     };
 
     function getYouTubeIdFromUrl(youtubeUrl) {
@@ -397,32 +306,30 @@ function inject_init(browser) {
             } else {
               hrs = 0;
               spl = spl[0];
-            };
-
-            spl = spl.split('m');
+            }
+	          spl = spl.split('m');
             if (spl.length == 2) {
               min = Number(spl[0]);
               spl = spl[1];
             } else {
               min = 0;
               spl = spl[0];
-            };
-
-            spl = spl.split('s');
+            }
+	          spl = spl.split('s');
             sec = Number(spl[0]);
 
             hrs = hrs * 3600;
             min = min * 60;
             start = hrs + min + sec;
-          };
+          }
         } else if (params.time_continue) {
           console.log('time_continue');
           start = params.time_continue[0];
         } else {
           console.log('out');
           start = params[0];
-        };
-        if (start) {
+        }
+	      if (start) {
             return '?t=' + start + 's';
         } else {
             return '';
@@ -441,9 +348,8 @@ function inject_init(browser) {
 
             if (sub.contains(["youtube.com", "youtu.be"])) {
                 $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-            };
-
-            if (sub.length > 60) {
+            }
+	        if (sub.length > 60) {
                 $(this).text(sub.substring(0, 40) + '...');
             }
 
@@ -455,7 +361,7 @@ function inject_init(browser) {
                 // console.log(sub);
                 if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
                     $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
-                };
+                }
             });
         }
 
@@ -467,9 +373,8 @@ function inject_init(browser) {
 
             if (link.includes('youtube.com')) {
                 link = 'https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link);
-            };
-
-            if (length < 30) {
+            }
+	        if (length < 30) {
                 copyToClipboard($(this).data("link"));
                 chrome.runtime.sendMessage({
                     msg: "This URL is short enough. Check your clipboard!"
@@ -529,9 +434,8 @@ function inject_init(browser) {
         input.select();
         document.execCommand('Copy');
         document.body.removeChild(input);
-    };
-
-    function comment_language() {
+    }
+	function comment_language() {
         var report_language = $(injects.report_language).text().trim();
         var comment;
 
@@ -566,8 +470,8 @@ function inject_init(browser) {
             }
         } else {
             comment = settings.own_comment;
-        };
-        $(injects.accept_comment).val(comment);
+        }
+	    $(injects.accept_comment).val(comment);
     }
 
     function bans_count_fetch() {
@@ -677,8 +581,8 @@ function inject_init(browser) {
                         type: "GET",
                         success: function(tmp_data) {
                             if (tmp_data !== true) {
-                                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').after(' <img src="' + tmp_data.response.avatar + '" class="img-rounded" style="width: 32px; height: 32px;">')
-                                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').wrap('<kbd>')
+                                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').after(' <img src="' + tmp_data.response.avatar + '" class="img-rounded" style="width: 32px; height: 32px;">');
+                                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').wrap('<kbd>');
 
                                 var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
                                 $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
@@ -689,24 +593,17 @@ function inject_init(browser) {
                                 $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').css('text-align', 'right');
                                 $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)').css('text-align', 'right');
 
-                                $(injects.summary.first_column).each(function(index, el) {
+                                $(injects.summary.first_column).each(function(index) {
                                     $(this).css('font-weight', 'bold');
                                 });
                                 $('[data-toggle="tooltip"]').tooltip();
                                 $("#loading-spinner").hide();
-                            };
+                            }
                         }
                     })
 
                 }
             });
-            // } else {
-            //     alert("Hello! Looks like this is your first try in Reports Improved! I'll open the settings for you...");
-            //     if (chrome.runtime.openOptionsPage) {
-            //         chrome.runtime.openOptionsPage();
-            //     } else {
-            //         window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-            //     }
         }
         if (perpetrator_id <= 3500) {
             low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check Steam aliases! If you want to change Perpetrator ID, please send request to CMs/team leads">Low ID! <strong>' + perpetrator_id + '</strong></span>';
@@ -730,12 +627,12 @@ function inject_init(browser) {
     }
 
     function comments_nice_look() {
-        $(".comment > p").each(function(index, el) {
+        $(".comment > p").each(function() {
             $('<hr style="margin: 10px 0 !important;">').insertAfter(this);
             $(this).wrap("<blockquote></blockquote>");
             if (!$(this).text().length) {
                 $(this).html('<i>Empty comment</i>');
-            };
+            }
         });
     }
 
@@ -761,7 +658,7 @@ function inject_init(browser) {
     	if(isBanned.length > 0){
 			var perpetrator = $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2)');
 			$(perpetrator).append('<span class="badge badge-red badge-banned">Banned</span>');
-    	};
+    	}
     }
 
     function final_init() {
@@ -781,9 +678,8 @@ function inject_init(browser) {
 
             if (settings.wide !== false) {
                 $('div.container.content').css('width', '85%');
-            };
-
-            $(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
+            }
+	        $(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
         });
     }
 
@@ -800,8 +696,8 @@ function inject_init(browser) {
 
         function each_type(type, buttons) {
             snippet = '<div class="btn-group" role="group">';
-            buttons.forEach(function(item, i, arr) {
-                var item = item.split(',');
+            buttons.forEach(function(item) {
+                item = item.split(',');
                 var number = item[0].trim();
                 var key = (item[1]) ? item[1].trim() : undefined;
                 var title = (item[2]) ? item[2].trim() : ('+'+number);
@@ -813,7 +709,7 @@ function inject_init(browser) {
                 } else {
                     snippet += '<button type="button" class="btn btn-'+ type+' plusdate" data-number="'+ number +'" data-key="'+ key +'">'+ title +'</button>';
                 }
-            })
+            });
             snippet += '</div>   ';
             return snippet;
         }
@@ -843,8 +739,8 @@ function inject_init(browser) {
                 var comments = OwnReasons.comments.split(';');
                 html += each_type_new('Comments', comments);
                 html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
-            };
-        };
+            }
+        }
         return html;
 
         function each_type_new(type, buttons) {
@@ -869,12 +765,11 @@ function inject_init(browser) {
                 place = 'after';
                 color = 'u';
                 change = 'comment';
-            };
+            }
             var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
             var count = 0;
-            // console.log(buttons);
             var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-            buttons.forEach(function(item, i, arr) {
+            buttons.forEach(function(item) {
                 if (count === 0) {
                     snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
                 }
@@ -901,7 +796,7 @@ function inject_init(browser) {
 
     function val_init() {
         var steamapi, OwnReasons, OwnDates, last_version;
-        return new Promise(function(resolve, reject) {
+        return new Promise(function(resolve) {
             storage.get({
                 steamapi: null,
                 OwnReasons: null,
@@ -949,14 +844,13 @@ function inject_init(browser) {
 
 	function evidencePasteInit(){
 		$('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').bind('paste', function(e) {
-		// $("textarea").bind('paste', function(e) { /* for debug */
 			var self = this,
 				data = e.originalEvent.clipboardData.getData('Text').trim(),
 				dataLower = data.toLowerCase();
-			if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this)){
+			if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
 				e.preventDefault();
 				insertAtCaret($(self)[0], '- ' + data);
-			};
+			}
 		});
 	}
 
@@ -981,7 +875,6 @@ function inject_init(browser) {
                 steamapi = v.steamapi;
                 settings = v.settings;
                 version_checker(last_version);
-                // database.init();
                 content_links();
                 comment_language();
                 bans_count_fetch();
@@ -1000,4 +893,4 @@ function inject_init(browser) {
         });
     }
     init();
-};
+}
