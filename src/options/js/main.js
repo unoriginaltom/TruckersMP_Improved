@@ -14,27 +14,28 @@ var default_OwnDates = {
     yellow: "1,w,+1 week",
     red: "1,M,+1 month; 3,M",
     other: "current_utc"
-}
+};
 var storage;
 
 if (chrome.storage.sync) {
     storage = chrome.storage.sync;
 } else {
     storage = chrome.storage.local;
-};
+}
 
 // Saves options to chrome.storage
 function save_options(with_message = true, data = false) {
     $('#steamapi_group').removeClass('has-error');
 
     if (!data) {
-        var data = {};
+        data = {};
         data.steamapi = $('#steamapi').val();
         data.settings = {
             img_previews: $('#img_previews').is(':checked'),
             wide: $('#wide').is(':checked'),
             separator: $('#separator').val(),
             own_comment: $('#own_comment').val().trim(),
+	          autoinsertsep: $('#autoinsertsep').val().trim()
         };
 
         data.OwnReasons = {
@@ -53,23 +54,23 @@ function save_options(with_message = true, data = false) {
             white: $('#white').val().trim(),
             yellow: $('#yellow').val().trim(),
             red: $('#red').val().trim(),
-            other: $('#other').val().trim(),
+            other: $('#other').val().trim()
         }
-    };
+    }
 
     new_data = {
         steamapi: data.steamapi,
         OwnReasons: data.OwnReasons,
         OwnDates: data.OwnDates,
         settings: data.settings
-    }
+    };
 
     if (data.steamapi.length == 32) {
         storage.set(new_data, function() {
             if (with_message) {
                 alert("Settings are saved! Please reload all TruckersMP tabs in order to fetch new settings.");
                 window.close();
-            };
+            }
         });
     } else {
         $('#steamapi_group').addClass('has-error');
@@ -77,7 +78,7 @@ function save_options(with_message = true, data = false) {
         setTimeout(function() {
             $('#steamapi_body').removeClass('bg-danger');
         }, 2000);
-    };
+    }
 }
 
 function versionCompare(left, right) {
@@ -101,8 +102,7 @@ function versionCompare(left, right) {
 
 function restore_options() {
     $('#ext_name').html('<strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
-
-    // console.log(storage);
+  
     storage.get({
         steamapi: 'none',
         OwnReasons: default_OwnReasons,
@@ -135,8 +135,6 @@ function restore_options() {
 
         $('#img_previews').prop("checked", items.settings.img_previews);
         $('#wide').prop("checked", items.settings.wide);
-
-        // console.log(items);
     });
 }
 
@@ -149,7 +147,7 @@ function import_data(event) {
         reader.readAsText(files[0]);
     } else {
         import_file.value = '';
-    };
+    }
 }
 
 function _imp() {
@@ -166,15 +164,15 @@ function _imp() {
                         import_file.value = '';
                         return null;
                     }
-                };
+                }
                 save_options(false, _data);
                 alert("Imported and saved! Nice job!\nYou can review new settings right now.");
                 restore_options();
             }
         } else {
             alert("JSON file is invalid!\nSteam API should be 32-symbol, given " + _data.steamapi.length);
-        };
-    };
+        }
+    }
 
     import_file.value = '';
 }
@@ -200,17 +198,17 @@ $(document).ready(function(){
 
     $(function () {
       $('[data-toggle="tooltip"]').tooltip()
-    })
+    });
 
     $('.version_detected').on('click', function(event) {
         event.preventDefault();
         window.open(chrome.runtime.getURL('src/options/new_version.html'), "_blank");
     });
 
-    $('#steamapi').on('focus', function (event) {
+    $('#steamapi').on('focus', function () {
         if ($(this).val() === 'null') {
             $(this).val('');
-        };
+        }
         $(this).select();
     });
 
