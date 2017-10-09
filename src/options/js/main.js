@@ -35,7 +35,7 @@ function save_options(with_message = true, data = false) {
             wide: $('#wide').is(':checked'),
             separator: $('#separator').val(),
             own_comment: $('#own_comment').val().trim(),
-	          autoinsertsep: $('#autoinsertsep').val().trim()
+	        autoinsertsep: $('#autoinsertsep').is(':checked')
         };
 
         data.OwnReasons = {
@@ -110,6 +110,7 @@ function restore_options() {
         settings: {
             img_previews: true,
             wide: true,
+            autoinsertsep: true,
             separator: ','
         }
     }, function(items) {
@@ -158,7 +159,7 @@ function _imp() {
         if (_data.steamapi.length == 32) {
             var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
             if (compare === 1) {
-                alert('Wait a second! JSON file version (' + _data.last_version + ') is newer that extension version (' + chrome.runtime.getManifest().version + ').\nPlease update extensiont before importing!');
+                alert('Wait a second! JSON file version (' + _data.last_version + ') is newer that extension version (' + chrome.runtime.getManifest().version + ').\nPlease update extension before importing!');
             } else {
                 if (compare === -1) {
                     if (!confirm('Wait a second! JSON file version (' + _data.last_version + ') is older that extension version (' + chrome.runtime.getManifest().version + ').\nData can be corrupted.\nDid you really want to import data?')) {
