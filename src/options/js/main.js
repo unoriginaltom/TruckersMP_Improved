@@ -101,8 +101,8 @@ function versionCompare(left, right) {
 }
 
 function restore_options() {
-    $('#ext_name').html('<strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
-  
+    $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
+
     storage.get({
         steamapi: 'none',
         OwnReasons: default_OwnReasons,

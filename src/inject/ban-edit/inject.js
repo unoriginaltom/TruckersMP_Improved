@@ -314,7 +314,7 @@ function checkDoubleSlash(input) {
 
 function insertAtCaret(input, text) {
 	if (!input) { return; }
-	
+
 	var strPos = 0;
 	var br = ((input.selectionStart || input.selectionStart == '0') ?
 		"ff" : (document.selection ? "ie" : false ) );
@@ -326,7 +326,7 @@ function insertAtCaret(input, text) {
 	} else if (br == "ff") {
 		strPos = input.selectionStart;
 	}
-	
+
 	var front = (input.value).substring(0, strPos);
 	var back = (input.value).substring(strPos, input.value.length);
 	input.value = front + text + back;

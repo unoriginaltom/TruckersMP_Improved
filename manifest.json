@@ -1,14 +1,12 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.5.14.1",
+  "version": "1.5.15",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "homepage_url": "http://bigmp.ru/improved/",
   "icons": {
     "16": "icons/icon16.png",
-    "19": "icons/icon19.png",
     "48": "icons/icon48.png",
-    "64": "icons/icon64.png",
     "128": "icons/icon128.png"
   },
   "minimum_chrome_version": "42",
@@ -38,9 +36,7 @@
   "browser_action": {
     "default_icon": {
         "16": "icons/icon16.png",
-        "19": "icons/icon19.png",
         "48": "icons/icon48.png",
-        "64": "icons/icon64.png",
         "128": "icons/icon128.png"
     },
     "default_popup": "src/popup/index.html"
