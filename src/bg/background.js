@@ -37,7 +37,7 @@ chrome.runtime.onInstalled.addListener(function (object) {
         alert('Oops... -> ' + v);
     });
 
-    chrome.browserAction.setBadgeText({'text': chrome.runtime.getManifest().version});
+    // chrome.browserAction.setBadgeText({'text': chrome.runtime.getManifest().version});
     storage.set({
         last_version: chrome.runtime.getManifest().version
     });

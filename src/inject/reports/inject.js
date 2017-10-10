@@ -158,7 +158,7 @@ function inject_init(browser) {
             event.preventDefault();
             // console.log(settings);
 
-            var reason = $('input[name="reason"]'), 
+            var reason = $('input[name="reason"]'),
             	reason_val = $(reason).val(),
             	sp = '';
             if(!checkDoubleSlash($(reason)[0]))

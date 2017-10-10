@@ -19,7 +19,7 @@ function init() {
 
   // INIT
   var version = chrome.runtime.getManifest().version;
-	
+
   $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Table Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>');
 
   // ===== Bootstrapping =====
@@ -132,11 +132,11 @@ function init() {
       $(this).removeClass('hiddenToggle')
     }
   });
-  
+
   $(".sorting").append(" <i class='fa fa-sort'></i>");
   $(".sorting_asc").append(" <i class='fa fa-sort-amount-asc'></i>");
   $(".sorting_desc").append(" <i class='fa fa-sort-amount-desc'></i>");
-  
+
   // ===== After All =====
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();

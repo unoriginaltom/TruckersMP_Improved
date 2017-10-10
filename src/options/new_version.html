@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.css">
-    <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+
+    <!-- <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css"> -->
+    <link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.min.css">
+
     <title>New version of TruckersMP Improved!</title>
+
     <style type="text/css">
         body {
             margin-top: 20px;
@@ -12,6 +15,10 @@
 
         .tab-pane {
             margin-top: 10px;
+        }
+
+        .changelog {
+            font-size: 15px;
         }
     </style>
 </head>
@@ -21,7 +28,7 @@
         <div class="container">
             <div class="col-lg-12 text-center">
                 <div class="jumbotron">
-                    <h2><strong>New version of TruckersMP Improved <kbd class="subheader"></kbd><br>has been installed!</strong></h2>
+                    <h2><strong><img src="/icons/icon48.png"> New version of TruckersMP Improved <kbd class="subheader"></kbd><br>has been installed!</strong></h2>
                         <p>
                             <a href="#" id="go_to_options" class="btn btn-primary">Go to options</a> <a href="#" id="close" class="btn btn-danger">Close this page</a>
                         </p>
@@ -39,7 +46,12 @@
             <div class="row">
                 <div class="col">
                     <h3 class="text-center">Changelog</h3>
-                    <ul class="disc">
+                    <ul class="disc changelog">
+                        <li>New icon! <img src="/icons/icon16.png"></li>
+                        <li>Fix: in popup, link to MultiURL has been removed (since it is not working)</li>
+                        <li>Optimization: local copy of Font Awesowe has been removed (since it should be imported from Web)</li>
+                        <li>Optimization: local copy of Bootstrap CSS has been removed (since Paper contains it already)</li>
+                        <hr>
                         <li>When adding a reason by button for the ban, if before paste exists is "//", the separator is not added.</li>
                         <li>When inserting a link into the reasons for the ban, now, automatically added prefix "- " before pasted link (Can be disabled in options). If before paste exists is "//", the prefix is not added.</li>
                         <li>Report form: If player already banned, in the report show red label "Banned"</li>
@@ -72,9 +84,9 @@
                             <div class="tab-content">
                                 <div class="tab-pane active in fade" id="v150">
                                     <ul class="disc">
-					<li>Added "Reasons" buttons to the "Ban edit" and "Ban add" forms</li>
-					<li>Changed style for "View" button in the reports table with "focus" state</li>
-					<li>Fixed bugs in the page of the reports table</li>
+                    					<li>Added "Reasons" buttons to the "Ban edit" and "Ban add" forms</li>
+                    					<li>Changed style for "View" button in the reports table with "focus" state</li>
+                    					<li>Fixed bugs in the page of the reports table</li>
                                         <hr>
                                         <li>If buttons "Accept", "Modify" and "Decline" in the appeal view not found, default value for field "Comment visibility" is "Private"</li>
                                         <li>If button "Claim report" in the report view not found, default value for field "Comment visibility" is "Private"</li>
