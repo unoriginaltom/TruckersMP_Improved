@@ -1,14 +1,15 @@
 chrome.runtime.onMessage.addListener(
     function(request) {
-        console.log(request);
+        // console.log(request);
         if (request.msg) {
-            chrome.notifications.create('Notification', {
+            var notification = {
                 "type": "basic",
-                "iconUrl": chrome.extension.getURL("icons/icon64.png"),
+                "iconUrl": chrome.extension.getURL("icons/icon128.png"),
                 "title": "This is a notification",
-                "message": request.msg
-            });
-            setTimeout(chrome.notifications.clear('Notification'), 5000);
+                "message": request.msg,
+                "contextMessage": "Happy trucking!"
+            }
+            chrome.notifications.create(notification);
         };
     }
 );
