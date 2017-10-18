@@ -853,6 +853,25 @@ function inject_init(browser) {
 			}
 		});
 	}
+	
+	function fixModals() {
+    var path = "div > div.modal-content > form > div.modal-body > div.form-group:last-child";
+    var rateAccept = $("#confirm-accept").find(path);
+		rateAccept.find("input[id='rating.positive']").attr("id","accept.rating.positive");
+		rateAccept.find("input[id='rating.negative']").attr("id","accept.rating.negative");
+		
+    rateAccept.find("label[for='rating.positive']").attr("for","accept.rating.positive");
+    rateAccept.find("label[for='rating.negative']").attr("for","accept.rating.negative");
+		
+		rateAccept.find("input[id='accept.rating.positive']").prop("checked",true);
+    
+    var rateDecline = $("#confirm-decline").find(path);
+		rateDecline.find("input[id='rating.positive']").attr("id","decline.rating.positive");
+		rateDecline.find("input[id='rating.negative']").attr("id","decline.rating.negative");
+		
+		rateDecline.find("label[for='rating.positive']").attr("for","decline.rating.positive");
+		rateDecline.find("label[for='rating.negative']").attr("for","decline.rating.negative");
+	}
 
     /*
         INIT SCRIPT
@@ -886,6 +905,7 @@ function inject_init(browser) {
                 supportInit();
                 bannedInit();
                 evidencePasteInit();
+	              fixModals();
                 final_init();
             }
         }).catch(function(v) {
