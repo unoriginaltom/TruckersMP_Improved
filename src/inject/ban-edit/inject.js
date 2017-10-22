@@ -357,4 +357,23 @@ function evidencePasteInit(){
 	});
 }
 
+function reasonMaxLength() {
+    var reason = $('input[name="reason"]');
+    reason.attr("maxlength","190");
+    reason.keydown(function () {
+        if(reason.val().length >= 180) {
+            reason.css({
+                'background-color': 'rgba(255, 0, 0, 0.5)',
+                'color': '#fff'
+            });
+        } else {
+            reason.css({
+                'background-color': '',
+                'color': ''
+            });
+        }
+    });
+}
+
 evidencePasteInit();
+reasonMaxLength();

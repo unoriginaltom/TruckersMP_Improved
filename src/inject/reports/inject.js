@@ -124,6 +124,8 @@ function inject_init(browser) {
 	    templates.date_buttons = construct_dates(OwnDates);
         $(templates.date_buttons).insertAfter(injects.date_buttons);
         $('input[id="perma.false"]').prop("checked", true);
+
+        var reason = $('input[name="reason"]')
         // ===== DateTime and Reason inputs checking =====
         $('#confirm-accept > div > div > form').on('submit', function(event) {
             var time_check = $('#datetimeselect').val();
@@ -140,6 +142,7 @@ function inject_init(browser) {
                 '-webkit-box-shadow': '',
                 'box-shadow': ''
             };
+
             if (!time_check && !perm_check) {
                 $('#datetimeselect').css(error_style);
                 event.preventDefault();
@@ -158,8 +161,7 @@ function inject_init(browser) {
             event.preventDefault();
             // console.log(settings);
 
-            var reason = $('input[name="reason"]'),
-            	reason_val = $(reason).val(),
+            var reason_val = $(reason).val(),
             	sp = '';
             if(!checkDoubleSlash($(reason)[0]))
             	sp = (settings.separator) ? settings.separator : ',';
@@ -194,6 +196,20 @@ function inject_init(browser) {
                     break;
             }
             $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+        });
+        reason.attr("maxlength","190");
+        reason.keydown(function () {
+            if(reason.val().length >= 180) {
+                reason.css({
+                    'background-color': 'rgba(255, 0, 0, 0.5)',
+                    'color': '#fff'
+                });
+            } else {
+                reason.css({
+                    'background-color': '',
+                    'color': ''
+                });
+            }
         });
     }
 
@@ -853,22 +869,22 @@ function inject_init(browser) {
 			}
 		});
 	}
-	
+
 	function fixModals() {
-    var path = "div > div.modal-content > form > div.modal-body > div.form-group:last-child";
-    var rateAccept = $("#confirm-accept").find(path);
-		rateAccept.find("input[id='rating.positive']").attr("id","accept.rating.positive");
-		rateAccept.find("input[id='rating.negative']").attr("id","accept.rating.negative");
-		
-    rateAccept.find("label[for='rating.positive']").attr("for","accept.rating.positive");
-    rateAccept.find("label[for='rating.negative']").attr("for","accept.rating.negative");
-		
-		rateAccept.find("input[id='accept.rating.positive']").prop("checked",true);
-    
-    var rateDecline = $("#confirm-decline").find(path);
+        var path = "div > div.modal-content > form > div.modal-body > div.form-group:last-child";
+        var rateAccept = $("#confirm-accept").find(path);
+        rateAccept.find("input[id='rating.positive']").attr("id","accept.rating.positive");
+        rateAccept.find("input[id='rating.negative']").attr("id","accept.rating.negative");
+
+        rateAccept.find("label[for='rating.positive']").attr("for","accept.rating.positive");
+        rateAccept.find("label[for='rating.negative']").attr("for","accept.rating.negative");
+
+        rateAccept.find("input[id='accept.rating.positive']").prop("checked",true);
+
+        var rateDecline = $("#confirm-decline").find(path);
 		rateDecline.find("input[id='rating.positive']").attr("id","decline.rating.positive");
 		rateDecline.find("input[id='rating.negative']").attr("id","decline.rating.negative");
-		
+
 		rateDecline.find("label[for='rating.positive']").attr("for","decline.rating.positive");
 		rateDecline.find("label[for='rating.negative']").attr("for","decline.rating.negative");
 	}
