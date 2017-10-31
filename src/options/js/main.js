@@ -43,6 +43,8 @@ function save_options(with_message = true, data = false) {
             reasons: $('#reasons').val().trim(),
             postfixes: $('#postfixes').val().trim(),
             declines: $('#declines').val().trim(),
+            declinesPositive: $('#declinesPositive').val().trim(),
+            declinesNegative: $('#declinesNegative').val().trim(),
             comments: $('#comments').val().trim(),
             declinesAppeals: $('#declinesAppeals').val().trim(),
             commentsAppeals: $('#commentsAppeals').val().trim(),
@@ -119,8 +121,12 @@ function restore_options() {
         $('#prefixes').val(items.OwnReasons.prefixes);
         $('#reasons').val(items.OwnReasons.reasons);
         $('#postfixes').val(items.OwnReasons.postfixes);
+
         $('#declines').val(items.OwnReasons.declines);
+        $('#declinesPositive').val(items.OwnReasons.declinesPositive);
+        $('#declinesNegative').val(items.OwnReasons.declinesNegative);
         $('#comments').val(items.OwnReasons.comments);
+
         $('#declinesAppeals').val(items.OwnReasons.declinesAppeals);
         $('#acceptsAppeals').val(items.OwnReasons.acceptsAppeals);
         $('#modifyAppeals').val(items.OwnReasons.modifyAppeals);

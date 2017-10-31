@@ -358,20 +358,32 @@ function evidencePasteInit(){
 }
 
 function reasonMaxLength() {
+    var reasonMax = 190;
     var reason = $('input[name="reason"]');
-    reason.attr("maxlength","190");
-    reason.keydown(function () {
-        if(reason.val().length >= 180) {
+    $("<div id='reasonHelpLink'></div><div id='reasonCount'>"+reason.val().length + "/" + reasonMax+"</div>").insertAfter(reason);
+    reason.keyup(function () {
+        if(reason.val().length > reasonMax) {
             reason.css({
                 'background-color': 'rgba(255, 0, 0, 0.5)',
                 'color': '#fff'
             });
+            $("#reasonCount").css({
+                'color':'red',
+                'font-weight':'bold'
+            });
+            $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/'>http://textuploader.com/</a>");
         } else {
+            $("#reasonHelpLink").html("");
+            $("#reasonCount").css({
+                'color':'',
+                'font-weight':''
+            });
             reason.css({
                 'background-color': '',
                 'color': ''
             });
         }
+        $("#reasonCount").html(reason.val().length + "/" + reasonMax);
     });
 }
 
