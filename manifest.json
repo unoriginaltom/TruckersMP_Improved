@@ -63,17 +63,6 @@
     },
 
     {
-        "matches": [
-            "https://truckersmp.com/admin"
-        ],
-        "css": [],
-        "js": [
-            "js/jquery.min.js",
-            "src/inject/admin/inject.js"
-        ]
-    },
-
-    {
       "matches": [
         "https://truckersmp.com/reports*"
       ],
