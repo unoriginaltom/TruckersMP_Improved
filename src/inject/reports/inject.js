@@ -443,10 +443,6 @@ function inject_init(browser) {
                   } else {
                       msg = "URL just being shorted! Check your clipboard!";
                   }
-
-                  chrome.runtime.sendMessage({
-                      msg: msg
-                  });
                 }
             },
             error: function() {
