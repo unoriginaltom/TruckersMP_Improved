@@ -252,7 +252,7 @@ function init() {
                         'color':'red',
                         'font-weight':'bold'
                     });
-                    $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/'>http://textuploader.com/</a>");
+                    $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
                 } else {
                     $("#reasonHelpLink").html("");
                     $("#reasonCount").css({
