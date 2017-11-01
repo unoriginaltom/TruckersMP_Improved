@@ -29,14 +29,13 @@ if (!chrome.extension.sendMessage) {
 
                 val_init().then(function(v) {
                     if (v.OwnReasons == null) {
-                        alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
+                        alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
                         if (chrome.runtime.openOptionsPage) {
                             chrome.runtime.openOptionsPage();
                         } else {
                             window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
                         }
                     } else {
-                        // console.log(v);
                         OwnReasons = v.OwnReasons;
                         settings = v.settings;
                     }

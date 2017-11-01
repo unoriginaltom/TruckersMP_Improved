@@ -6,7 +6,6 @@ if (!chrome.extension.sendMessage) {
             if (document.readyState === "complete") {
                 clearInterval(readyStateCheckInterval);
                 inject_init('chrome');
-                // alert("Chrome");
             }
         }, 10);
     });
@@ -119,7 +118,7 @@ function inject_init(browser) {
 
     val_init().then(function(v) {
             if (v.OwnReasons == null) {
-                alert("Hello! Looks like this is your first try in Reports Improved! I'll open the settings for you...");
+                alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
                 if (chrome.runtime.openOptionsPage) {
                     chrome.runtime.openOptionsPage();
                 } else {
@@ -413,7 +412,6 @@ function inject_init(browser) {
         if (settings.img_previews !== false) {
             $('div.comment .autolink > a').each(function () {
                 var sub = $(this).attr('href');
-                // console.log(sub);
                 if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
                     $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
                 }
