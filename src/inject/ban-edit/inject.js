@@ -44,7 +44,6 @@ if (!chrome.extension.sendMessage) {
                 }).catch(function(v) {
                     console.log(v)
                 });
-                // alert("Chrome");
         	}
     	}, 10);
     });
@@ -240,6 +239,48 @@ function init() {
             });
         }
 
+        function reasonMaxLength() {
+            var reasonMax = 190;
+            var reason = $('input[name="reason"]');
+            $("<div id='reasonHelpLink'></div><div id='reasonCount'>"+reason.val().length + "/" + reasonMax+"</div>").insertAfter(reason);
+            reason.keyup(function () {
+                if(reason.val().length > reasonMax) {
+                    reason.css({
+                        'background-color': 'rgba(255, 0, 0, 0.5)',
+                        'color': '#fff'
+                    });
+                    $("#reasonCount").css({
+                        'color':'red',
+                        'font-weight':'bold'
+                    });
+                    $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/'>http://textuploader.com/</a>");
+                } else {
+                    $("#reasonHelpLink").html("");
+                    $("#reasonCount").css({
+                        'color':'',
+                        'font-weight':''
+                    });
+                    reason.css({
+                        'background-color': '',
+                        'color': ''
+                    });
+                }
+                $("#reasonCount").html(reason.val().length + "/" + reasonMax);
+            });
+        }
+
+        function evidencePasteInit(){
+            $('input[name="reason"]').bind('paste', function(e) {
+                var self = this,
+                    data = e.originalEvent.clipboardData.getData('Text').trim(),
+                    dataLower = data.toLowerCase();
+                if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
+                    e.preventDefault();
+                    insertAtCaret($(self)[0], '- ' + data);
+                }
+            });
+        }
+
         var reason_buttons = construct_buttons(OwnReasons);
         $('<div class="ban-reasons">'+reason_buttons+'</div>').insertAfter('input[name=reason]');
 
@@ -264,9 +305,12 @@ function init() {
             event.preventDefault();
             $('input[name="reason"]').val("");
         });
-
+        reasonMaxLength();
         dropdown_enchancements();
+        evidencePasteInit();
     }
+
+
 }
 
 function perma_perform(el) {
@@ -344,48 +388,3 @@ function insertAtCaret(input, text) {
 		input.focus();
 	}
 }
-
-function evidencePasteInit(){
-	$('input[name="reason"]').bind('paste', function(e) {
-		var self = this,
-			data = e.originalEvent.clipboardData.getData('Text').trim(),
-			dataLower = data.toLowerCase();
-		if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
-			e.preventDefault();
-			insertAtCaret($(self)[0], '- ' + data);
-		}
-	});
-}
-
-function reasonMaxLength() {
-    var reasonMax = 190;
-    var reason = $('input[name="reason"]');
-    $("<div id='reasonHelpLink'></div><div id='reasonCount'>"+reason.val().length + "/" + reasonMax+"</div>").insertAfter(reason);
-    reason.keyup(function () {
-        if(reason.val().length > reasonMax) {
-            reason.css({
-                'background-color': 'rgba(255, 0, 0, 0.5)',
-                'color': '#fff'
-            });
-            $("#reasonCount").css({
-                'color':'red',
-                'font-weight':'bold'
-            });
-            $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/'>http://textuploader.com/</a>");
-        } else {
-            $("#reasonHelpLink").html("");
-            $("#reasonCount").css({
-                'color':'',
-                'font-weight':''
-            });
-            reason.css({
-                'background-color': '',
-                'color': ''
-            });
-        }
-        $("#reasonCount").html(reason.val().length + "/" + reasonMax);
-    });
-}
-
-evidencePasteInit();
-reasonMaxLength();
