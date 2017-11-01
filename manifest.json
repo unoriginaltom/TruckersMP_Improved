@@ -67,7 +67,8 @@
         "https://truckersmp.com/reports*"
       ],
       "exclude_matches": [
-        "https://truckersmp.com/reports/view/*"
+        "https://truckersmp.com/reports/view/*",
+        "https://truckersmp.com/reports/create"
       ],
       "css": [
         "css/datatables.min.css",
