@@ -45,9 +45,20 @@
                 <div class="col">
                     <h3 class="text-center">Changelog</h3>
                     <ul class="disc changelog">
-                        <li>"Positive" is now selected by default on Accept report modal</li>
-                        <li>Fixed bug were clicking on "Positive" or "Negative" labels weren't checking the associated radio button</li>
-                        <li>Browser now forbids to input a ban reason longer than 190 chars (Approximately the limit applied by the server) + Added a visual warning when the ban reason is above 180 chars</li>
+                        <li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in the options</li>
+                        <li>Added a red badge in reporter ID is the same as perpetrator ID</li>
+                        <li>Some improvements on the ban reason length check:
+                        <ul>
+                            <li>Shows now a hint to use <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a> if the ban reason is above the limit</li>
+                            <li>Removed browser enforcing the 190 chars limit</li>
+                            <li>Visual warning appears now at 190 chars (180 before)</li>
+                            <li>Added chars count under the field</li>
+                        </ul>
+                        </li>
+                        <li>Fixed double popup when shortening link</li>
+                        <li>Permanent check is also done on appeal page opening (Means that expire date field is now initialy hidden on the modify-ban modal if the ban is perma)</li>
+                        <li>Display username in profile tab title</li>
+                        <li>Excluded reports/create to prevent wrong applying of CSS rules</li>
                     </ul>
                 </div>
             </div>
@@ -75,6 +86,10 @@
                             <div class="tab-content">
                                 <div class="tab-pane active in fade" id="v150">
                                     <ul class="disc">
+                                        <li>"Positive" is now selected by default on Accept report modal</li>
+                                        <li>Fixed bug were clicking on "Positive" or "Negative" labels weren't checking the associated radio button</li>
+                                        <li>Browser now forbids to input a ban reason longer than 190 chars (Approximately the limit applied by the server) + Added a visual warning when the ban reason is above 180 chars</li>
+                                        <hr/>
                                         <li>New icon! <img src="/icons/icon16.png"></li>
                                         <li>Fix: in popup, link to MultiURL has been removed (since it is not working)</li>
                                         <li>Optimization: local copy of Font Awesowe has been removed (since it should be imported from Web)</li>
