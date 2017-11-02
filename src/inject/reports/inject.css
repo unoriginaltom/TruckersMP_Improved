@@ -9,3 +9,15 @@ hr.small {
 .badge.badge-banned{
 	margin-left: 10px;
 }
+
+#reasonHelpLink {
+    width: 80%;
+    display: inline-block;
+}
+
+#reasonCount {
+    text-align: right;
+    width: 20%;
+    display: inline-block;
+    margin-bottom: 10px;
+}

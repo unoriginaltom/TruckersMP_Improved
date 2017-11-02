@@ -1,11 +1,19 @@
-.ban-reasons{
-	margin: 15px 0;
-}
-
 .ban-reasons a.btn.btn-warning.dropdown-toggle{
 	color:white;
 }
 
 .ban-reasons a.btn.btn-danger.dropdown-toggle{
 	color:white;
+}
+
+#reasonHelpLink {
+	width: 80%;
+	display: inline-block;
+}
+
+#reasonCount {
+	text-align: right;
+	width: 20%;
+	display: inline-block;
+	margin-bottom: 10px;
 }

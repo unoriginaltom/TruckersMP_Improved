@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.5.17",
+  "version": "1.6",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "homepage_url": "http://bigmp.ru/improved/",
@@ -63,22 +63,12 @@
     },
 
     {
-        "matches": [
-            "https://truckersmp.com/admin"
-        ],
-        "css": [],
-        "js": [
-            "js/jquery.min.js",
-            "src/inject/admin/inject.js"
-        ]
-    },
-
-    {
       "matches": [
         "https://truckersmp.com/reports*"
       ],
       "exclude_matches": [
-        "https://truckersmp.com/reports/view/*"
+        "https://truckersmp.com/reports/view/*",
+        "https://truckersmp.com/reports/create"
       ],
       "css": [
         "css/datatables.min.css",
@@ -138,6 +128,21 @@
         "js/youtubepopup.js",
         "js/moment-with-locales.min.js",
         "src/inject/appeals/inject.js"
+      ]
+    },
+
+    {
+      "matches": [
+        "https://truckersmp.com/user/*"
+      ],
+      "exclude_matches": [
+        "https://truckersmp.com/user/search*",
+        "https://truckersmp.com/user/edit*",
+        "https://truckersmp.com/user/appeals*"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "src/inject/user/inject.js"
       ]
     }
   ]

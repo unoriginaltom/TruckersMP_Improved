@@ -130,7 +130,6 @@ function inject_init(browser) {
         $('#confirm-accept > div > div > form').on('submit', function(event) {
             var time_check = $('#datetimeselect').val();
             var perm_check = $('input[id="perma.true"]').prop("checked");
-            // console.log(perm_check);
             var reason_check = $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').val();
             var error_style = {
                 'border-color': '#a94442',
@@ -182,7 +181,6 @@ function inject_init(browser) {
             $('input[name="reason"]').val("");
         });
         // ===== Timing FTW! =====
-
         $('.plusdate').on("click", function(event) {
             event.preventDefault();
             var number = $(this).data('number');
@@ -197,19 +195,33 @@ function inject_init(browser) {
             }
             $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
         });
-        reason.attr("maxlength","190");
-        reason.keydown(function () {
-            if(reason.val().length >= 180) {
+
+        //Ban reason length check
+        var reasonMax = 190;
+        $("<div id='reasonHelpLink'></div><div id='reasonCount'>0/"+reasonMax+"</div>").insertAfter(reason);
+        reason.keyup(function () {
+            if(reason.val().length > reasonMax) {
                 reason.css({
                     'background-color': 'rgba(255, 0, 0, 0.5)',
                     'color': '#fff'
                 });
+                $("#reasonCount").css({
+                    'color':'red',
+                    'font-weight':'bold'
+                });
+                $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
             } else {
+                $("#reasonHelpLink").html("");
+                $("#reasonCount").css({
+                    'color':'',
+                    'font-weight':''
+                });
                 reason.css({
                     'background-color': '',
                     'color': ''
                 });
             }
+            $("#reasonCount").html(reason.val().length + "/" + reasonMax);
         });
     }
 
@@ -241,10 +253,24 @@ function inject_init(browser) {
             } else {
                 $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val(reason_val + ' ' + $(this).html());
             }
+
+            switch ($(this).data('action')) {
+                case "negative":
+                    document.getElementById('decline.rating.negative').checked = true;
+                    break;
+
+                case "positive":
+                    document.getElementById('decline.rating.positive').checked = true;
+                    break;
+            }
             $('#confirm-decline > div > div > form > div.modal-body > div > textarea').focus();
         });
         function setReason(reason, reason_val){
-           $(reason).val($(reason).val() + ' ' + reason_val + ' ');
+           if ($(reason).val() == "") {
+               $(reason).val(reason_val);
+           } else {
+               $(reason).val($(reason).val() + ' ' + reason_val);
+           }
            $(reason).focus();
         }
 	    $('.pluscomment').on('click', function(event) {
@@ -417,10 +443,6 @@ function inject_init(browser) {
                   } else {
                       msg = "URL just being shorted! Check your clipboard!";
                   }
-
-                  chrome.runtime.sendMessage({
-                      msg: msg
-                  });
                 }
             },
             error: function() {
@@ -565,6 +587,7 @@ function inject_init(browser) {
 
         var perpetrator_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').attr('href').replace('/user/', '');
         var perpetrator_nickname = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').text();
+        var reporter_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a').attr('href').replace('/user/', '');
 
         $(document).prop('title', perpetrator_nickname + ' - ' + perpetrator_id + ' | TruckersMP');
 
@@ -622,7 +645,9 @@ function inject_init(browser) {
             });
         }
         if (perpetrator_id <= 3500) {
-            low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check Steam aliases! If you want to change Perpetrator ID, please send request to CMs/team leads">Low ID! <strong>' + perpetrator_id + '</strong></span>';
+            low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check names & aliases">Low ID! <strong>' + perpetrator_id + '</strong></span>';
+        } else if (perpetrator_id == reporter_id) {
+            low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID is the same as Reporter ID"> Same IDs! <strong>' + perpetrator_id + '</strong></span>';
         } else {
             low_id = ' <span class="badge badge-u" data-toggle="tooltip" title="ID is legit">ID ' + perpetrator_id + '</span>';
         }
@@ -640,6 +665,7 @@ function inject_init(browser) {
         });
         $('input[name=reason]').attr('autocomplete', 'off');
         $('input[name=expire]').attr('autocomplete', 'off');
+
     }
 
     function comments_nice_look() {
@@ -736,12 +762,14 @@ function inject_init(browser) {
         if(!isComments){
             html = '<br>';
             if (if_decline) {
-                // console.log(typeof OwnReasons);
                 var declines = OwnReasons.declines.split(';');
+                var declinesPositive = OwnReasons.declinesPositive.split(';');
+                var declinesNegative = OwnReasons.declinesNegative.split(';');
                 html += each_type_new('Declines', declines);
+                html += each_type_new('Declines (Positive)', declinesPositive);
+                html += each_type_new('Declines (Negative)', declinesNegative);
                 html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
             } else {
-                // console.log(typeof OwnReasons);
                 var prefixes = OwnReasons.prefixes.split(';');
                 var reasons = OwnReasons.reasons.split(';');
                 var postfixes = OwnReasons.postfixes.split(';');
@@ -760,27 +788,56 @@ function inject_init(browser) {
         return html;
 
         function each_type_new(type, buttons) {
-            var place, color, change;
-            if (type == 'Prefixes') {
-                place = 'before';
-                color = 'warning';
-                change = 'reason';
-            } else if (type == 'Reasons') {
-                place = 'after';
-                color = 'default';
-                change = 'reason';
-            } else if (type == 'Postfixes') {
-                place = 'after-wo';
-                color = 'danger';
-                change = 'reason';
-            } else if (type == 'Declines') {
-                place = 'after';
-                color = 'info';
-                change = 'decline';
-            } else if (type == 'Comments') {
-                place = 'after';
-                color = 'u';
-                change = 'comment';
+            var place, color, change, action;
+            switch (type) {
+                case 'Prefixes':
+                    place = 'before';
+                    color = 'warning';
+                    change = 'reason';
+                    action = '';
+                    break;
+
+                case 'Reasons':
+                    place = 'after';
+                    color = 'default';
+                    change = 'reason';
+                    action = '';
+                    break;
+
+                case 'Postfixes':
+                    place = 'after-wo';
+                    color = 'danger';
+                    change = 'reason';
+                    action = '';
+                    break;
+
+                case 'Declines':
+                    place = 'after';
+                    color = 'info';
+                    change = 'decline';
+                    action = '';
+                    break;
+
+                case 'Declines (Positive)':
+                    place = 'after';
+                    color = 'warning';
+                    change = 'decline';
+                    action = 'positive';
+                    break;
+
+                case 'Declines (Negative)':
+                    place = 'after';
+                    color = 'danger';
+                    change = 'decline';
+                    action = 'negative';
+                    break;
+
+                case 'Comments':
+                    place = 'after';
+                    color = 'u';
+                    change = 'comment';
+                    action = '';
+                    break;
             }
             var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
             var count = 0;
@@ -793,7 +850,7 @@ function inject_init(browser) {
                     snippet += '</ul></div>';
                     count = 0;
                 } else {
-                    snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
+                    snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '">' + item.trim() + '</a></li>';
                     ++count;
                 }
             });

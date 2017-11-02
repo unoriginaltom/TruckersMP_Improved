@@ -1,20 +1,17 @@
 if (!chrome.extension.sendMessage) {
     inject_init('firefox');
-    // alert("Firefox");
 } else {
     chrome.extension.sendMessage({}, function(response) {
         var readyStateCheckInterval = setInterval(function() {
             if (document.readyState === "complete") {
                 clearInterval(readyStateCheckInterval);
                 inject_init('chrome');
-                // alert("Chrome");
             }
         }, 10);
     });
 }
 
 function inject_init(browser) {
-    // console.log(browser);
     var storage;
     if (chrome.storage.sync) {
         storage = chrome.storage.sync;
@@ -26,7 +23,6 @@ function inject_init(browser) {
 
     function construct_buttons(OwnReasons, if_decline, if_modify, isComments) {
         var html = '';
-         //console.log(OwnReasons);
          if(!isComments){
             if(!if_modify && typeof OwnReasons.declinesAppeals !== 'undefined' && typeof OwnReasons.acceptsAppeals !== 'undefined'){
                 if(if_decline){
@@ -37,20 +33,20 @@ function inject_init(browser) {
                     var accepts = OwnReasons.acceptsAppeals.split(';');
                     html += each_type_new('Accepts', accepts);
                     html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
-                };
-            };
+                }
+            }
             if(if_modify && typeof OwnReasons.modifyAppeals !== 'undefined'){
                 var modify = OwnReasons.modifyAppeals.split(';');
                 html += each_type_new('Modify', modify);
                 html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
-            };
+            }
          }else{
              if(typeof OwnReasons.commentsAppeals !== 'undefined'){
                  var comments = OwnReasons.commentsAppeals.split(';');
                  html += each_type_new('Comments', comments);
                  html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
-             };
-         };
+             }
+         }
          function each_type_new(type, buttons) {
              var place, color, change;
              if (type == 'Prefixes') {
@@ -81,10 +77,9 @@ function inject_init(browser) {
                  place = 'after';
                  color = 'u';
                  change = 'comment';
-             };
+             }
              var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
              var count = 0;
-             // console.log(buttons);
              var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
              buttons.forEach(function(item, i, arr) {
                  if (count === 0) {
@@ -102,7 +97,7 @@ function inject_init(browser) {
              return snippet;
          }
          return html;
-    };
+    }
 
     function dropdown_enchancements() {
         $('ul.dropdown-menu').css('top', '95%');
@@ -123,7 +118,7 @@ function inject_init(browser) {
 
     val_init().then(function(v) {
             if (v.OwnReasons == null) {
-                alert("Hello! Looks like this is your first try in Reports Improved! I'll open the settings for you...");
+                alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
                 if (chrome.runtime.openOptionsPage) {
                     chrome.runtime.openOptionsPage();
                 } else {
@@ -140,7 +135,7 @@ function inject_init(browser) {
                 function setReason(reason, reason_val){
                     $(reason).val($(reason).val() + ' ' + reason_val + ' ');
                     $(reason).focus();
-                };
+                }
                 $('.pluscomment').on('click', function(event) {
                     event.preventDefault();
                     setReason($('form').find('textarea[name=comment]'), $(this).html());
@@ -243,7 +238,7 @@ function inject_init(browser) {
                     } else {
                         this.expiration = new moment(this.expiration);
                         this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
-                    };
+                    }
                     row += "<td>" + this.expiration +"</td>";
 
                     row += "<td class='autolink'>" + this.reason +"</td>";
@@ -253,7 +248,7 @@ function inject_init(browser) {
                         this.active = 'times';
                     } else if (this.active == true) {
                         this.active = 'check';
-                    };
+                    }
                     row += "<td><i class='fa fa-" + this.active +"'></i></td>";
 
                     row += '</tr>';
@@ -273,8 +268,8 @@ function inject_init(browser) {
             if(typeof textArea !== 'undefined' && html.length > 0){
                 $(textArea).css('margin-bottom', '10px');
                 $(textArea).parent().append(html);
-            };
-        };
+            }
+        }
 
         addButtons($('#confirm-accept').find('textarea[name=comment]') , construct_buttons(OwnReasons, false));
         addButtons($('#confirm-modify').find('textarea[name=comment]') , construct_buttons(OwnReasons, false, true));
@@ -286,7 +281,7 @@ function inject_init(browser) {
     		$(select).find('option:selected').removeProp('selected');
     		$(select).find('option[value=Private]').prop('selected', 'selected');
         }
-    };
+    }
 
     function escapeHTML(s) {
         return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -302,7 +297,6 @@ function inject_init(browser) {
                 success: function(val) {
                     // console.log(val);
                     if (val === undefined) {
-                        // console.error('No Response by Steam');
                         $("#loading-error").show();
                         $("#loading-spinner").hide();
                         blink('#loading-error');
@@ -329,12 +323,12 @@ function inject_init(browser) {
                                         if (alias != steam_name) {
                                             aliases += '<kbd  data-toggle="tooltip" title="' + timechanged + '">' + escapeHTML(alias) + '</kbd>   ';
                                         }
-                                    };
+                                    }
                                 }
                                 if (aliases.length) {
                                     aliases = '<tr><td>Aliases</td><td>' + aliases + '</td></tr>';
                                     $(aliases).insertAfter('#summary > table > tbody > tr:nth-child(3)');
-                                };
+                                }
                             }
                             $('[data-toggle="tooltip"]').tooltip();
 
@@ -346,22 +340,12 @@ function inject_init(browser) {
                     });
                 }
             });
-        };
+        }
 
-        $('input[type=radio][name=perma]').change(function() {
-            if (this.id == 'perma.true') {
-                $('#ownreasons_buttons').slideUp('fast');
-                $('#datetimeselect').slideUp('fast');
-                $('label[for=\'perma.true\']').addClass('text-danger').addClass('lead').addClass('text-uppercase');
-            } else if (this.id == 'perma.false') {
-                $('#ownreasons_buttons').slideDown('fast');
-                $('#datetimeselect').slideDown('fast');
-                $('label[for=\'perma.true\']').removeClass('text-danger').removeClass('lead').removeClass('text-uppercase');
-            }
-        });
+        $('input[type=radio][name=perma]').change(function() { permcheck() });
         $('input[name=reason]').attr('autocomplete', 'off');
         $('input[name=expire]').attr('autocomplete', 'off');
-    };
+    }
 
     function aftermath() {
         $(function () {
@@ -387,12 +371,12 @@ function inject_init(browser) {
             $(this).wrap("<blockquote></blockquote>");
             if (!$(this).text().length) {
                 $(this).html('<i>Empty comment</i>');
-            };
+            }
         });
 
         if (settings.wide !== false) {
             $('div.container.content').css('width', '85%');
-        };
+        }
 
         $(function() {
             $(".youtube").YouTubeModal({autoplay:0, width:640, height:480});
@@ -405,8 +389,8 @@ function inject_init(browser) {
         for (var i = needle.length - 1; i >= 0; i--) {
             if (this.includes(needle[i])) {
                 return true;
-            };
-        };
+            }
+        }
     };
 
     function content_links() {
@@ -418,7 +402,7 @@ function inject_init(browser) {
 
             if (sub.contains(["youtube.com", "youtu.be"])) {
                 $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-            };
+            }
 
             if (sub.length > 60) {
                 $(this).text(sub.substring(0, 40) + '...');
@@ -428,10 +412,9 @@ function inject_init(browser) {
         if (settings.img_previews !== false) {
             $('div.comment .autolink > a').each(function () {
                 var sub = $(this).attr('href');
-                // console.log(sub);
                 if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
                     $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
-                };
+                }
             });
         }
 
@@ -460,7 +443,7 @@ function inject_init(browser) {
 
                           chrome.runtime.sendMessage({
                               msg: "URL just being shorted! Check your clipboard!"
-                          });;
+                          });
                         }
                     },
                     error: function() {
@@ -483,5 +466,18 @@ function inject_init(browser) {
         input.select();
         document.execCommand('Copy');
         document.body.removeChild(input);
-    };
+    }
+
+    function permcheck() {
+        if ($("input[id='perma.true']").prop("checked")) {
+            $('#ownreasons_buttons').slideUp('fast');
+            $('#datetimeselect').slideUp('fast');
+            $('label[for=\'perma.true\']').addClass('text-danger').addClass('lead').addClass('text-uppercase');
+        } else {
+            $('#ownreasons_buttons').slideDown('fast');
+            $('#datetimeselect').slideDown('fast');
+            $('label[for=\'perma.true\']').removeClass('text-danger').removeClass('lead').removeClass('text-uppercase');
+        }
+    }
+    permcheck();
 }

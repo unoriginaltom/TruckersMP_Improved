@@ -29,14 +29,13 @@ if (!chrome.extension.sendMessage) {
 
                 val_init().then(function(v) {
                     if (v.OwnReasons == null) {
-                        alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
+                        alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
                         if (chrome.runtime.openOptionsPage) {
                             chrome.runtime.openOptionsPage();
                         } else {
                             window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
                         }
                     } else {
-                        // console.log(v);
                         OwnReasons = v.OwnReasons;
                         settings = v.settings;
                     }
@@ -44,7 +43,6 @@ if (!chrome.extension.sendMessage) {
                 }).catch(function(v) {
                     console.log(v)
                 });
-                // alert("Chrome");
         	}
     	}, 10);
     });
@@ -240,6 +238,48 @@ function init() {
             });
         }
 
+        function reasonMaxLength() {
+            var reasonMax = 190;
+            var reason = $('input[name="reason"]');
+            $("<div id='reasonHelpLink'></div><div id='reasonCount'>"+reason.val().length + "/" + reasonMax+"</div>").insertAfter(reason);
+            reason.keyup(function () {
+                if(reason.val().length > reasonMax) {
+                    reason.css({
+                        'background-color': 'rgba(255, 0, 0, 0.5)',
+                        'color': '#fff'
+                    });
+                    $("#reasonCount").css({
+                        'color':'red',
+                        'font-weight':'bold'
+                    });
+                    $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
+                } else {
+                    $("#reasonHelpLink").html("");
+                    $("#reasonCount").css({
+                        'color':'',
+                        'font-weight':''
+                    });
+                    reason.css({
+                        'background-color': '',
+                        'color': ''
+                    });
+                }
+                $("#reasonCount").html(reason.val().length + "/" + reasonMax);
+            });
+        }
+
+        function evidencePasteInit(){
+            $('input[name="reason"]').bind('paste', function(e) {
+                var self = this,
+                    data = e.originalEvent.clipboardData.getData('Text').trim(),
+                    dataLower = data.toLowerCase();
+                if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
+                    e.preventDefault();
+                    insertAtCaret($(self)[0], '- ' + data);
+                }
+            });
+        }
+
         var reason_buttons = construct_buttons(OwnReasons);
         $('<div class="ban-reasons">'+reason_buttons+'</div>').insertAfter('input[name=reason]');
 
@@ -264,9 +304,12 @@ function init() {
             event.preventDefault();
             $('input[name="reason"]').val("");
         });
-
+        reasonMaxLength();
         dropdown_enchancements();
+        evidencePasteInit();
     }
+
+
 }
 
 function perma_perform(el) {
@@ -344,36 +387,3 @@ function insertAtCaret(input, text) {
 		input.focus();
 	}
 }
-
-function evidencePasteInit(){
-	$('input[name="reason"]').bind('paste', function(e) {
-		var self = this,
-			data = e.originalEvent.clipboardData.getData('Text').trim(),
-			dataLower = data.toLowerCase();
-		if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
-			e.preventDefault();
-			insertAtCaret($(self)[0], '- ' + data);
-		}
-	});
-}
-
-function reasonMaxLength() {
-    var reason = $('input[name="reason"]');
-    reason.attr("maxlength","190");
-    reason.keydown(function () {
-        if(reason.val().length >= 180) {
-            reason.css({
-                'background-color': 'rgba(255, 0, 0, 0.5)',
-                'color': '#fff'
-            });
-        } else {
-            reason.css({
-                'background-color': '',
-                'color': ''
-            });
-        }
-    });
-}
-
-evidencePasteInit();
-reasonMaxLength();
