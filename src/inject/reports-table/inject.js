@@ -22,7 +22,9 @@ function init() {
 
   $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Table Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>');
 
-  // ===== Bootstrapping =====
+
+
+  // ===== Init bootstrapping =====
   $('table.table').addClass('table-condensed table-hover');
 
   $('table.table > tbody > :first(tr)').wrap('<thead class="TEMP"></thead>');
@@ -30,29 +32,64 @@ function init() {
   $('.TEMP').remove();
 
   var colsHead = $('body > div.wrapper > div.container.content > div > table > thead > tr > th'),
-    colsBody = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td');
+      colsBody = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td');
 
   $(colsHead).each(function(idx, item){
-  	if($(item).text().length == 0)
-  		$(item).addClass('no-sort');
+      if($(item).text().length == 0)
+          $(item).addClass('no-sort');
   });
 
   if(colsHead.length < colsBody.length){
-  	var colsHeadTr = $('body > div.wrapper > div.container.content > div > table > thead > tr');
-  	for (i = 0; i < colsBody.length - colsHead.length; i++)
-		  $(colsHeadTr).append('<th class="no-sort"></th>');
+    var colsHeadTr = $('body > div.wrapper > div.container.content > div > table > thead > tr');
+    for (i = 0; i < colsBody.length - colsHead.length; i++)
+      $(colsHeadTr).append('<th class="no-sort"></th>');
   }
-  $('body > div.wrapper > div.container.content > div > table > thead > tr > th:nth-child(9)').addClass('no-sort');
 
+  // ===== Add claim buttons to TIGAs =====
+  var admin_name = $("a[href='/profile']:first").html();
+  var admins = [];
+  console.log(admin_name);
+  $.each($("select[name='admin_id']").find("option"), function (index, admin) {
+    var name = $(admin).text();
+    if (index > 2) {
+      admins.push(name);
+    }
+  });
+
+  if($.inArray(admin_name, admins) > -1) {
+    $.each($('table.table > tbody > tr'), function (index, row) {
+        if ($(row).find("td:nth-child(10)").html() == "") {
+          var view_link = $(row).find("td:nth-child(9) > a")[0];
+          var report_id = $(view_link).attr("href").split("/")[4];
+          var report_admin = $(row).find("td:nth-child(6)")[0];
+          var report_status = $(row).find("td:nth-child(7)")[0];
+          var report_claim = $(row).find("td:nth-child(10)")[0];
+          if ($.inArray($(report_status).text(), ["Accepted", "Declined"]) == -1) {
+            switch ($(report_admin).text()) {
+              case admin_name:
+                $(report_claim).html("<a href='/report/claim/"+report_id+"'>Un-claim report</a>");
+                break;
+
+              case "Nobody":
+                $(report_claim).html("<a href='/report/claim/"+report_id+"'>Claim report</a>");
+                break;
+            }
+          }
+        }
+    })
+  }
+
+  // ===== Transform links =====
   $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function(index, el) {
     $(this).addClass('btn btn-default btn-block btn-sm');
-    $(this).text($(this).text().replace("report","").trim());
+    $(this).text("View");
+    $(this).attr('target', '_blank');
   });
 
   $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(10) > a').each(function(index, el) {
     $(this).addClass('btn btn-primary btn-block btn-sm claim');
 
-    var text = $(this).text().replace("report"," ").trim();
+    var text = $(this).text().replace(" report","").trim();
 
     if (text == "Claim") {
       $(this).html(text + " <i class=\"fa fa-external-link\"></i>");
@@ -62,6 +99,7 @@ function init() {
     }
   });
 
+  //Claim link click
   $('a.claim').click(function(event) {
     event.preventDefault();
     if (event.which == 1 || event.which == 2) {
