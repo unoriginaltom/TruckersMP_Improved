@@ -45,20 +45,8 @@
                 <div class="col">
                     <h3 class="text-center">Changelog</h3>
                     <ul class="disc changelog">
-                        <li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in the options</li>
-                        <li>Added a red badge in reporter ID is the same as perpetrator ID</li>
-                        <li>Some improvements on the ban reason length check:
-                        <ul>
-                            <li>Shows now a hint to use <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a> if the ban reason is above the limit</li>
-                            <li>Removed browser enforcing the 190 chars limit</li>
-                            <li>Visual warning appears now at 190 chars (180 before)</li>
-                            <li>Added chars count under the field</li>
-                        </ul>
-                        </li>
-                        <li>Fixed double popup when shortening link</li>
-                        <li>Permanent check is also done on appeal page opening (Means that expire date field is now initialy hidden on the modify-ban modal if the ban is perma)</li>
-                        <li>Display username in profile tab title</li>
-                        <li>Excluded reports/create to prevent wrong applying of CSS rules</li>
+                        <li>Added claim/unclaim report buttons for trial-IGAs</li>
+                        <li>Removed the steam alliases on the appeals</li>
                     </ul>
                 </div>
             </div>
@@ -73,7 +61,8 @@
                     <div>
                         <div class="col-lg-2">
                             <ul class="nav nav-pills nav-stacked text-right" role="tablist">
-                                <li class="active"><a href="#v150" data-toggle="tab">1.5</a></li>
+                                <li class="active"><a href="#v160" data-toggle="tab">1.6</a></li>
+                                <li><a href="#v150" data-toggle="tab">1.5</a></li>
                                 <li><a href="#v140" data-toggle="tab">1.4</a></li>
                                 <li><a href="#v130" data-toggle="tab">1.3</a></li>
                                 <li><a href="#v120" data-toggle="tab">1.2</a></li>
@@ -84,7 +73,25 @@
 
                         <div class="col-lg-10">
                             <div class="tab-content">
-                                <div class="tab-pane active in fade" id="v150">
+                                <div class="tab-pane active in fade" id="v160">
+                                    <ul>
+                                        <li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in the options</li>
+                                        <li>Added a red badge in reporter ID is the same as perpetrator ID</li>
+                                        <li>Some improvements on the ban reason length check:
+                                            <ul>
+                                                <li>Shows now a hint to use <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a> if the ban reason is above the limit</li>
+                                                <li>Removed browser enforcing the 190 chars limit</li>
+                                                <li>Visual warning appears now at 190 chars (180 before)</li>
+                                                <li>Added chars count under the field</li>
+                                            </ul>
+                                        </li>
+                                        <li>Fixed double popup when shortening link</li>
+                                        <li>Permanent check is also done on appeal page opening (Means that expire date field is now initialy hidden on the modify-ban modal if the ban is perma)</li>
+                                        <li>Display username in profile tab title</li>
+                                        <li>Excluded reports/create to prevent wrong applying of CSS rules</li>
+                                    </ul>
+                                </div>
+                                <div class="tab-pane fade" id="v150">
                                     <ul class="disc">
                                         <li>"Positive" is now selected by default on Accept report modal</li>
                                         <li>Fixed bug were clicking on "Positive" or "Negative" labels weren't checking the associated radio button</li>
