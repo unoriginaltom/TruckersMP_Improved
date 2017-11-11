@@ -295,7 +295,6 @@ function inject_init(browser) {
                 url: "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + steamapi + "&format=json&steamids=" + steam_id,
                 type: 'GET',
                 success: function(val) {
-                    // console.log(val);
                     if (val === undefined) {
                         $("#loading-error").show();
                         $("#loading-spinner").hide();
@@ -309,35 +308,6 @@ function inject_init(browser) {
 
                     var steam_link = '<tr><td>Steam</td><td> <a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank"><kbd>' + steam_name + '</kbd></a> <img src="' + player_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
                     $(steam_link).insertAfter('#summary > table > tbody > tr:nth-child(2)');
-                    $.ajax({
-                        url: "https://steamcommunity.com/profiles/" + steam_id + "/ajaxaliases",
-                        type: 'GET',
-                        success: function(val) {
-                            var steam_aliases = val;
-                            var aliases = "";
-                            if (!$.isEmptyObject(steam_aliases)) {
-                                for (var key in steam_aliases) {
-                                    var alias = steam_aliases[key].newname.trim();
-                                    var timechanged = steam_aliases[key].timechanged;
-                                    if (alias) {
-                                        if (alias != steam_name) {
-                                            aliases += '<kbd  data-toggle="tooltip" title="' + timechanged + '">' + escapeHTML(alias) + '</kbd>   ';
-                                        }
-                                    }
-                                }
-                                if (aliases.length) {
-                                    aliases = '<tr><td>Aliases</td><td>' + aliases + '</td></tr>';
-                                    $(aliases).insertAfter('#summary > table > tbody > tr:nth-child(3)');
-                                }
-                            }
-                            $('[data-toggle="tooltip"]').tooltip();
-
-                            $("#loading-spinner").hide();
-                        },
-                        error: function(val) {
-                            console.log(val);
-                        }
-                    });
                 }
             });
         }
