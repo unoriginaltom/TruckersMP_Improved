@@ -67,11 +67,11 @@ function init() {
           if ($.inArray($(report_status).text(), ["Accepted", "Declined"]) == -1) {
             switch ($(report_admin).text()) {
               case admin_name:
-                $(report_claim).html("<a href='/report/claim/"+report_id+"'>Un-claim report</a>");
+                $(report_claim).html("<a href='/reports/claim/"+report_id+"'>Un-claim report</a>");
                 break;
 
               case "Nobody":
-                $(report_claim).html("<a href='/report/claim/"+report_id+"'>Claim report</a>");
+                $(report_claim).html("<a href='/reports/claim/"+report_id+"'>Claim report</a>");
                 break;
             }
           }
