@@ -60,7 +60,7 @@ function init() {
     $.each($('table.table > tbody > tr'), function (index, row) {
         if ($(row).find("td:nth-child(10)").html() == "") {
           var view_link = $(row).find("td:nth-child(9) > a")[0];
-          var report_id = $(view_link).attr("href").split("/")[4];
+          var report_id = $(view_link).attr("href").split("/")[3];
           var report_admin = $(row).find("td:nth-child(6)")[0];
           var report_status = $(row).find("td:nth-child(7)")[0];
           var report_claim = $(row).find("td:nth-child(10)")[0];
