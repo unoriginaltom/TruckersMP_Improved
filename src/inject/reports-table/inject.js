@@ -60,18 +60,18 @@ function init() {
     $.each($('table.table > tbody > tr'), function (index, row) {
         if ($(row).find("td:nth-child(10)").html() == "") {
           var view_link = $(row).find("td:nth-child(9) > a")[0];
-          var report_id = $(view_link).attr("href").split("/")[4];
+          var report_id = $(view_link).attr("href").split("/")[3];
           var report_admin = $(row).find("td:nth-child(6)")[0];
           var report_status = $(row).find("td:nth-child(7)")[0];
           var report_claim = $(row).find("td:nth-child(10)")[0];
           if ($.inArray($(report_status).text(), ["Accepted", "Declined"]) == -1) {
             switch ($(report_admin).text()) {
               case admin_name:
-                $(report_claim).html("<a href='/report/claim/"+report_id+"'>Un-claim report</a>");
+                $(report_claim).html("<a href='/reports/claim/"+report_id+"'>Un-claim report</a>");
                 break;
 
               case "Nobody":
-                $(report_claim).html("<a href='/report/claim/"+report_id+"'>Claim report</a>");
+                $(report_claim).html("<a href='/reports/claim/"+report_id+"'>Claim report</a>");
                 break;
             }
           }
