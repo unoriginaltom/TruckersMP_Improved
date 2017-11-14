@@ -93,45 +93,65 @@
 			<div class="col-md-10 col-md-offset-1">
 				<div class="row">
 					<div class="col-md-7">
-						<div class="panel panel-default">
-							<div class="panel-heading">
-								<h3 class="panel-title">Steam Web API Key <i class="text-muted">discontinued, will be deleted in the future</i></h3>
-							</div>
-							<div class="panel-body" id="steamapi_body">
-								<div class="form-group" id="steamapi_group">
-									<input type="text" name="steamapi" id="steamapi" placeholder="Paste it here" class="form-control text-center" maxlength="32" required="required">
-									<p class="help-clock">This 32-symbol key is needed for Steam integration. <a href="#" data-toggle="modal" data-target="#SteamAPIModal">How to get it?</a></p>
+						<div class="col-md-12">
+							<div class="panel panel-default">
+								<div class="panel-heading">
+									<h3 class="panel-title">Steam Web API Key <i class="text-muted">discontinued, will be deleted in the future</i></h3>
 								</div>
+								<div class="panel-body" id="steamapi_body">
+									<div class="form-group" id="steamapi_group">
+										<input type="text" name="steamapi" id="steamapi" placeholder="Paste it here" class="form-control text-center" maxlength="32" required="required">
+										<p class="help-clock">This 32-symbol key is needed for Steam integration. <a href="#" data-toggle="modal" data-target="#SteamAPIModal">How to get it?</a></p>
+									</div>
 
-								<div class="modal fade" tabindex="-1" role="dialog" id="SteamAPIModal">
-									<div class="modal-dialog" role="document">
-										<div class="modal-content">
-											<div class="modal-header">
-												<h4 class="modal-title">How to get Steam Web API Key?</h4>
-											</div>
-											<div class="modal-body">
-												<p>1) Go to&nbsp;<strong><a href="http://steamcommunity.com/dev/apikey" target="_blank">http://steamcommunity.com/dev/apikey</a></strong></p>
-												<p>2) Paste some random site, check <strong>I agree</strong> and click <strong>Register</strong></p>
-												<p>
-													<img src="http://i.imgur.com/nOdnvh6.png" class="img-responsive img-thumbnail">
-												</p>
-												<p>3) Copy Steam Web API Key</p>
-												<p>
-													<img src="http://i.imgur.com/R1tQps5.png" class="img-responsive img-thumbnail">
-												</p>
-												<p>4) Paste it right there</p>
-												<p>5) Click "Save Settings" in navigation menu and reload TruckersMP page.</p>
-											</div>
-											<div class="modal-footer">
-												<button type="button" class="btn btn-primary" data-dismiss="modal">Got it!</button>
+									<div class="modal fade" tabindex="-1" role="dialog" id="SteamAPIModal">
+										<div class="modal-dialog" role="document">
+											<div class="modal-content">
+												<div class="modal-header">
+													<h4 class="modal-title">How to get Steam Web API Key?</h4>
+												</div>
+												<div class="modal-body">
+													<p>1) Go to&nbsp;<strong><a href="http://steamcommunity.com/dev/apikey" target="_blank">http://steamcommunity.com/dev/apikey</a></strong></p>
+													<p>2) Paste some random site, check <strong>I agree</strong> and click <strong>Register</strong></p>
+													<p>
+														<img src="http://i.imgur.com/nOdnvh6.png" class="img-responsive img-thumbnail">
+													</p>
+													<p>3) Copy Steam Web API Key</p>
+													<p>
+														<img src="http://i.imgur.com/R1tQps5.png" class="img-responsive img-thumbnail">
+													</p>
+													<p>4) Paste it right there</p>
+													<p>5) Click "Save Settings" in navigation menu and reload TruckersMP page.</p>
+												</div>
+												<div class="modal-footer">
+													<button type="button" class="btn btn-primary" data-dismiss="modal">Got it!</button>
+												</div>
 											</div>
 										</div>
 									</div>
 								</div>
 							</div>
 						</div>
-					</div>
 
+						<div class="col-md-12">
+							<div class="panel panel-success storage-settings">
+
+								<div class="panel-heading">
+									<h3 class="panel-title">Storage Settings</h3>
+								</div>
+
+								<ul class="list-group">
+									<li class="list-group-item">
+										Local Storage for Settings <strong><abbr data-toggle="tooltip" data-placement="top" title="" data-original-title="Use this storage for save large settings. This storage is a default if synchronization with your Google account not allowed.">?</abbr></strong>
+										<div class="material-switch pull-left">
+											<input id="local_storage" name="local_storage" type="checkbox">
+											<label for="local_storage" class="label-primary"></label>
+										</div>
+									</li>
+								</ul>
+							</div>
+						</div>					
+					</div>
 					<div class="col-md-5">
 						<div class="panel panel-danger">
 
@@ -166,6 +186,7 @@
 							</ul>
 						</div>
 					</div>
+
 				</div>
 
 				<div class="panel panel-primary">
