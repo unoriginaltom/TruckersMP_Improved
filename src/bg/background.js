@@ -14,17 +14,10 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-var storage;
-if (chrome.storage.sync) {
-    storage = chrome.storage.sync;
-} else {
-    storage = chrome.storage.local;
-};
-
 chrome.runtime.onInstalled.addListener(function (object) {
     val_init().then(function(v) {
         if (!v.steamapi) {
-            if (chrome.runtime.openOptionsPage) {
+           if (chrome.runtime.openOptionsPage) {
                 chrome.runtime.openOptionsPage();
             } else {
                 window.open(chrome.runtime.getURL('src/options/index.html'));
@@ -47,20 +40,8 @@ chrome.runtime.onInstalled.addListener(function (object) {
 
 function val_init() {
     var steamapi, last_version;
-
     return new Promise(function(resolve, reject) {
-        storage.get({
-            steamapi: 'none',
-            last_version: chrome.runtime.getManifest().version,
-            settings: {
-                img_previews: true,
-                wide: true,
-                separator: ',',
-                own_comment: null
-            }
-        }, function(items) {
-            resolve(items);
-        });
+        loadSettings(resolve);
     });
 
 }

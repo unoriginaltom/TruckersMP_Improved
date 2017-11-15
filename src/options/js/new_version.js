@@ -1,11 +1,3 @@
-var storage;
-
-if (chrome.storage.sync) {
-    storage = chrome.storage.sync;
-} else {
-    storage = chrome.storage.local;
-}
-
 $('#ext_name').html('<strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
 $('.subheader').html(chrome.runtime.getManifest().version);
 

@@ -12,12 +12,6 @@ if (!chrome.extension.sendMessage) {
 }
 
 function inject_init(browser) {
-    var storage;
-    if (chrome.storage.sync) {
-        storage = chrome.storage.sync;
-    } else {
-        storage = chrome.storage.local;
-    }
     var steam_id = $('input[name="steam_id"]').val();
     var now = moment.utc(); // Moment.js init
     var version = {
@@ -97,15 +91,6 @@ function inject_init(browser) {
         $(injects.header).append(templates.header({
             version: version
         }));
-
-        if (browser == 'firefox') {
-            if (last_version != chrome.runtime.getManifest().version) {
-                window.open(chrome.runtime.getURL('src/options/new_version.html'));
-                storage.set({
-                    last_version: chrome.runtime.getManifest().version
-                });
-            }
-        }
     }
 
     function accept_modal_init() {
@@ -870,15 +855,7 @@ function inject_init(browser) {
     function val_init() {
         var steamapi, OwnReasons, OwnDates, last_version;
         return new Promise(function(resolve) {
-            storage.get({
-                steamapi: null,
-                OwnReasons: null,
-                OwnDates: null,
-                last_version: chrome.runtime.getManifest().version,
-                settings: {}
-            }, function(items) {
-                resolve(items);
-            });
+            loadSettings(resolve);
         });
     }
 
@@ -952,6 +929,7 @@ function inject_init(browser) {
 
     function init() {
         val_init().then(function(v) {
+console.log(v);
             if (v.OwnReasons == null || v.OwnDates == null) {
                 alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
                 if (chrome.runtime.openOptionsPage) {

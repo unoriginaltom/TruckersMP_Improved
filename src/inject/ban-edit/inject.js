@@ -1,4 +1,4 @@
-var storage, OwnReasons, settings;
+var OwnReasons, settings;
 
 if (!chrome.extension.sendMessage) {
     init();
@@ -8,22 +8,9 @@ if (!chrome.extension.sendMessage) {
         	if (document.readyState === "complete") {
         		clearInterval(readyStateCheckInterval);
 
-                if (chrome.storage.sync) {
-                    storage = chrome.storage.sync;
-                } else {
-                    storage = chrome.storage.local;
-                }
-
                 function val_init() {
                     return new Promise(function(resolve, reject) {
-                        storage.get({
-                            steamapi: null,
-                            OwnReasons: null,
-                            OwnDates: null,
-                            settings: {}
-                        }, function(items) {
-                            resolve(items);
-                        });
+                        loadSettings(resolve);
                     });
                 }
 
