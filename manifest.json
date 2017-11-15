@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.6.2",
+  "version": "1.6.2.1",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "homepage_url": "http://bigmp.ru/improved/",
@@ -58,6 +58,7 @@
             "js/moment-with-locales.min.js",
             "js/clipboard.min.js",
             "js/underscore-min.js",
+            "src/main.js",
             "src/inject/reports/inject.js"
         ]
     },
@@ -81,6 +82,7 @@
         "js/jquery.dataTables.min.js",
         "js/dataTables.bootstrap.min.js",
         "js/moment-with-locales.min.js",
+        "src/main.js",
         "src/inject/reports-table/inject.js"
       ]
     },
@@ -97,6 +99,7 @@
         "js/jquery.min.js",
         "js/bootstrap.min.js",
         "js/moment-with-locales.min.js",
+        "src/main.js",
         "src/inject/ban-edit/inject.js"
       ]
     },
@@ -111,6 +114,7 @@
       "js": [
         "js/jquery.min.js",
         "js/bootstrap.min.js",
+        "src/main.js",
         "src/inject/profile/inject.js"
       ]
     },
@@ -127,6 +131,7 @@
         "js/bootstrap.min.js",
         "js/youtubepopup.js",
         "js/moment-with-locales.min.js",
+        "src/main.js",
         "src/inject/appeals/inject.js"
       ]
     },
@@ -142,6 +147,7 @@
       ],
       "js": [
         "js/jquery.min.js",
+        "src/main.js",
         "src/inject/user/inject.js"
       ]
     }

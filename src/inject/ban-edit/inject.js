@@ -1,4 +1,4 @@
-var storage, OwnReasons, settings;
+var OwnReasons, settings;
 
 if (!chrome.extension.sendMessage) {
     init();
@@ -8,22 +8,9 @@ if (!chrome.extension.sendMessage) {
         	if (document.readyState === "complete") {
         		clearInterval(readyStateCheckInterval);
 
-                if (chrome.storage.sync) {
-                    storage = chrome.storage.sync;
-                } else {
-                    storage = chrome.storage.local;
-                }
-
                 function val_init() {
                     return new Promise(function(resolve, reject) {
-                        storage.get({
-                            steamapi: null,
-                            OwnReasons: null,
-                            OwnDates: null,
-                            settings: {}
-                        }, function(items) {
-                            resolve(items);
-                        });
+                        loadSettings(resolve);
                     });
                 }
 
@@ -275,7 +262,7 @@ function init() {
                     dataLower = data.toLowerCase();
                 if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
                     e.preventDefault();
-                    insertAtCaret($(self)[0], '- ' + data);
+                    insertAtCaret($(self)[0], '- ' + data, true);
                 }
             });
         }
@@ -322,68 +309,4 @@ function perma_perform(el) {
         $('#datetimeselect').slideDown('fast');
         $('label[for=\'perma.true\']').removeClass('text-uppercase');
     }
-}
-
-function checkDoubleSlash(input) {
-	if (!input) { return; }
-	var val = input.value,
-		valLength = val.length;
-	if(valLength > 1){
-		var strPos = 0;
-		var br = ((input.selectionStart || input.selectionStart == '0') ?
-			"ff" : (document.selection ? "ie" : false ) );
-		if (br == "ie") {
-			input.focus();
-			var range = document.selection.createRange();
-			range.moveStart ('character', -input.value.length);
-			strPos = range.text.length;
-		} else if (br == "ff") {
-			strPos = input.selectionStart;
-		}
-		if(strPos > 1){
-			var result = false;
-			if(strPos > 2)
-				result = val.substring(strPos - 3, strPos) == '// ';
-			if(!result)
-				result = val.substring(strPos - 2, strPos) == '//';
-			return result;
-		}else{
-			return false;
-		}
-	}else{
-		return false;
-	}
-}
-
-function insertAtCaret(input, text) {
-	if (!input) { return; }
-
-	var strPos = 0;
-	var br = ((input.selectionStart || input.selectionStart == '0') ?
-		"ff" : (document.selection ? "ie" : false ) );
-	if (br == "ie") {
-		input.focus();
-		var range = document.selection.createRange();
-		range.moveStart ('character', -input.value.length);
-		strPos = range.text.length;
-	} else if (br == "ff") {
-		strPos = input.selectionStart;
-	}
-
-	var front = (input.value).substring(0, strPos);
-	var back = (input.value).substring(strPos, input.value.length);
-	input.value = front + text + back;
-	strPos = strPos + text.length;
-	if (br == "ie") {
-		input.focus();
-		var ieRange = document.selection.createRange();
-		ieRange.moveStart ('character', -input.value.length);
-		ieRange.moveStart ('character', strPos);
-		ieRange.moveEnd ('character', 0);
-		ieRange.select();
-	} else if (br == "ff") {
-		input.selectionStart = strPos;
-		input.selectionEnd = strPos;
-		input.focus();
-	}
 }

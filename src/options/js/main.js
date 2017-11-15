@@ -17,14 +17,6 @@ var default_OwnDates = {
 	red: "1,M,+1 month; 3,M",
 	other: "current_utc"
 };
-var storage, syncAllowed = false;
-
-if (chrome.storage.sync) {
-	syncAllowed = true;
-	storage = chrome.storage.sync;
-} else {
-	storage = chrome.storage.local;
-}
 
 // Saves options to chrome.storage
 function save_options(with_message = true, data = false) {
@@ -163,26 +155,7 @@ function restore_options() {
 		$('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
 	};
 
-	storage.get({
-		steamapi: 'none',
-		OwnReasons: default_OwnReasons,
-		OwnDates: default_OwnDates,
-		settings: {
-			local_storage: false,
-			img_previews: true,
-			wide: true,
-			autoinsertsep: true,
-			separator: ','
-		}
-	}, function(items) {
-		if(syncAllowed && items.settings.local_storage){
-			chrome.storage.local.get(items, function(items) {
-				set_options(items);
-			});
-		}else{
-			set_options(items);
-		};
-	});
+	loadSettings(set_options);
 }
 
 function import_data(event) {
@@ -262,8 +235,7 @@ $(document).ready(function(){
 	$('#export').on('click', function(event) {
 		event.preventDefault();
 		save_options(false);
-
-		storage.get(null, function (items) {
+		loadSettings(function(items){
 			var data = JSON.stringify(items, null, 4);
 			var vLink = document.createElement('a');
 			var vBlob = new Blob([data], {type: 'octet/stream'});

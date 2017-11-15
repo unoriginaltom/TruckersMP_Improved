@@ -48,7 +48,7 @@ function init() {
   // ===== Add claim buttons to TIGAs =====
   var admin_name = $("a[href='/profile']:first").html();
   var admins = [];
-  console.log(admin_name);
+//  console.log(admin_name);
   $.each($("select[name='admin_id']").find("option"), function (index, admin) {
     var name = $(admin).text();
     if (index > 2) {

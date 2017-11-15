@@ -12,12 +12,6 @@ if (!chrome.extension.sendMessage) {
 }
 
 function inject_init(browser) {
-    var storage;
-    if (chrome.storage.sync) {
-        storage = chrome.storage.sync;
-    } else {
-        storage = chrome.storage.local;
-    }
     var steam_id = $('input[name="steam_id"]').val();
 
 
@@ -178,14 +172,7 @@ function inject_init(browser) {
     function val_init() {
         var steamapi, OwnReasons, last_version;
         return new Promise(function(resolve, reject) {
-            storage.get({
-                steamapi: null,
-                OwnReasons: null,
-                last_version: chrome.runtime.getManifest().version,
-                settings: {}
-            }, function(items) {
-                resolve(items);
-            });
+            loadSettings(resolve);
         });
     }
 
