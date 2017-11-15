@@ -64,7 +64,7 @@ function checkDoubleSlash(input) {
 	}
 };
 
-function insertAtCaret(input, text) {
+function insertAtCaret(input, text, firstSpace) {
 	if (!input) { return; }
 
 	var strPos = 0;
@@ -79,10 +79,21 @@ function insertAtCaret(input, text) {
 		strPos = input.selectionStart;
 	}
 
-	var front = (input.value).substring(0, strPos);
-	var back = (input.value).substring(strPos, input.value.length);
-	input.value = front + text + back;
-	strPos = strPos + text.length;
+	var front = (input.value).substring(0, strPos),
+		back = (input.value).substring(strPos, input.value.length),
+		textVal = text;
+
+	if(firstSpace){
+		if(front.length > 0){
+			var flOld = front.length;
+			front = front.replace(/\s+$/, '');
+			strPos = strPos - (flOld - front.length);
+		};
+		textVal = ' ' + text;
+	};
+
+	input.value = front + textVal + back;
+	strPos = strPos + textVal.length;
 	if (br == "ie") {
 		input.focus();
 		var ieRange = document.selection.createRange();

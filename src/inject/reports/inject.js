@@ -835,7 +835,7 @@ function inject_init(browser) {
 				dataLower = data.toLowerCase();
 			if((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep){
 				e.preventDefault();
-				insertAtCaret($(self)[0], '- ' + data);
+    		    insertAtCaret($(self)[0], '- ' + data, true);
 			}
 		});
 	}
@@ -891,7 +891,7 @@ function inject_init(browser) {
                 supportInit();
                 bannedInit();
                 evidencePasteInit();
-	              fixModals();
+                fixModals();
                 final_init();
             }
         }).catch(function(v) {
