@@ -32,3 +32,67 @@ function loadSettings(callBack){
 		});
 	};
 };
+
+function checkDoubleSlash(input) {
+	if (!input) { return; }
+	var val = input.value,
+		valLength = val.length;
+	if(valLength > 1){
+		var strPos = 0;
+		var br = ((input.selectionStart || input.selectionStart == '0') ?
+			"ff" : (document.selection ? "ie" : false ) );
+		if (br == "ie") {
+			input.focus();
+			var range = document.selection.createRange();
+			range.moveStart ('character', -input.value.length);
+			strPos = range.text.length;
+		} else if (br == "ff") {
+			strPos = input.selectionStart;
+		}
+		if(strPos > 1){
+			var result = false;
+			if(strPos > 2)
+				result = val.substring(strPos - 3, strPos) == '// ';
+			if(!result)
+				result = val.substring(strPos - 2, strPos) == '//';
+			return result;
+		}else{
+			return false;
+		}
+	}else{
+		return false;
+	}
+};
+
+function insertAtCaret(input, text) {
+	if (!input) { return; }
+
+	var strPos = 0;
+	var br = ((input.selectionStart || input.selectionStart == '0') ?
+		"ff" : (document.selection ? "ie" : false ) );
+	if (br == "ie") {
+		input.focus();
+		var range = document.selection.createRange();
+		range.moveStart ('character', -input.value.length);
+		strPos = range.text.length;
+	} else if (br == "ff") {
+		strPos = input.selectionStart;
+	}
+
+	var front = (input.value).substring(0, strPos);
+	var back = (input.value).substring(strPos, input.value.length);
+	input.value = front + text + back;
+	strPos = strPos + text.length;
+	if (br == "ie") {
+		input.focus();
+		var ieRange = document.selection.createRange();
+		ieRange.moveStart ('character', -input.value.length);
+		ieRange.moveStart ('character', strPos);
+		ieRange.moveEnd ('character', 0);
+		ieRange.select();
+	} else if (br == "ff") {
+		input.selectionStart = strPos;
+		input.selectionEnd = strPos;
+		input.focus();
+	}
+};
