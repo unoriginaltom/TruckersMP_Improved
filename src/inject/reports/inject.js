@@ -865,7 +865,6 @@ function inject_init(browser) {
 
     function init() {
         val_init().then(function(v) {
-console.log(v);
             if (v.OwnReasons == null || v.OwnDates == null) {
                 alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
                 if (chrome.runtime.openOptionsPage) {
