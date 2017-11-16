@@ -31,7 +31,8 @@ function save_options(with_message = true, data = false) {
 			wide: $('#wide').is(':checked'),
 			separator: $('#separator').val(),
 			own_comment: $('#own_comment').val().trim(),
-			autoinsertsep: $('#autoinsertsep').is(':checked')
+			autoinsertsep: $('#autoinsertsep').is(':checked'),
+			viewreportblank: $('#viewreportblank').is(':checked')
 		};
 
 		data.OwnReasons = {
@@ -153,6 +154,7 @@ function restore_options() {
 		$('#img_previews').prop("checked", items.settings.img_previews);
 		$('#wide').prop("checked", items.settings.wide);
 		$('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
+		$('#viewreportblank').prop("checked", items.settings.viewreportblank);
 	};
 
 	loadSettings(set_options);

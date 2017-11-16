@@ -657,6 +657,11 @@ function inject_init(browser) {
     	}
     }
 
+    function viewReportBlankInit(){
+        if(settings.viewreportblank)
+            $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
+    }
+
     function final_init() {
         $(document).ready(function() {
             $('#go_to_options').on('click', function(event) {
@@ -890,6 +895,7 @@ function inject_init(browser) {
                 dropdown_enchancements();
                 supportInit();
                 bannedInit();
+                viewReportBlankInit();
                 evidencePasteInit();
                 fixModals();
                 final_init();
