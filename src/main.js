@@ -19,6 +19,7 @@ function loadSettings(callBack){
 				img_previews: true,
 				wide: true,
 				autoinsertsep: true,
+				viewreportblank: true,
 				separator: ','
 			}
 		}, function(items){

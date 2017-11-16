@@ -1,11 +1,19 @@
+var settings;
+
 if (!chrome.extension.sendMessage) {
-  init();
+  loadSettings(function(items){
+    settings = items;
+    init();
+  });
 } else {
   chrome.extension.sendMessage({}, function(response) {
   	var readyStateCheckInterval = setInterval(function() {
     	if (document.readyState === "complete") {
     		clearInterval(readyStateCheckInterval);
-        init();
+        loadSettings(function(items){
+          settings = items;
+          init();
+        });
     	}
   	}, 10);
   });
@@ -83,7 +91,8 @@ function init() {
   $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function(index, el) {
     $(this).addClass('btn btn-default btn-block btn-sm');
     $(this).text("View");
-    $(this).attr('target', '_blank');
+    if(settings.settings.viewreportblank)
+      $(this).attr('target', '_blank');
   });
 
   $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(10) > a').each(function(index, el) {
