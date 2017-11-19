@@ -1,9 +1,8 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.6.2.1",
+  "version": "1.6.2.2",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
-  "homepage_url": "http://bigmp.ru/improved/",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -18,6 +17,7 @@
     "notifications",
     "tabs",
     "storage",
+    "unlimitedStorage",
     "webRequest",
     "clipboardRead",
     "clipboardWrite"
@@ -35,32 +35,30 @@
 
   "browser_action": {
     "default_icon": {
-        "16": "icons/icon16.png",
-        "48": "icons/icon48.png",
-        "128": "icons/icon128.png"
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
     },
     "default_popup": "src/popup/index.html"
   },
 
-  "content_scripts": [
-    {
-        "matches": [
-            "https://truckersmp.com/reports/view/*"
-        ],
-        "css": [
-            "css/waves.min.css",
-            "src/inject/reports/inject.css"
-        ],
-        "js": [
-            "js/jquery.min.js",
-            "js/youtubepopup.js",
-            "js/bootstrap.min.js",
-            "js/moment-with-locales.min.js",
-            "js/clipboard.min.js",
-            "js/underscore-min.js",
-            "src/main.js",
-            "src/inject/reports/inject.js"
-        ]
+  "content_scripts": [{
+      "matches": [
+        "https://truckersmp.com/reports/view/*"
+      ],
+      "css": [
+        "src/inject/reports/inject.css"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/youtubepopup.js",
+        "js/bootstrap.min.js",
+        "js/moment-with-locales.min.js",
+        "js/clipboard.min.js",
+        "js/underscore-min.js",
+        "src/main.js",
+        "src/inject/reports/inject.js"
+      ]
     },
 
     {
@@ -73,7 +71,6 @@
       ],
       "css": [
         "css/datatables.min.css",
-        "css/waves.min.css",
         "src/inject/reports-table/inject.css"
       ],
       "js": [
