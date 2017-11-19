@@ -21,3 +21,8 @@ hr.small {
     display: inline-block;
     margin-bottom: 10px;
 }
+
+.img-thumbnail {
+    border: none !important;
+    background-color: transparent !important;
+}
