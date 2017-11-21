@@ -1,250 +1,304 @@
 <!DOCTYPE html>
 
 <head>
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.min.css">
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.min.css">
 
-	<title>New version of TruckersMP Improved!</title>
+  <title>New version of TruckersMP Improved!</title>
 
-	<style type="text/css">
-		body {
-			margin-top: 20px;
-		}
+  <style type="text/css">
+    body {
+      margin-top: 20px;
+    }
 
-		.tab-pane {
-			margin-top: 10px;
-		}
+    .tab-pane {
+      margin-top: 10px;
+    }
 
-		.changelog {
-			font-size: 15px;
-		}
-	</style>
+    .changelog {
+      font-size: 15px;
+    }
+  </style>
 </head>
 
 <html>
-	<body class="dark">
-		<div class="container">
-			<div class="col-lg-12 text-center">
-				<div class="jumbotron">
-					<h2><strong><img src="/icons/icon48.png"> New version of TruckersMP Improved <kbd class="subheader"></kbd><br>has been installed!</strong></h2>
-						<p>
-							<a href="#" id="go_to_options" class="btn btn-primary">Go to options</a> <a href="#" id="close" class="btn btn-danger">Close this page</a>
-						</p>
-					<p>
-						<a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" class="btn" target="_blank">Forum topic</a>
-					</p>
 
-					<p>
-						Created by <a href="https://github.com/cjmaxik" target="_blank">CJMAXiK</a><br>
-						Contributors: <a href="https://github.com/HumaneWolf" target="_blank">HumaneWolf</a>, <a href="https://github.com/math-98" target="_blank">math-98</a>, <a href="https://github.com/AlexKERNEL" target="_blank">AlexKERNEL</a>, <a href="https://github.com/CaptainKostaZ" target="_blank">CaptainKostaZ</a>
-					</p>
-				</div>
-			</div>
+<body class="dark">
+  <div class="container">
+    <div class="col-lg-12 text-center">
+      <div class="jumbotron">
+        <h2>
+          <strong>
+            <img src="/icons/icon48.png"> New version of TruckersMP Improved
+            <kbd class="subheader"></kbd>
+            <br>has been installed!</strong>
+        </h2>
+        <p>
+          <a href="#" id="go_to_options" class="btn btn-primary">Go to options</a>
+          <a href="#" id="close" class="btn btn-danger">Close this page</a>
+        </p>
+        <p>
+          <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" class="btn" target="_blank">Forum topic</a>
+        </p>
 
-			<div class="row">
-				<div class="col">
-					<h3 class="text-center">Changelog</h3>
-					<ul class="disc changelog">
-						<li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine, but the settings were not saved)</li>
-						<li>Added setting "Local Storage" - use this for save large settings data</li>
-					</ul>
-				</div>
-			</div>
-		</div>
+        <p>
+          Created by
+          <a href="https://github.com/cjmaxik" target="_blank">CJMAXiK</a>
+          <br> Contributors:
+          <a href="https://github.com/HumaneWolf" target="_blank">HumaneWolf</a>,
+          <a href="https://github.com/math-98" target="_blank">math-98</a>,
+          <a href="https://github.com/AlexKERNEL" target="_blank">AlexKERNEL</a>,
+          <a href="https://github.com/CaptainKostaZ" target="_blank">CaptainKostaZ</a>
+        </p>
+      </div>
+    </div>
 
-		<hr>
+    <div class="row">
+      <div class="col">
+        <h3 class="text-center">Changelog</h3>
+        <ul class="disc changelog">
+          <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine,
+            but the settings were not saved)</li>
+          <li>Added setting "Local Storage" - use this for save large settings data</li>
+          <li>Added setting "View report in new tab" - use this if you need to open reports in new tab in the forms "Report list"
+            and "Other Open Reports"</li>
+          <li>Bug fixed when load settings data from local storage</li>
+          <li>Bug fixed at "Auto-insert separator"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
 
-		<div class="container">
-			<div class="row">
-			<div class="col-lg-12 jumbotron">
-					<h3 class="text-center">Version history</h3>
-					<div>
-						<div class="col-lg-2">
-							<ul class="nav nav-pills nav-stacked text-right" role="tablist">
-								<li class="active"><a href="#v160" data-toggle="tab">1.6</a></li>
-								<li><a href="#v150" data-toggle="tab">1.5</a></li>
-								<li><a href="#v140" data-toggle="tab">1.4</a></li>
-								<li><a href="#v130" data-toggle="tab">1.3</a></li>
-								<li><a href="#v120" data-toggle="tab">1.2</a></li>
-								<li><a href="#v110" data-toggle="tab">1.1</a></li>
-								<li><a href="#v100" data-toggle="tab">1.0</a></li>
-							</ul>
-						</div>
+  <hr>
 
-						<div class="col-lg-10">
-							<div class="tab-content">
-								<div class="tab-pane active in fade" id="v160">
-									<ul>
-										<li>Added claim/unclaim report buttons for trial-IGAs</li>
-										<li>Removed the steam alliases on the appeals</li>
-										<li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in the options</li>
-										<li>Added a red badge in reporter ID is the same as perpetrator ID</li>
-										<li>Some improvements on the ban reason length check:
-											<ul>
-												<li>Shows now a hint to use <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a> if the ban reason is above the limit</li>
-												<li>Removed browser enforcing the 190 chars limit</li>
-												<li>Visual warning appears now at 190 chars (180 before)</li>
-												<li>Added chars count under the field</li>
-											</ul>
-										</li>
-										<li>Fixed double popup when shortening link</li>
-										<li>Permanent check is also done on appeal page opening (Means that expire date field is now initialy hidden on the modify-ban modal if the ban is perma)</li>
-										<li>Display username in profile tab title</li>
-										<li>Excluded reports/create to prevent wrong applying of CSS rules</li>
-									</ul>
-								</div>
-								<div class="tab-pane fade" id="v150">
-									<ul class="disc">
-										<li>"Positive" is now selected by default on Accept report modal</li>
-										<li>Fixed bug were clicking on "Positive" or "Negative" labels weren't checking the associated radio button</li>
-										<li>Browser now forbids to input a ban reason longer than 190 chars (Approximately the limit applied by the server) + Added a visual warning when the ban reason is above 180 chars</li>
-										<hr/>
-										<li>New icon! <img src="/icons/icon16.png"></li>
-										<li>Fix: in popup, link to MultiURL has been removed (since it is not working)</li>
-										<li>Optimization: local copy of Font Awesowe has been removed (since it should be imported from Web)</li>
-										<li>Optimization: local copy of Bootstrap CSS has been removed (since Paper contains it already)</li>
-										<hr>
-										<li>When adding a reason by button for the ban, if before paste exists is "//", the separator is not added.</li>
-										<li>When inserting a link into the reasons for the ban, now, automatically added prefix "- " before pasted link (Can be disabled in options). If before paste exists is "//", the prefix is not added.</li>
-										<li>Report form: If player already banned, in the report show red label "Banned"</li>
-										<li>Added "Modify" button in the appeal form for "Modify" action</li>
-										<li>Added setting "Appeals Modify" for "Own Reasons Buttons"</li>
-										<hr>
-										<li>Added "Reasons" buttons to the "Ban edit" and "Ban add" forms</li>
-										<li>Changed style for "View" button in the reports table with "focus" state</li>
-										<li>Fixed bugs in the page of the reports table</li>
-										<hr>
-										<li>If buttons "Accept", "Modify" and "Decline" in the appeal view not found, default value for field "Comment visibility" is "Private"</li>
-										<li>If button "Claim report" in the report view not found, default value for field "Comment visibility" is "Private"</li>
-										<li>Added settings for "Own Reasons Buttons": "Comments", "Appeals Accepts", "Appeals Declines", "Appeals Comments"</li>
-										<li>Added "Comments" button in the "Appeal" and "Report" forms</li>
-										<li>Added "Accepts" button in the appeal form for "Accept" action</li>
-										<li>Added "Declines" button in the appeal form for "Decline" action</li>
-										<li>Fixed the detect of the language in which the report was submitted</li>
-										<li>Minimum ID 3500 since 3500 is the max capacity of a server</li>
-										<hr>
-										<li>Steam info saves into file. USE THIS FUNCTION ONLY FOR PURPOSE!!!!!!!!!!</li>
-										<li>Report links and previews is back! Links in appeals and profiles works as well.</li>
-										<li>Initial re-working of the extension.</li>
-										<li>Add Ban: New ban helper (like in Edit ban)</li>
-										<li>Edit ban: Link to Ban By Mistake forum topic has been added</li>
-										<li>Reports table: Small screen mode, issues fixes</li>
-										<li>Useful Links Popup: Added links to jm's url shrinker and MultiURL</li>
-										<li>Reports: Youtube links will be auto-magically shrinked to youtu.be in clipboard</li>
-										<li>Import/Export settings <i>(useful for non-Chrome users, since Chrome will auto-sync settings to all computers with the same account)</i></li>
-										<li>Fix some minor stuff</li>
-										<hr>
-										<li>Minimum ID is 3200 for now (we are growing lol)</li>
-										<li>Goodbye, Steam aliases row, we will miss you (nope)</li>
-										<li>Hello, TruckersMP Avatar, my old friend...</li>
-										<li>U want sum visual fixes? I do!</li>
-										<li>Reports table responsive mode has been disabled</li>
-										<li>Reports table column visibility toggles</li>
-										<hr>
-										<li>Donate info has been wiped out from this page (no money - no honey)</li>
-										<li>Quick fix: red badge of Low ID</li>
-										<li>Quick fix: Active perma bans will be highlighted red as it should be</li>
-										<li>Quick fix: Reminer about deleted bans</li>
-									</ul>
-								</div>
-								<div class="tab-pane fade" id="v140">
-									<ul class="disc">
-										<li>Own separator</li>
-										<li>Own report comment (instead of localised)</li>
-										<li>Own Date Buttons</li>
-										<li>Other changes that I forgot :)</li>
-									</ul>
-								</div>
-								<div class="tab-pane fade" id="v130">
-									<ul class="disc">
-										<li>New icon</li>
-										<li>Popup button w/ useful links</li>
-										<br>
-										<li><b>Both Reports & Appeal Ban Improved</b>
-											<ul>
-												<li>YouTube previews (<i class="fa fa-youtube-play fa-fw"></i> button to open preview window)</li>
-												<li>Image previews (inline)</li>
-												<li>Wider pages</li>
-												<li>Some style fixes</li>
-											</ul>
-										</li>
-										<br>
-										<li><b>Appeal Ban Improved</b>
-											<ul>
-												<li>Steam Integration (Steam ID, nickname, aliases, avatar)</li>
-											</ul>
-										</li>
-										<br>
-										<li><b>Settings page</b>
-											<ul>
-												<li>UI settings panel</li>
-												<li>Steam Web API Key help in modal window</li>
-												<li>Links to the forum topic, changelog & donate pages</li>
-												<li>Own Reasons panel now collapsed by default</li>
-											</ul>
-										</li>
-										<li>Button to put pure ban time string in Ban edit (ability to change only a Ban Reason)</li>
-										<li>Ctrl key in Reports table open report in the same tab (instead of new tab by default)</li>
-										<li>Added link to IGA Rules in Popup</li>
-									</ul>
-								</div>
-								<div class="tab-pane in fade" id="v120">
-									<ul class="disc">
-										<li><b>Appeal Ban Improved</b>
-											<ul>
-												<li>Lastest 5 bans</li>
-												<li>Links parser</li>
-												<li>Comments nice look</li>
-												<li>Tables nice look</li>
-											</ul>
-										</li>
-										<br>
-										<li><b>Profile Page Improved</b>
-											<ul>
-												<li>Links parser in Bans section</li>
-											</ul>
-										<br>
-										<li><b>Reports Table Improved</b>
-											<ul>
-												<li>Links parser</li>
-												<li>Tables nice look</li>
-												<li>Time nice look</li>
-												<li><a href="#" class="btn btn-default btn-xs">View</a> button will open report in the same tab</li>
-												<li><a href="#" class="btn btn-primary btn-xs">Claim</a> button will open report in the new tab and will be colored <span class="text-danger">red</span></li>
-												<!-- <li>Alphabetically sorted admins select options</li> -->
-												<li>Fix links issues</li>
-											</ul>
-										</li>
-										<br>
-										<li>Donation form</li>
-										<li>Other fixes & features</li>
-									</ul>
-								</div>
-								<div class="tab-pane in fade" id="v110">
-									<ul class="disc">
-										<li>Latest Bans Improved
-											<ul>
-												<li>Auto ban time conversion in proper form</li>
-												<li>PlusDate buttons</li>
-											</ul>
-										</li>
-										<li>New version page (you are here)</li>
-										<li>New style of Settings page</li>
-										<li>Improvements for Firefox & Opera</li>
-									</ul>
-								</div>
-								<div role="tabpanel" class="tab-pane fade" id="v100">
-									Initial release
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12 jumbotron">
+        <h3 class="text-center">Version history</h3>
+        <div>
+          <div class="col-lg-2">
+            <ul class="nav nav-pills nav-stacked text-right" role="tablist">
+              <li class="active">
+                <a href="#v160" data-toggle="tab">1.6</a>
+              </li>
+              <li>
+                <a href="#v150" data-toggle="tab">1.5</a>
+              </li>
+              <li>
+                <a href="#v140" data-toggle="tab">1.4</a>
+              </li>
+              <li>
+                <a href="#v130" data-toggle="tab">1.3</a>
+              </li>
+              <li>
+                <a href="#v120" data-toggle="tab">1.2</a>
+              </li>
+              <li>
+                <a href="#v110" data-toggle="tab">1.1</a>
+              </li>
+              <li>
+                <a href="#v100" data-toggle="tab">1.0</a>
+              </li>
+            </ul>
+          </div>
 
-		<script src="/js/jquery.min.js"></script>
-		<script src="/js/bootstrap.min.js"></script>
-		<script src="js/new_version.js"></script>
-	</body>
+          <div class="col-lg-10">
+            <div class="tab-content">
+              <div class="tab-pane active in fade" id="v160">
+                <ul>
+                  <li>Added claim/unclaim report buttons for trial-IGAs</li>
+                  <li>Removed the steam alliases on the appeals</li>
+                  <li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in
+                    the options</li>
+                  <li>Added a red badge in reporter ID is the same as perpetrator ID</li>
+                  <li>Some improvements on the ban reason length check:
+                    <ul>
+                      <li>Shows now a hint to use
+                        <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a> if the ban reason is above the limit</li>
+                      <li>Removed browser enforcing the 190 chars limit</li>
+                      <li>Visual warning appears now at 190 chars (180 before)</li>
+                      <li>Added chars count under the field</li>
+                    </ul>
+                  </li>
+                  <li>Fixed double popup when shortening link</li>
+                  <li>Permanent check is also done on appeal page opening (Means that expire date field is now initialy hidden
+                    on the modify-ban modal if the ban is perma)</li>
+                  <li>Display username in profile tab title</li>
+                  <li>Excluded reports/create to prevent wrong applying of CSS rules</li>
+                </ul>
+              </div>
+              <div class="tab-pane fade" id="v150">
+                <ul class="disc">
+                  <li>"Positive" is now selected by default on Accept report modal</li>
+                  <li>Fixed bug were clicking on "Positive" or "Negative" labels weren't checking the associated radio button</li>
+                  <li>Browser now forbids to input a ban reason longer than 190 chars (Approximately the limit applied by the
+                    server) + Added a visual warning when the ban reason is above 180 chars</li>
+                  <hr/>
+                  <li>New icon!
+                    <img src="/icons/icon16.png">
+                  </li>
+                  <li>Fix: in popup, link to MultiURL has been removed (since it is not working)</li>
+                  <li>Optimization: local copy of Font Awesowe has been removed (since it should be imported from Web)</li>
+                  <li>Optimization: local copy of Bootstrap CSS has been removed (since Paper contains it already)</li>
+                  <hr>
+                  <li>When adding a reason by button for the ban, if before paste exists is "//", the separator is not added.</li>
+                  <li>When inserting a link into the reasons for the ban, now, automatically added prefix "- " before pasted
+                    link (Can be disabled in options). If before paste exists is "//", the prefix is not added.</li>
+                  <li>Report form: If player already banned, in the report show red label "Banned"</li>
+                  <li>Added "Modify" button in the appeal form for "Modify" action</li>
+                  <li>Added setting "Appeals Modify" for "Own Reasons Buttons"</li>
+                  <hr>
+                  <li>Added "Reasons" buttons to the "Ban edit" and "Ban add" forms</li>
+                  <li>Changed style for "View" button in the reports table with "focus" state</li>
+                  <li>Fixed bugs in the page of the reports table</li>
+                  <hr>
+                  <li>If buttons "Accept", "Modify" and "Decline" in the appeal view not found, default value for field "Comment
+                    visibility" is "Private"</li>
+                  <li>If button "Claim report" in the report view not found, default value for field "Comment visibility" is
+                    "Private"</li>
+                  <li>Added settings for "Own Reasons Buttons": "Comments", "Appeals Accepts", "Appeals Declines", "Appeals Comments"</li>
+                  <li>Added "Comments" button in the "Appeal" and "Report" forms</li>
+                  <li>Added "Accepts" button in the appeal form for "Accept" action</li>
+                  <li>Added "Declines" button in the appeal form for "Decline" action</li>
+                  <li>Fixed the detect of the language in which the report was submitted</li>
+                  <li>Minimum ID 3500 since 3500 is the max capacity of a server</li>
+                  <hr>
+                  <li>Steam info saves into file. USE THIS FUNCTION ONLY FOR PURPOSE!!!!!!!!!!</li>
+                  <li>Report links and previews is back! Links in appeals and profiles works as well.</li>
+                  <li>Initial re-working of the extension.</li>
+                  <li>Add Ban: New ban helper (like in Edit ban)</li>
+                  <li>Edit ban: Link to Ban By Mistake forum topic has been added</li>
+                  <li>Reports table: Small screen mode, issues fixes</li>
+                  <li>Useful Links Popup: Added links to jm's url shrinker and MultiURL</li>
+                  <li>Reports: Youtube links will be auto-magically shrinked to youtu.be in clipboard</li>
+                  <li>Import/Export settings
+                    <i>(useful for non-Chrome users, since Chrome will auto-sync settings to all computers with the same account)</i>
+                  </li>
+                  <li>Fix some minor stuff</li>
+                  <hr>
+                  <li>Minimum ID is 3200 for now (we are growing lol)</li>
+                  <li>Goodbye, Steam aliases row, we will miss you (nope)</li>
+                  <li>Hello, TruckersMP Avatar, my old friend...</li>
+                  <li>U want sum visual fixes? I do!</li>
+                  <li>Reports table responsive mode has been disabled</li>
+                  <li>Reports table column visibility toggles</li>
+                  <hr>
+                  <li>Donate info has been wiped out from this page (no money - no honey)</li>
+                  <li>Quick fix: red badge of Low ID</li>
+                  <li>Quick fix: Active perma bans will be highlighted red as it should be</li>
+                  <li>Quick fix: Reminer about deleted bans</li>
+                </ul>
+              </div>
+              <div class="tab-pane fade" id="v140">
+                <ul class="disc">
+                  <li>Own separator</li>
+                  <li>Own report comment (instead of localised)</li>
+                  <li>Own Date Buttons</li>
+                  <li>Other changes that I forgot :)</li>
+                </ul>
+              </div>
+              <div class="tab-pane fade" id="v130">
+                <ul class="disc">
+                  <li>New icon</li>
+                  <li>Popup button w/ useful links</li>
+                  <br>
+                  <li>
+                    <b>Both Reports & Appeal Ban Improved</b>
+                    <ul>
+                      <li>YouTube previews (
+                        <i class="fa fa-youtube-play fa-fw"></i> button to open preview window)</li>
+                      <li>Image previews (inline)</li>
+                      <li>Wider pages</li>
+                      <li>Some style fixes</li>
+                    </ul>
+                  </li>
+                  <br>
+                  <li>
+                    <b>Appeal Ban Improved</b>
+                    <ul>
+                      <li>Steam Integration (Steam ID, nickname, aliases, avatar)</li>
+                    </ul>
+                  </li>
+                  <br>
+                  <li>
+                    <b>Settings page</b>
+                    <ul>
+                      <li>UI settings panel</li>
+                      <li>Steam Web API Key help in modal window</li>
+                      <li>Links to the forum topic, changelog & donate pages</li>
+                      <li>Own Reasons panel now collapsed by default</li>
+                    </ul>
+                  </li>
+                  <li>Button to put pure ban time string in Ban edit (ability to change only a Ban Reason)</li>
+                  <li>Ctrl key in Reports table open report in the same tab (instead of new tab by default)</li>
+                  <li>Added link to IGA Rules in Popup</li>
+                </ul>
+              </div>
+              <div class="tab-pane in fade" id="v120">
+                <ul class="disc">
+                  <li>
+                    <b>Appeal Ban Improved</b>
+                    <ul>
+                      <li>Lastest 5 bans</li>
+                      <li>Links parser</li>
+                      <li>Comments nice look</li>
+                      <li>Tables nice look</li>
+                    </ul>
+                  </li>
+                  <br>
+                  <li>
+                    <b>Profile Page Improved</b>
+                    <ul>
+                      <li>Links parser in Bans section</li>
+                    </ul>
+                    <br>
+                    <li>
+                      <b>Reports Table Improved</b>
+                      <ul>
+                        <li>Links parser</li>
+                        <li>Tables nice look</li>
+                        <li>Time nice look</li>
+                        <li>
+                          <a href="#" class="btn btn-default btn-xs">View</a> button will open report in the same tab</li>
+                        <li>
+                          <a href="#" class="btn btn-primary btn-xs">Claim</a> button will open report in the new tab and will be colored
+                          <span class="text-danger">red</span>
+                        </li>
+                        <!-- <li>Alphabetically sorted admins select options</li> -->
+                        <li>Fix links issues</li>
+                      </ul>
+                    </li>
+                    <br>
+                    <li>Donation form</li>
+                    <li>Other fixes & features</li>
+                </ul>
+              </div>
+              <div class="tab-pane in fade" id="v110">
+                <ul class="disc">
+                  <li>Latest Bans Improved
+                    <ul>
+                      <li>Auto ban time conversion in proper form</li>
+                      <li>PlusDate buttons</li>
+                    </ul>
+                  </li>
+                  <li>New version page (you are here)</li>
+                  <li>New style of Settings page</li>
+                  <li>Improvements for Firefox & Opera</li>
+                </ul>
+              </div>
+              <div role="tabpanel" class="tab-pane fade" id="v100">
+                Initial release
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/jquery.min.js"></script>
+  <script src="/js/bootstrap.min.js"></script>
+  <script src="js/new_version.js"></script>
+</body>
+
 </html>

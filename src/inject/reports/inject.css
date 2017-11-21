@@ -1,23 +1,33 @@
-.table>tbody>tr>td, .table>tbody>tr>th, .table>tfoot>tr>td, .table>tfoot>tr>th, .table>thead>tr>td, .table>thead>tr>th {
-    vertical-align: middle !important;
+.table>tbody>tr>td,
+.table>tbody>tr>th,
+.table>tfoot>tr>td,
+.table>tfoot>tr>th,
+.table>thead>tr>td,
+.table>thead>tr>th {
+  vertical-align: middle !important;
 }
 
 hr.small {
-    margin: 10px 0 !important;
+  margin: 10px 0 !important;
 }
 
-.badge.badge-banned{
-	margin-left: 10px;
+.badge.badge-banned {
+  margin-left: 10px;
 }
 
 #reasonHelpLink {
-    width: 80%;
-    display: inline-block;
+  width: 80%;
+  display: inline-block;
 }
 
 #reasonCount {
-    text-align: right;
-    width: 20%;
-    display: inline-block;
-    margin-bottom: 10px;
+  text-align: right;
+  width: 20%;
+  display: inline-block;
+  margin-bottom: 10px;
+}
+
+.img-thumbnail {
+  border: none !important;
+  background-color: transparent !important;
 }

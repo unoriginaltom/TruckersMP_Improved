@@ -1,19 +1,15 @@
 .clicked {
-    color: #fff !important;
-    background-color: #902828 !important;
-    border-color: #401212 !important;
+  color: #fff !important;
+  background-color: #902828 !important;
+  border-color: #401212 !important;
 }
 
-a.toggle-vis {
-    cursor: pointer !important;
+.btn.btn-default:focus {
+  background-color: #989898;
+  border-color: #a5a5a5;
+  color: white;
 }
 
-a.hiddenToggle {
-    color: red !important;
-}
-
-a.btn.btn-default:focus{
-	background-color: #989898;
-	border-color: #a5a5a5;
-	color: white;
+.dataTables_filter {
+  text-align: right;
 }
