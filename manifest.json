@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.6.2.2",
+  "version": "1.6.3",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "icons": {
@@ -8,6 +8,7 @@
     "48": "icons/icon48.png",
     "128": "icons/icon128.png"
   },
+
   "minimum_chrome_version": "42",
   "permissions": [
     "*://*.truckersmp.com/*",
@@ -24,11 +25,13 @@
   ],
 
   "background": {
-    "page": "src/bg/background.html",
-    "persistent": true
+    "page": "src/bg/background.html"
   },
 
-  "options_page": "src/options/index.html",
+  "options_ui": {
+    "page": "src/options/index.html",
+    "open_in_tab": true
+  },
   "web_accessible_resources": [
     "src/options/*"
   ],

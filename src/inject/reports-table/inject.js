@@ -1,37 +1,8 @@
-var settings;
-
-if (!chrome.extension.sendMessage) {
-  loadSettings(function (items) {
-    settings = items;
-    init();
-  });
-} else {
-  chrome.extension.sendMessage({}, function (response) {
-    var readyStateCheckInterval = setInterval(function () {
-      if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-        loadSettings(function (items) {
-          settings = items;
-          init();
-        });
-      }
-    }, 10);
-  });
-}
-
-
-function init() {
-  // ----------------------------------------------------------
-  // This part of the script triggers when page is done loading
-  // ----------------------------------------------------------
-
-  // INIT
-  var version = chrome.runtime.getManifest().version;
-
-  $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Table Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>');
+function inject_init() {
+  var table = $('table.table');
 
   // ===== Init bootstrapping =====
-  $('table.table').addClass('table-condensed table-hover');
+  table.addClass('table-condensed table-hover');
 
   $('table.table > tbody > :first(tr)').wrap('<thead class="TEMP"></thead>');
   $('table.table > tbody > thead').clone().prependTo('table.table').removeClass('TEMP');
@@ -47,14 +18,14 @@ function init() {
 
   if (colsHead.length < colsBody.length) {
     var colsHeadTr = $('body > div.wrapper > div.container.content > div > table > thead > tr');
-    for (i = 0; i < colsBody.length - colsHead.length; i++)
+    for (var i = 0; i < colsBody.length - colsHead.length; i++)
       $(colsHeadTr).append('<th class="no-sort"></th>');
   }
 
   // ===== Add claim buttons to TIGAs =====
   var admin_name = $("a[href='/profile']:first").html();
   var admins = [];
-  //  console.log(admin_name);
+
   $.each($("select[name='admin_id']").find("option"), function (index, admin) {
     var name = $(admin).text();
     if (index > 2) {
@@ -86,14 +57,14 @@ function init() {
   }
 
   // ===== Transform links =====
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function (index, el) {
+  $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function () {
     $(this).addClass('btn btn-default btn-block btn-sm');
     $(this).text("View");
-    if (settings.settings.viewreportblank)
+    if (settings.viewreportblank)
       $(this).attr('target', '_blank');
   });
 
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(10) > a').each(function (index, el) {
+  $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(10) > a').each(function () {
     $(this).addClass('btn btn-primary btn-block btn-sm claim');
 
     var text = $(this).text().replace(" report", "").trim();
@@ -122,33 +93,33 @@ function init() {
   });
 
   // ==== ? =====
-  $('.form-control').each(function (index, el) {
-    $(this).addClass('input-sm')
+  $('.form-control').each(function () {
+    $(this).addClass('input-sm');
     $(this).css('width', 'auto').css('max-width', '140px')
   });
   $('body > div.wrapper > div.container.content > div > form > button').addClass('btn-sm');
 
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr').each(function (index, el) {
-    if ($(this).children('td:nth-child(7)').text() == 'Waiting for player') {
+  $('body > div.wrapper > div.container.content > div > table > tbody > tr').each(function () {
+    if ($(this).find('td:nth-child(7)').text() == 'Waiting for player') {
       $(this).find('td').css('color', '#555');
     }
   });
 
   var columns_html = '<div><label style="margin-right: 5px;">Column visibility</label><div class="btn-group btn-group-xs" id="toggle_column">';
   $('body > div.wrapper > div.container.content > div.row.padding-top-5 > table > thead > tr > th').each(function (index, el) {
-    var text = $.trim($(el).text())
+    var text = $.trim($(el).text());
     if (text) {
       // columns_html += '<kbd><a class="toggle-vis" data-column="' + index + '">' + text + '</a></kbd>'
       columns_html += '<button type="button" class="btn btn-primary toggle-vis" data-column="' + index + '">' + text + '</button>'
     }
-  })
+  });
   columns_html += '</div></div>';
 
-  $('table.table').before(columns_html);
-  $('table.table').css('width', '100%');
+  table.before(columns_html);
+  table.css('width', '100%');
 
   // ===== Manipulation =====
-  var datatable = $('table.table').DataTable({
+  var datatable = table.DataTable({
     paging: false,
     stateSave: true,
     fixedHeader: true,
@@ -164,7 +135,7 @@ function init() {
     }
   });
 
-  $('#toggle_column > button').each(function (index, el) {
+  $('#toggle_column').find('button').each(function () {
     var column = datatable.column($(this).attr('data-column'));
     if (!column.visible()) {
       $(this).removeClass('btn-primary').addClass('btn-danger')
@@ -199,20 +170,6 @@ function init() {
       page = 1
     }
     $(document).prop('title', 'Page ' + page + ' - Reports | TruckersMP');
-
-    $('#go_to_options').on('click', function (event) {
-      event.preventDefault();
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
-      } else {
-        window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-      }
-    });
-
-    $('#version_detected').on('click', function (event) {
-      event.preventDefault();
-      window.open(chrome.runtime.getURL('src/options/new_version.html'), "_blank");
-    });
+    $("#loading-spinner").hide();
   });
-  $("#loading-spinner").remove();
 }

@@ -1,90 +1,65 @@
-if (!chrome.extension.sendMessage) {
-  inject_init('firefox');
-} else {
-  chrome.extension.sendMessage({}, function () {
-    var readyStateCheckInterval = setInterval(function () {
-      if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-        inject_init('chrome');
-      }
-    }, 10);
-  });
-}
-
-function inject_init(browser) {
+function inject_init() {
   var steam_id = $('input[name="steam_id"]').val();
-  var now = moment.utc(); // Moment.js init
-  var version = {
-    number: chrome.runtime.getManifest().version,
-    changes: [
-      'Rewrited version'
-    ],
-    features: [
-      'Many fixes'
-    ]
-  };
-  var templates = {
-    /*
-        UndescoreJS Templates
-     */
-    header: _.template(` Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik"> <%= version.number %></span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#new_version_modal" data-toggle="modal" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>  <i class="fa fa-exclamation-triangle" id="loading-error" style="display:none; color: #ac2925;" data-toggle="tooltip" title="Steam has an issue, try again later..."></i>`),
-  };
+  var accept_modal = $('#confirm-accept');
+  var decline_modal = $('#confirm-decline');
   var injects = {
-    header: 'body > div.wrapper > div.breadcrumbs > div > h1',
-    date_buttons: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)',
-    report_language: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)',
-    claim_report: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(10) > td:nth-child(2) > a',
-    accept_comment: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(7) > textarea',
+    header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
+    date_buttons: accept_modal.find('div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)'),
+    report_language: $('div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)'),
+    claim_report: $('div.container.content > div > div > div > table.table > tbody > tr:nth-child(10) > td:nth-child(2) > a'),
+    spinner: $("#loading-spinner"),
+    accept: {
+      comment: accept_modal.find('div > div > form > div.modal-body > div:nth-child(7) > textarea'),
+      form: accept_modal.find('div > div > form'),
+      time: $('#datetimeselect'),
+      reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input'),
+      reasonCount: $('#reasonCount'),
+      reasonHelpLink: $('#reasonHelpLink')
+    },
     bans: {
-      table: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr',
-      header: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4:nth-child(4)',
+      table: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr'),
+      header: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4:nth-child(4)'),
+      ban_toggler: $('#expired_bans_toggler').find('i')
+    },
+    decline: {
+      comment: decline_modal.find('div > div > form > div.modal-body > div > textarea'),
+      form: decline_modal.find('div > div > form')
     },
     summary: {
-      first_column: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr > td:nth-child(1)',
+      first_column: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr > td:nth-child(1)'),
+      perpetrator_link: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a'),
+      perpetrator_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)'),
+      previous_usernames: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)')
     }
   };
 
-  /*
-      SERVICE FUNCTIONS
-   */
   // Escape HTML due to HTML tags in Steam usernames
   function escapeHTML(s) {
     return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  /*
-      ECHO
-   */
-
-  function version_checker(last_version) {
-    $(injects.header).append(templates.header({
-      version: version
-    }));
-  }
-
   function accept_modal_init() {
     var reason_buttons = construct_buttons(OwnReasons, false),
-      decline_buttons = construct_buttons(OwnReasons, true),
-      comments_buttons = construct_buttons(OwnReasons, false, true);
+        decline_buttons = construct_buttons(OwnReasons, true),
+        comments_buttons = construct_buttons(OwnReasons, false, true);
 
-    $(reason_buttons).insertAfter('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input');
-    $(decline_buttons).insertAfter('#confirm-decline > div > div > form > div.modal-body > div > textarea');
+    $(reason_buttons).insertAfter(injects.accept.reason);
+    $(decline_buttons).insertAfter(injects.decline.comment);
 
     if (comments_buttons.length > 0) {
       var textArea = $('div.container.content').find('textarea[name=comment]');
       $(textArea).css('margin-bottom', '10px');
       $(textArea).parent().append(comments_buttons);
     }
-    templates.date_buttons = construct_dates(OwnDates);
-    $(templates.date_buttons).insertAfter(injects.date_buttons);
+    var date_buttons = construct_dates(OwnDates);
+    $(date_buttons).insertAfter(injects.date_buttons);
     $('input[id="perma.false"]').prop("checked", true);
 
-    var reason = $('input[name="reason"]')
     // ===== DateTime and Reason inputs checking =====
-    $('#confirm-accept > div > div > form').on('submit', function (event) {
-      var time_check = $('#datetimeselect').val();
+    injects.accept.form.on('submit', function (event) {
+      var time_check = injects.accept.time.val();
       var perm_check = $('input[id="perma.true"]').prop("checked");
-      var reason_check = $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').val();
+      var reason_check = injects.accept.reason.val();
       var error_style = {
         'border-color': '#a94442',
         '-webkit-box-shadow': 'inset 0 1px 1px rgba(0,0,0,.075)',
@@ -97,26 +72,25 @@ function inject_init(browser) {
       };
 
       if (!time_check && !perm_check) {
-        $('#datetimeselect').css(error_style);
+        injects.accept.time.css(error_style);
         event.preventDefault();
       } else {
-        $('#datetimeselect').css(normal_style);
+        injects.accept.time.css(normal_style);
       }
       if (!reason_check) {
-        $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').css(error_style);
+        injects.accept.reason.css(error_style);
         event.preventDefault();
       } else {
-        $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').css(normal_style);
+        injects.accept.reason.css(normal_style);
       }
     });
     // ===== Reasons FTW =====
     $('.plusreason').on('click', function (event) {
       event.preventDefault();
-      // console.log(settings);
 
-      var reason_val = $(reason).val(),
+      var reason_val = injects.accept.reason.val(),
         sp = '';
-      if (!checkDoubleSlash($(reason)[0]))
+      if (!checkDoubleSlash(injects.accept.reason[0]))
         sp = (settings.separator) ? settings.separator : ',';
 
       if ($(this).data('place') == 'before') {
@@ -132,7 +106,7 @@ function inject_init(browser) {
     });
     $('button#reason_clear').on('click', function (event) {
       event.preventDefault();
-      $('input[name="reason"]').val("");
+      injects.accept.reason.val("");
     });
     // ===== Timing FTW! =====
     $('.plusdate').on("click", function (event) {
@@ -147,41 +121,41 @@ function inject_init(browser) {
           now.add(number, key);
           break;
       }
-      $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+      injects.accept.time.val(now.format("YYYY/MM/DD HH:mm"));
     });
 
     //Ban reason length check
     var reasonMax = 190;
-    $("<div id='reasonHelpLink'></div><div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(reason);
-    reason.keyup(function () {
-      if (reason.val().length > reasonMax) {
-        reason.css({
+    $("<div id='reasonHelpLink'></div><div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
+    injects.accept.reason.keyup(function () {
+      if (injects.accept.reason.val().length > reasonMax) {
+        injects.accept.reason.css({
           'background-color': 'rgba(255, 0, 0, 0.5)',
           'color': '#fff'
         });
-        $("#reasonCount").css({
+        injects.accept.reason.css({
           'color': 'red',
           'font-weight': 'bold'
         });
-        $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
+        injects.accept.reasonHelpLink.html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
       } else {
-        $("#reasonHelpLink").html("");
-        $("#reasonCount").css({
+        injects.accept.reasonHelpLink.html("");
+        injects.accept.reasonCount.css({
           'color': '',
           'font-weight': ''
         });
-        reason.css({
+        injects.accept.reason.css({
           'background-color': '',
           'color': ''
         });
       }
-      $("#reasonCount").html(reason.val().length + "/" + reasonMax);
+      injects.accept.reasonCount.html(reason.val().length + "/" + reasonMax);
     });
   }
 
   function decline_modal_init() {
-    $('#confirm-decline > div > div > form').on('submit', function (event) {
-      var comment_check = $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val();
+    injects.decline.form.on('submit', function (event) {
+      var comment_check = injects.decline.comment.val();
       var error_style = {
         'border-color': '#a94442',
         '-webkit-box-shadow': 'inset 0 1px 1px rgba(0,0,0,.075)',
@@ -193,19 +167,19 @@ function inject_init(browser) {
         'box-shadow': ''
       };
       if (!comment_check) {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').css(error_style);
+        injects.decline.comment.css(error_style);
         event.preventDefault();
       } else {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').css(normal_style);
+        injects.decline.comment.css(normal_style);
       }
     });
     $('.plusdecline').on('click', function (event) {
       event.preventDefault();
-      var reason_val = $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val();
+      var reason_val = injects.decline.comment.val();
       if ($(this).data('place') == 'before') {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val($(this).html() + ' ' + reason_val + ' ');
+        injects.decline.comment.val($(this).html() + ' ' + reason_val + ' ');
       } else {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val(reason_val + ' ' + $(this).html());
+        injects.decline.comment.val(reason_val + ' ' + $(this).html());
       }
 
       switch ($(this).data('action')) {
@@ -217,7 +191,7 @@ function inject_init(browser) {
           document.getElementById('decline.rating.positive').checked = true;
           break;
       }
-      $('#confirm-decline > div > div > form > div.modal-body > div > textarea').focus();
+      injects.decline.comment.focus();
     });
 
     function setReason(reason, reason_val) {
@@ -234,21 +208,13 @@ function inject_init(browser) {
     });
     $('button#decline_clear').on('click', function (event) {
       event.preventDefault();
-      $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val("");
+      injects.decline.comment.val("");
     });
     $('button#comments_clear').on('click', function (event) {
       event.preventDefault();
       $('form').find('textarea[name=comment]').val("");
     });
   }
-
-  String.prototype.contains = function (needle) {
-    for (var i = needle.length - 1; i >= 0; i--) {
-      if (this.includes(needle[i])) {
-        return true;
-      }
-    }
-  };
 
   function getYouTubeIdFromUrl(youtubeUrl) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -290,13 +256,11 @@ function inject_init(browser) {
     var params = parseURLParams(url);
     if (params) {
       if (params.t) {
-        console.log('t');
-        start = params.t[0];
-        console.log(start);
+        var start = params.t[0];
         if (start.includes('s')) {
           var hrs, min, sec;
 
-          spl = start.split('h');
+          var spl = start.split('h');
           if (spl.length == 2) {
             hrs = Number(spl[0]);
             spl = spl[1];
@@ -320,10 +284,8 @@ function inject_init(browser) {
           start = hrs + min + sec;
         }
       } else if (params.time_continue) {
-        console.log('time_continue');
         start = params.time_continue[0];
       } else {
-        console.log('out');
         start = params[0];
       }
       if (start) {
@@ -355,7 +317,6 @@ function inject_init(browser) {
     if (settings.img_previews !== false) {
       $('div.comment .autolink > a').each(function () {
         var sub = $(this).attr('href');
-        // console.log(sub);
         if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
           $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
         }
@@ -364,7 +325,7 @@ function inject_init(browser) {
 
     $('a.jmdev_ca').on('click', function (event) {
       event.preventDefault();
-      $("#loading-spinner").show();
+      $(injects.spinner).show();
       var link = $(this).data("link");
       var length = ($(this).data("link")).length;
 
@@ -384,6 +345,7 @@ function inject_init(browser) {
   }
 
   function urlShorter(link, paste = false) {
+    var msg;
     $.ajax({
       url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
       type: 'GET',
@@ -430,7 +392,7 @@ function inject_init(browser) {
   }
 
   function comment_language() {
-    var report_language = $(injects.report_language).text().trim();
+    var report_language = injects.report_language.text().trim();
     var comment;
 
     if (!settings.own_comment) {
@@ -465,90 +427,82 @@ function inject_init(browser) {
     } else {
       comment = settings.own_comment;
     }
-    $(injects.accept_comment).val(comment);
+    injects.accept.comment.val(comment);
   }
 
   function bans_count_fetch() {
-    // console.log('Current locale is ' + $('body > div.wrapper > div.header > div.container > div > ul > li.hoverSelector > ul > li.active > a').attr('hreflang'));
-    if ($('body > div.wrapper > div.header > div.container > div > ul > li.hoverSelector > ul > li.active > a').attr('hreflang').indexOf("en_US") == 0) {
-      var bans_count = 0;
-      var expired_bans_count = 0;
-      $(injects.bans.table).each(function (index) {
-        // console.log($(this).children('td:nth-child(1)').text());
-        var banned_time_td = $(this).children('td:nth-child(1)').text();
-        var banned_reason_td = $(this).children('td:nth-child(3)').text();
-        var banned_time;
-        if (banned_time_td.indexOf("Today") !== -1) {
-          banned_time = now;
-        } else if (banned_time_td.indexOf("Tomorrow") !== -1) {
-          banned_time = now.add(1, 'd');
-        } else if (banned_time_td.indexOf("Yesterday") !== -1) {
-          banned_time = now.add(1, 'd');
+    var bans_count = 0;
+    var expired_bans_count = 0;
+    injects.bans.table.each(function () {
+      var banned_time_td = $(this).find('td:nth-child(1)').text();
+      var banned_reason_td = $(this).find('td:nth-child(3)').text();
+      var banned_time;
+      if (banned_time_td.indexOf("Today") !== -1) {
+        banned_time = now;
+      } else if (banned_time_td.indexOf("Tomorrow") !== -1) {
+        banned_time = now.add(1, 'd');
+      } else if (banned_time_td.indexOf("Yesterday") !== -1) {
+        banned_time = now.add(1, 'd');
+      } else {
+        console.log(banned_time_td);
+        banned_time = moment(banned_time_td);
+      }
+      if (banned_time.year() == '2001') {
+        banned_time.year(now.year());
+      }
+      if (banned_reason_td == '@BANBYMISTAKE') {
+        banned_time.year('1998');
+      }
+      if (banned_time.isValid()) {
+        if (Math.abs(banned_time.diff(now, 'd')) >= 365) {
+          $(this).hide();
+          $(this).addClass('expired_bans');
+          $(this).find('td').css('color', '#555');
+          expired_bans_count++;
         } else {
-          banned_time = moment(banned_time_td);
+          bans_count++;
         }
-        if (banned_time.year() == '2001') {
-          banned_time.year(now.year());
-        }
-        if (banned_reason_td == '@BANBYMISTAKE') {
-          banned_time.year('1998');
-        }
-        if (banned_time.isValid()) {
-          if (Math.abs(banned_time.diff(now, 'd')) >= 365) {
-            $(this).hide();
-            $(this).addClass('expired_bans');
-            $(this).find('td').css('color', '#555');
-            expired_bans_count++;
-          } else {
-            bans_count++;
-          }
+      }
+    });
+
+    injects.bans.header.html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small>');
+    if (bans_count >= 3) {
+      injects.bans.header.css('color', '#d43f3a');
+    }
+    if (expired_bans_count > 0) {
+      injects.bans.header.html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small> <a href="#" id="expired_bans_toggler"><i class="fa fa-toggle-off" data-toggle="tooltip" title="Show/hide bans further than 12 months and @BANBYMISTAKE"></i></a>');
+      $('#expired_bans_toggler').on('click', function (event) {
+        event.preventDefault();
+        $('.expired_bans').fadeToggle('slow');
+        if (injects.bans.ban_toggler.hasClass('fa-toggle-off')) {
+          injects.bans.ban_toggler.removeClass('fa-toggle-off');
+          injects.bans.ban_toggler.addClass('fa-toggle-on');
+        } else {
+          injects.bans.ban_toggler.removeClass('fa-toggle-on');
+          injects.bans.ban_toggler.addClass('fa-toggle-off');
         }
       });
-
-      $(injects.bans.header).html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small>');
-      if (bans_count >= 3) {
-        $(injects.bans.header).css('color', '#d43f3a');
-      }
-      if (expired_bans_count > 0) {
-        $(injects.bans.header).html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small> <a href="#" id="expired_bans_toggler"><i class="fa fa-toggle-off" data-toggle="tooltip" title="Show/hide bans further than 12 months and @BANBYMISTAKE"></i></a>');
-        $('#expired_bans_toggler').on('click', function (event) {
-          event.preventDefault();
-          $('.expired_bans').fadeToggle('slow');
-          if ($('#expired_bans_toggler > i').hasClass('fa-toggle-off')) {
-            $('#expired_bans_toggler > i').removeClass('fa-toggle-off');
-            $('#expired_bans_toggler > i').addClass('fa-toggle-on');
-          } else {
-            $('#expired_bans_toggler > i').removeClass('fa-toggle-on');
-            $('#expired_bans_toggler > i').addClass('fa-toggle-off');
-          }
-        });
-      }
-
-      if ($('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2) > td:nth-child(5) > i').hasClass('fa-check')) {
-        $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2)').children('td').css({
-          'color': '#d43f3a'
-        });
-      }
-    } else {
-      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4')
-        .html('Ban history <small>Sorry, but bans count checking works only on <a rel="alternate" hreflang="en_US" href="/user/locale/en_US"><img src="/assets/images/flags/en_US.png">&nbsp;English</a> locale :(</small>');
     }
 
-    $(injects.bans.header).before('<hr class="small"/>')
+    if ($('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2) > td:nth-child(5) > i').hasClass('fa-check')) {
+      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2)').find('td').css({
+        'color': '#d43f3a'
+      });
+    }
+    injects.bans.header.before('<hr class="small"/>')
   }
 
-  function table_impoving() {
+  function table_improving() {
     $('table').addClass('table-condensed table-hover');
     $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > div:nth-child(1)').after('<hr class="small"/>');
 
-    var perpetrator_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').attr('href').replace('/user/', '');
-    var perpetrator_nickname = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').text();
+    var perpetrator_id = injects.summary.perpetrator_link.attr('href').replace('/user/', '');
+    var perpetrator_nickname = injects.summary.perpetrator_link.text();
     var reporter_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a').attr('href').replace('/user/', '');
 
     $(document).prop('title', perpetrator_nickname + ' - ' + perpetrator_id + ' | TruckersMP');
 
     if (steamapi === "none") {
-      // console.log(":O");
       $("body > div.wrapper > div.breadcrumbs > div > h1").append("<kbd>#blame" + $('body > div.wrapper > div.header > div.container > div > ul > li:nth-child(1) > a').html() + "</kbd>");
       $("#loading-spinner").hide();
       $(function () {
@@ -559,12 +513,9 @@ function inject_init(browser) {
         url: "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + steamapi + "&format=json&steamids=" + steam_id,
         type: 'GET',
         success: function (steam_data) {
-          // console.log(steam_data);
           if (steam_data === undefined) {
-            console.error('No Response by Steam');
             $("#loading-error").show();
             $("#loading-spinner").hide();
-            blink('#loading-error');
             return;
           }
 
@@ -576,19 +527,16 @@ function inject_init(browser) {
             type: "GET",
             success: function (tmp_data) {
               if (tmp_data !== true) {
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').after(' <img src="' + tmp_data.response.avatar + '" class="img-rounded" style="width: 32px; height: 32px;">');
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').wrap('<kbd>');
+                injects.summary.perpetrator_link.after(' <img src="' + tmp_data.response.avatar + '" class="img-rounded" style="width: 32px; height: 32px;">');
+                injects.summary.perpetrator_link.wrap('<kbd>');
 
                 var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
                 $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
 
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').css('text-align', 'right');
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)').css('text-align', 'right');
+                injects.summary.perpetrator_label.css('text-align', 'right');
+                injects.summary.previous_usernames.css('text-align', 'right');
 
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').css('text-align', 'right');
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)').css('text-align', 'right');
-
-                $(injects.summary.first_column).each(function (index) {
+                injects.summary.first_column.each(function () {
                   $(this).css('font-weight', 'bold');
                 });
                 $('[data-toggle="tooltip"]').tooltip();
@@ -600,6 +548,8 @@ function inject_init(browser) {
         }
       });
     }
+
+    var low_id;
     if (perpetrator_id <= 3500) {
       low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check names & aliases">Low ID! <strong>' + perpetrator_id + '</strong></span>';
     } else if (perpetrator_id == reporter_id) {
@@ -611,11 +561,11 @@ function inject_init(browser) {
     $('input[type=radio][name=perma]').change(function () {
       if (this.id == 'perma.true') {
         $('#ownreasons_buttons').slideUp('fast');
-        $('#datetimeselect').slideUp('fast');
+        $(injects.accept.time).slideUp('fast');
         $('label[for=\'perma.true\']').addClass('text-danger').addClass('lead').addClass('text-uppercase');
       } else if (this.id == 'perma.false') {
         $('#ownreasons_buttons').slideDown('fast');
-        $('#datetimeselect').slideDown('fast');
+        $(injects.accept.time).slideDown('fast');
         $('label[for=\'perma.true\']').removeClass('text-danger').removeClass('lead').removeClass('text-uppercase');
       }
     });
@@ -666,19 +616,6 @@ function inject_init(browser) {
 
   function final_init() {
     $(document).ready(function () {
-      $('#go_to_options').on('click', function (event) {
-        event.preventDefault();
-        if (chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-        }
-      });
-      $('#version_detected').on('click', function (event) {
-        event.preventDefault();
-        window.open(chrome.runtime.getURL('src/options/new_version.html'), "_blank");
-      });
-
       if (settings.wide !== false) {
         $('div.container.content').css('width', '85%');
       }
@@ -688,38 +625,6 @@ function inject_init(browser) {
         height: 480
       });
     });
-  }
-
-  function construct_dates(OwnDates) {
-    var html = '<br><div id="ownreasons_buttons">';
-
-    html += each_type('default', OwnDates.white.split(';'));
-    html += each_type('warning', OwnDates.yellow.split(';'));
-    html += each_type('danger', OwnDates.red.split(';'));
-    html += each_type('other', OwnDates.other.split(';'));
-
-    html += '</div>';
-    return html;
-
-    function each_type(type, buttons) {
-      snippet = '<div class="btn-group" role="group">';
-      buttons.forEach(function (item) {
-        item = item.split(',');
-        var number = item[0].trim();
-        var key = (item[1]) ? item[1].trim() : undefined;
-        var title = (item[2]) ? item[2].trim() : ('+' + number);
-
-        if (type == 'other') {
-          if (number == 'current_utc') {
-            snippet += '<button type="button" class="btn btn-link plusdate" data-number="clear">Current UTC time</button>'
-          }
-        } else {
-          snippet += '<button type="button" class="btn btn-' + type + ' plusdate" data-number="' + number + '" data-key="' + key + '">' + title + '</button>';
-        }
-      });
-      snippet += '</div>   ';
-      return snippet;
-    }
   }
 
   function construct_buttons(OwnReasons, if_decline, isComments) {
@@ -825,22 +730,15 @@ function inject_init(browser) {
   }
 
   function supportInit() {
-    if ($(injects.claim_report).length == 0) {
+    if (injects.claim_report.length == 0) {
       var select = $('select[name=visibility]');
       $(select).find('option:selected').removeProp('selected');
       $(select).find('option[value=Private]').prop('selected', 'selected');
     }
   }
 
-  function val_init() {
-    var steamapi, OwnReasons, OwnDates, last_version;
-    return new Promise(function (resolve) {
-      loadSettings(resolve);
-    });
-  }
-
   function evidencePasteInit() {
-    $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').bind('paste', function (e) {
+    injects.accept.reason.bind('paste', function (e) {
       var self = this,
         data = e.originalEvent.clipboardData.getData('Text').trim(),
         dataLower = data.toLowerCase();
@@ -875,40 +773,22 @@ function inject_init(browser) {
    */
 
   function init() {
-    val_init().then(function (v) {
-      if (v.OwnReasons == null || v.OwnDates == null) {
-        alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
-        if (chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-        }
-      } else {
-        // console.log(v);
-        OwnReasons = v.OwnReasons;
-        OwnDates = v.OwnDates;
-        last_version = v.last_version;
-        steamapi = v.steamapi;
-        settings = v.settings;
-        version_checker(last_version);
-        content_links();
-        comment_language();
-        bans_count_fetch();
-        table_impoving();
-        comments_nice_look();
-        accept_modal_init();
-        decline_modal_init();
-        dropdown_enchancements();
-        supportInit();
-        bannedInit();
-        viewReportBlankInit();
-        evidencePasteInit();
-        fixModals();
-        final_init();
-      }
-    }).catch(function (v) {
-      console.error(v);
-    });
+    version_checker(last_version);
+    content_links();
+    comment_language();
+    bans_count_fetch();
+    table_improving();
+    comments_nice_look();
+    accept_modal_init();
+    decline_modal_init();
+    dropdown_enchancements();
+    supportInit();
+    bannedInit();
+    viewReportBlankInit();
+    evidencePasteInit();
+    fixModals();
+    final_init();
   }
+  var now = moment.utc(); // Moment.js init
   init();
 }

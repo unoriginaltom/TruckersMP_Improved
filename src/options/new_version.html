@@ -57,13 +57,10 @@
       <div class="col">
         <h3 class="text-center">Changelog</h3>
         <ul class="disc changelog">
-          <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine,
-            but the settings were not saved)</li>
-          <li>Added setting "Local Storage" - use this for save large settings data</li>
-          <li>Added setting "View report in new tab" - use this if you need to open reports in new tab in the forms "Report list"
-            and "Other Open Reports"</li>
-          <li>Bug fixed when load settings data from local storage</li>
-          <li>Bug fixed at "Auto-insert separator"</li>
+          <li>Multi-browser compatibility: Works <strong>FINALLY</strong> in Firefox</li>
+          <li>Moved out some functions to a common file (So only one file to edit now)</li>
+          <li>Auto-update storage now when opening the changelog page: Solves that bug of having to go to options and click on "Save" when the extension gets updated</li>
+          <li>Optimized code as much as possible (Removed commented parts, stored some JQuery searches in vars rather than always redoing them)</li>
         </ul>
       </div>
     </div>
@@ -106,6 +103,14 @@
             <div class="tab-content">
               <div class="tab-pane active in fade" id="v160">
                 <ul>
+                  <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine,
+                    but the settings were not saved)</li>
+                  <li>Added setting "Local Storage" - use this for save large settings data</li>
+                  <li>Added setting "View report in new tab" - use this if you need to open reports in new tab in the forms "Report list"
+                    and "Other Open Reports"</li>
+                  <li>Bug fixed when load settings data from local storage</li>
+                  <li>Bug fixed at "Auto-insert separator"</li>
+                  <hr/>
                   <li>Added claim/unclaim report buttons for trial-IGAs</li>
                   <li>Removed the steam alliases on the appeals</li>
                   <li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in
@@ -298,6 +303,7 @@
 
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/main.js"></script>
   <script src="js/new_version.js"></script>
 </body>
 
