@@ -250,7 +250,9 @@ val_init().then(function(v) {
             } else {
               storage = chrome.storage.local;
             }
-            inject_init();
+            if (typeof inject_init() === "function") {
+              inject_init();
+            }
           }
         }, 10);
       });

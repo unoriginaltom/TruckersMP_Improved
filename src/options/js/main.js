@@ -1,5 +1,5 @@
 function inject_init() {
-// Saves options to chrome.storage
+  // Saves options to chrome.storage
   function save_options(with_message = true, data = false) {
     var steamapi_group = $('#steamapi_group');
     steamapi_group.removeClass('has-error');

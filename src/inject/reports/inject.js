@@ -503,7 +503,6 @@ function inject_init() {
     $(document).prop('title', perpetrator_nickname + ' - ' + perpetrator_id + ' | TruckersMP');
 
     if (steamapi === "none") {
-      $("body > div.wrapper > div.breadcrumbs > div > h1").append("<kbd>#blame" + $('body > div.wrapper > div.header > div.container > div > ul > li:nth-child(1) > a').html() + "</kbd>");
       $("#loading-spinner").hide();
       $(function () {
         $('[data-toggle="tooltip"]').tooltip();

@@ -10,6 +10,12 @@
   },
 
   "minimum_chrome_version": "42",
+  "applications": {
+    "gecko": {
+      "id": "tmpimproved@bigmp.ru",
+      "strict_min_version": "48.0"
+    }
+  },
   "permissions": [
     "*://*.truckersmp.com/*",
     "*://*.jmdev.ca/*",
