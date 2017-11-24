@@ -85,8 +85,7 @@
       "js": [
         "js/jquery.min.js",
         "js/bootstrap.min.js",
-        "js/jquery.dataTables.min.js",
-        "js/dataTables.bootstrap.min.js",
+        "js/dataTables.min.js",
         "js/moment-with-locales.min.js",
         "src/main.js",
         "src/inject/reports-table/inject.js"
