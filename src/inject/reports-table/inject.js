@@ -154,10 +154,6 @@ function inject_init() {
     }
   });
 
-  $(".sorting").append(" <i class='fa fa-sort'></i>");
-  $(".sorting_asc").append(" <i class='fa fa-sort-amount-asc'></i>");
-  $(".sorting_desc").append(" <i class='fa fa-sort-amount-desc'></i>");
-
   // ===== After All =====
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
