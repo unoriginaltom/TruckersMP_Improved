@@ -111,40 +111,41 @@ function inject_init() {
     $(reason).focus();
   }
 
-  $('.pluscomment').on('click', function (event) {
-    event.preventDefault();
-    setReason($('form').find('textarea[name=comment]'), $(this).html());
-  });
-  $('.plusaccept').on('click', function (event) {
-    event.preventDefault();
-    setReason(injects.accept.find('textarea[name=comment]'), $(this).html());
-  });
-  $('.plusmodify').on('click', function (event) {
-    event.preventDefault();
-    setReason(injects.modify.find('textarea[name=comment]'), $(this).html());
-  });
-  $('.plusdecline').on('click', function (event) {
-    event.preventDefault();
-    setReason(injects.decline.find('textarea[name=comment]'), $(this).html());
-  });
+  $(document).ready(function () {
+    $('.pluscomment').on('click', function (event) {
+        event.preventDefault();
+        setReason($('form').find('textarea[name=comment]'), $(this).html());
+    });
+    $('.plusaccept').on('click', function (event) {
+        event.preventDefault();
+        setReason(injects.accept.find('textarea[name=comment]'), $(this).html());
+    });
+    $('.plusmodify').on('click', function (event) {
+        event.preventDefault();
+        setReason(injects.modify.find('textarea[name=comment]'), $(this).html());
+    });
+    $('.plusdecline').on('click', function (event) {
+        event.preventDefault();
+        setReason(injects.decline.find('textarea[name=comment]'), $(this).html());
+    });
 
-  $('button#comments_clear').on('click', function (event) {
-    event.preventDefault();
-    $('form').find('textarea[name=comment]').val("");
+    $('button#comments_clear').on('click', function (event) {
+        event.preventDefault();
+        $('form').find('textarea[name=comment]').val("");
+    });
+    $('button#accept_clear').on('click', function (event) {
+        event.preventDefault();
+        injects.accept.find('textarea[name=comment]').val("");
+    });
+    $('button#modify_clear').on('click', function (event) {
+        event.preventDefault();
+        injects.modify.find('textarea[name=comment]').val("");
+    });
+    $('button#decline_clear').on('click', function (event) {
+        event.preventDefault();
+        injects.decline.find('textarea[name=comment]').val("");
+      });
   });
-  $('button#accept_clear').on('click', function (event) {
-    event.preventDefault();
-    injects.accept.find('textarea[name=comment]').val("");
-  });
-  $('button#modify_clear').on('click', function (event) {
-    event.preventDefault();
-    injects.modify.find('textarea[name=comment]').val("");
-  });
-  $('button#decline_clear').on('click', function (event) {
-    event.preventDefault();
-    injects.decline.find('textarea[name=comment]').val("");
-  });
-
 
   function escapeHTML(s) {
     return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');

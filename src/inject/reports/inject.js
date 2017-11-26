@@ -13,7 +13,6 @@ function inject_init() {
       form: accept_modal.find('div > div > form'),
       time: $('#datetimeselect'),
       reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input'),
-      reasonCount: $('#reasonCount'),
       reasonHelpLink: $('#reasonHelpLink')
     },
     bans: {
@@ -39,13 +38,13 @@ function inject_init() {
   }
 
   function accept_modal_init() {
-    var reason_buttons = construct_buttons(OwnReasons, false),
-        decline_buttons = construct_buttons(OwnReasons, true),
-        comments_buttons = construct_buttons(OwnReasons, false, true);
-
+    var reason_buttons = construct_buttons('accept');
+    var decline_buttons = construct_buttons('decline');
+    var comments_buttons = construct_buttons('comments');
+    
     $(reason_buttons).insertAfter(injects.accept.reason);
     $(decline_buttons).insertAfter(injects.decline.comment);
-
+  
     if (comments_buttons.length > 0) {
       var textArea = $('div.container.content').find('textarea[name=comment]');
       $(textArea).css('margin-bottom', '10px');
@@ -54,7 +53,7 @@ function inject_init() {
     var date_buttons = construct_dates(OwnDates);
     $(date_buttons).insertAfter(injects.date_buttons);
     $('input[id="perma.false"]').prop("checked", true);
-
+  
     // ===== DateTime and Reason inputs checking =====
     injects.accept.form.on('submit', function (event) {
       var time_check = injects.accept.time.val();
@@ -70,7 +69,7 @@ function inject_init() {
         '-webkit-box-shadow': '',
         'box-shadow': ''
       };
-
+    
       if (!time_check && !perm_check) {
         injects.accept.time.css(error_style);
         event.preventDefault();
@@ -87,22 +86,23 @@ function inject_init() {
     // ===== Reasons FTW =====
     $('.plusreason').on('click', function (event) {
       event.preventDefault();
-
+    
       var reason_val = injects.accept.reason.val(),
         sp = '';
       if (!checkDoubleSlash(injects.accept.reason[0]))
         sp = (settings.separator) ? settings.separator : ',';
-
+    
       if ($(this).data('place') == 'before') {
-        $(reason).val($(this).html() + ' ' + reason_val.trim() + ' ');
+        injects.accept.reason.val($(this).html() + ' ' + reason_val.trim() + ' ');
       } else if (($(this).data('place') == 'after-wo') || (reason_val.trim() == 'Intentional')) {
-        $(reason).val(reason_val.trim() + ' ' + $(this).html() + ' ');
+        injects.accept.reason.val(reason_val.trim() + ' ' + $(this).html() + ' ');
       } else if (reason_val.length) {
-        $(reason).val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
+        injects.accept.reason.val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
       } else {
-        $(reason).val($(this).html() + ' ');
+        injects.accept.reason.val($(this).html() + ' ');
       }
-      $(reason).focus();
+      injects.accept.reason.focus();
+      checkReasonLength();
     });
     $('button#reason_clear').on('click', function (event) {
       event.preventDefault();
@@ -123,24 +123,26 @@ function inject_init() {
       }
       injects.accept.time.val(now.format("YYYY/MM/DD HH:mm"));
     });
-
+  
     //Ban reason length check
     var reasonMax = 190;
     $("<div id='reasonHelpLink'></div><div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
-    injects.accept.reason.keyup(function () {
+    var reasonCount = $('#reasonCount');
+  
+    function checkReasonLength() {
       if (injects.accept.reason.val().length > reasonMax) {
         injects.accept.reason.css({
           'background-color': 'rgba(255, 0, 0, 0.5)',
           'color': '#fff'
         });
-        injects.accept.reason.css({
+        reasonCount.css({
           'color': 'red',
           'font-weight': 'bold'
         });
         injects.accept.reasonHelpLink.html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
       } else {
         injects.accept.reasonHelpLink.html("");
-        injects.accept.reasonCount.css({
+        reasonCount.css({
           'color': '',
           'font-weight': ''
         });
@@ -149,7 +151,11 @@ function inject_init() {
           'color': ''
         });
       }
-      injects.accept.reasonCount.html(reason.val().length + "/" + reasonMax);
+      reasonCount.html(injects.accept.reason.val().length + "/" + reasonMax);
+    }
+  
+    injects.accept.reason.keyup(function () {
+      checkReasonLength();
     });
   }
 
@@ -195,12 +201,12 @@ function inject_init() {
     });
 
     function setReason(reason, reason_val) {
-      if ($(reason).val() == "") {
-        $(reason).val(reason_val);
+      if (injects.accept.reason.val() == "") {
+        injects.accept.reason.val(reason_val);
       } else {
-        $(reason).val($(reason).val() + ' ' + reason_val);
+        injects.accept.reason.val(injects.accept.reason.val() + ' ' + reason_val);
       }
-      $(reason).focus();
+      injects.accept.reason.focus();
     }
     $('.pluscomment').on('click', function (event) {
       event.preventDefault();
@@ -311,7 +317,6 @@ function inject_init() {
       if (sub.length > 60) {
         $(this).text(sub.substring(0, 40) + '...');
       }
-
     });
 
     if (settings.img_previews !== false) {
@@ -444,7 +449,6 @@ function inject_init() {
       } else if (banned_time_td.indexOf("Yesterday") !== -1) {
         banned_time = now.add(1, 'd');
       } else {
-        console.log(banned_time_td);
         banned_time = moment(banned_time_td);
       }
       if (banned_time.year() == '2001') {
@@ -543,7 +547,6 @@ function inject_init() {
               }
             }
           })
-
         }
       });
     }
@@ -612,33 +615,18 @@ function inject_init() {
     if (settings.viewreportblank)
       $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
   }
-
-  function final_init() {
-    $(document).ready(function () {
-      if (settings.wide !== false) {
-        $('div.container.content').css('width', '85%');
-      }
-      $(".youtube").YouTubeModal({
-        autoplay: 0,
-        width: 640,
-        height: 480
-      });
-    });
-  }
-
-  function construct_buttons(OwnReasons, if_decline, isComments) {
+  
+  function construct_buttons(type) {
     var html = '';
-    if (!isComments) {
-      html = '<br>';
-      if (if_decline) {
-        var declines = OwnReasons.declines.split(';');
-        var declinesPositive = OwnReasons.declinesPositive.split(';');
-        var declinesNegative = OwnReasons.declinesNegative.split(';');
-        html += each_type_new('Declines', declines);
-        html += each_type_new('Declines (Positive)', declinesPositive);
-        html += each_type_new('Declines (Negative)', declinesNegative);
-        html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
-      } else {
+    switch (type) {
+      case "comments":
+        var comments = OwnReasons.comments.split(';');
+        html += each_type_new('Comments', comments);
+        html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
+        break;
+  
+      case "accept":
+        html = '<br>';
         var prefixes = OwnReasons.prefixes.split(';');
         var reasons = OwnReasons.reasons.split(';');
         var postfixes = OwnReasons.postfixes.split(';');
@@ -646,14 +634,20 @@ function inject_init() {
         html += each_type_new('Prefixes', prefixes);
         html += each_type_new('Postfixes', postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
-      }
-    } else {
-      if (typeof OwnReasons.comments !== 'undefined') {
-        var comments = OwnReasons.comments.split(';');
-        html += each_type_new('Comments', comments);
-        html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
-      }
+        break;
+  
+      case "decline":
+        html = '<br>';
+        var declines = OwnReasons.declines.split(';');
+        var declinesPositive = OwnReasons.declinesPositive.split(';');
+        var declinesNegative = OwnReasons.declinesNegative.split(';');
+        html += each_type_new('Declines', declines);
+        html += each_type_new('Declines (Positive)', declinesPositive);
+        html += each_type_new('Declines (Negative)', declinesNegative);
+        html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+        break;
     }
+    
     return html;
 
     function each_type_new(type, buttons) {
@@ -749,20 +743,19 @@ function inject_init() {
   }
 
   function fixModals() {
-    var path = "div > div.modal-content > form > div.modal-body > div.form-group:last-child";
-    var rateAccept = $("#confirm-accept").find(path);
+    var path = "div.modal-body > div.form-group:last-child";
+    
+    var rateAccept = injects.accept.form.find(path);
     rateAccept.find("input[id='rating.positive']").attr("id", "accept.rating.positive");
     rateAccept.find("input[id='rating.negative']").attr("id", "accept.rating.negative");
-
     rateAccept.find("label[for='rating.positive']").attr("for", "accept.rating.positive");
     rateAccept.find("label[for='rating.negative']").attr("for", "accept.rating.negative");
 
     rateAccept.find("input[id='accept.rating.positive']").prop("checked", true);
 
-    var rateDecline = $("#confirm-decline").find(path);
+    var rateDecline = injects.decline.form.find(path);
     rateDecline.find("input[id='rating.positive']").attr("id", "decline.rating.positive");
     rateDecline.find("input[id='rating.negative']").attr("id", "decline.rating.negative");
-
     rateDecline.find("label[for='rating.positive']").attr("for", "decline.rating.positive");
     rateDecline.find("label[for='rating.negative']").attr("for", "decline.rating.negative");
   }
@@ -772,7 +765,6 @@ function inject_init() {
    */
 
   function init() {
-    version_checker(last_version);
     content_links();
     comment_language();
     bans_count_fetch();
@@ -786,8 +778,17 @@ function inject_init() {
     viewReportBlankInit();
     evidencePasteInit();
     fixModals();
-    final_init();
   }
   var now = moment.utc(); // Moment.js init
+  $(document).ready(function () {
+      if (settings.wide !== false) {
+          $('div.container.content').css('width', '85%');
+      }
+      $(".youtube").YouTubeModal({
+          autoplay: 0,
+          width: 640,
+          height: 480
+      });
+  });
   init();
 }

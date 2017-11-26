@@ -85,7 +85,7 @@ function inject_init() {
       $(this).text('Claimed!');
     }
 
-    if (event.ctrlKey) {
+    if (event.ctrlKey || !settings.viewreportblank) {
       window.open($(this).attr('href'), "_top");
     } else {
       window.open($(this).attr('href'), "_blank");
@@ -153,6 +153,13 @@ function inject_init() {
       $(this).addClass('btn-primary').removeClass('btn-danger')
     }
   });
+
+
+
+    function viewReportBlankInit() {
+        if (settings.viewreportblank)
+            $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
+    }
 
   // ===== After All =====
   $(function () {

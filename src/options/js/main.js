@@ -142,6 +142,7 @@ function inject_init() {
   }
 
   var import_file = $('#import_file');
+  console.log(import_file);
   function import_data(event) {
     if (confirm("BEWARE! All of your data will be lost after importing!\nDo you really want to do that?")) {
       $('#importExportModal').modal('hide');
@@ -181,7 +182,7 @@ function inject_init() {
     import_file.value = '';
   }
 
-  import_file.on('change', import_data, false);
+  import_file.on('change', import_data);
 
   $('textarea').each(function () {
     this.setAttribute('style', 'overflow-y:hidden;');
@@ -240,6 +241,7 @@ function inject_init() {
 
   $('#import').on('click', function (event) {
     event.preventDefault();
+    import_file.click();
   });
 
   restore_options();
