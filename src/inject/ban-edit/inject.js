@@ -139,7 +139,6 @@ function inject_init() {
 
     function reasonMaxLength() {
       var reasonMax = 190;
-      var reason = reason;
       var reasonCount = $("#reasonCount");
       var reasonHelpLink = $("#reasonHelpLink");
       $("<div id='reasonHelpLink'></div><div id='reasonCount'>" + reason.val().length + "/" + reasonMax + "</div>").insertAfter(reason);

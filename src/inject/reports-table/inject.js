@@ -71,7 +71,9 @@ function inject_init() {
 
     if (text == "Claim") {
       $(this).html(text + " <i class=\"fa fa-external-link\"></i>");
-      $(this).attr('target', '_blank');
+      if (settings.viewreportblank) {
+        $(this).attr('target', '_blank');
+      }
     } else {
       $(this).html(text);
     }
@@ -79,16 +81,15 @@ function inject_init() {
 
   //Claim link click
   $('a.claim').click(function (event) {
-    event.preventDefault();
-    if (event.which == 1 || event.which == 2) {
-      $(this).addClass('clicked');
-      $(this).text('Claimed!');
-    }
-
-    if (event.ctrlKey) {
-      window.open($(this).attr('href'), "_top");
-    } else {
-      window.open($(this).attr('href'), "_blank");
+    $(this).addClass('clicked');
+    $(this).text('Claimed!');
+    if (settings.viewreportblank) {
+      event.preventDefault();
+      if (event.ctrlKey) {
+        window.open($(this).attr('href'), "_top");
+      } else {
+        window.open($(this).attr('href'), "_blank");
+      }
     }
   });
 
@@ -154,12 +155,21 @@ function inject_init() {
     }
   });
 
+
+
+    function viewReportBlankInit() {
+        if (settings.viewreportblank)
+            $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
+    }
+
   // ===== After All =====
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
-    $('.claim').tooltip({
-      title: "Press Ctrl to open report in the same tab",
-    });
+    if (settings.viewreportblank) {
+      $('.claim').tooltip({
+        title: "Press Ctrl to open report in the same tab",
+      });
+    }
 
     var page = $('div.row').find('li.active').text();
     if (!page) {
