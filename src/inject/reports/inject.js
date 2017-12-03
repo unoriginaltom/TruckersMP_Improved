@@ -12,8 +12,7 @@ function inject_init() {
       comment: accept_modal.find('div > div > form > div.modal-body > div:nth-child(7) > textarea'),
       form: accept_modal.find('div > div > form'),
       time: $('#datetimeselect'),
-      reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input'),
-      reasonHelpLink: $('#reasonHelpLink')
+      reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input')
     },
     bans: {
       table: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr'),
@@ -38,11 +37,15 @@ function inject_init() {
   }
 
   function accept_modal_init() {
+    var reasonMax = 190;
+    $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
+    var reasonCount = $('#reasonCount');
+    
     var reason_buttons = construct_buttons('accept');
     var decline_buttons = construct_buttons('decline');
     var comments_buttons = construct_buttons('comments');
-    
-    $(reason_buttons).insertAfter(injects.accept.reason);
+  
+    $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
     $(decline_buttons).insertAfter(injects.decline.comment);
   
     if (comments_buttons.length > 0) {
@@ -94,7 +97,7 @@ function inject_init() {
     
       if ($(this).data('place') == 'before') {
         injects.accept.reason.val($(this).html() + ' ' + reason_val.trim() + ' ');
-      } else if (($(this).data('place') == 'after-wo') || (reason_val.trim() == 'Intentional')) {
+      } else if ($(this).data('place') == 'after-wo') {
         injects.accept.reason.val(reason_val.trim() + ' ' + $(this).html() + ' ');
       } else if (reason_val.length) {
         injects.accept.reason.val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
@@ -125,10 +128,6 @@ function inject_init() {
     });
   
     //Ban reason length check
-    var reasonMax = 190;
-    $("<div id='reasonHelpLink'></div><div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
-    var reasonCount = $('#reasonCount');
-  
     function checkReasonLength() {
       if (injects.accept.reason.val().length > reasonMax) {
         injects.accept.reason.css({
@@ -139,9 +138,7 @@ function inject_init() {
           'color': 'red',
           'font-weight': 'bold'
         });
-        injects.accept.reasonHelpLink.html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
-      } else {
-        injects.accept.reasonHelpLink.html("");
+        } else {
         reasonCount.css({
           'color': '',
           'font-weight': ''
@@ -181,12 +178,7 @@ function inject_init() {
     });
     $('.plusdecline').on('click', function (event) {
       event.preventDefault();
-      var reason_val = injects.decline.comment.val();
-      if ($(this).data('place') == 'before') {
-        injects.decline.comment.val($(this).html() + ' ' + reason_val + ' ');
-      } else {
-        injects.decline.comment.val(reason_val + ' ' + $(this).html());
-      }
+      setReason(injects.decline.comment, $(this).html());
 
       switch ($(this).data('action')) {
         case "negative":
@@ -199,29 +191,22 @@ function inject_init() {
       }
       injects.decline.comment.focus();
     });
-
-    function setReason(reason, reason_val) {
-      if (injects.accept.reason.val() == "") {
-        injects.accept.reason.val(reason_val);
-      } else {
-        injects.accept.reason.val(injects.accept.reason.val() + ' ' + reason_val);
-      }
-      injects.accept.reason.focus();
-    }
-    $('.pluscomment').on('click', function (event) {
-      event.preventDefault();
-      setReason($('form').find('textarea[name=comment]'), $(this).html());
-    });
+    
     $('button#decline_clear').on('click', function (event) {
       event.preventDefault();
       injects.decline.comment.val("");
     });
-    $('button#comments_clear').on('click', function (event) {
-      event.preventDefault();
-      $('form').find('textarea[name=comment]').val("");
-    });
   }
-
+  
+  function setReason(reason, reason_val) {
+    if ($(reason).val() == "") {
+      $(reason).val(reason_val + ' ');
+    } else {
+      $(reason).val($(reason).val().trim() + ' ' + reason_val + ' ');
+    }
+    $(reason).focus();
+  }
+  
   function getYouTubeIdFromUrl(youtubeUrl) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = youtubeUrl.match(regExp);
@@ -334,9 +319,8 @@ function inject_init() {
       var link = $(this).data("link");
       var length = ($(this).data("link")).length;
 
-      if (link.includes('youtube.com')) {
-        link = 'https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link);
-      }
+      
+      
       if (length < 30) {
         copyToClipboard($(this).data("link"));
         chrome.runtime.sendMessage({
@@ -344,7 +328,14 @@ function inject_init() {
         });
         $("#loading-spinner").hide();
       } else {
-        urlShorter(link);
+        if (link.includes('youtube.com') || link.includes('youtu.be')) {
+          copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
+          chrome.runtime.sendMessage({
+            msg: "URL just being shorted! Check your clipboard!"
+          });
+        } else {
+          urlShorter(link);
+        }
       }
     });
   }
@@ -438,8 +429,9 @@ function inject_init() {
   function bans_count_fetch() {
     var bans_count = 0;
     var expired_bans_count = 0;
+    var nb_parts;
     injects.bans.table.each(function () {
-      var banned_time_td = $(this).find('td:nth-child(1)').text();
+      var banned_time_td = $(this).find('td:nth-child(2)').text();
       var banned_reason_td = $(this).find('td:nth-child(3)').text();
       var banned_time;
       if (banned_time_td.indexOf("Today") !== -1) {
@@ -449,7 +441,19 @@ function inject_init() {
       } else if (banned_time_td.indexOf("Yesterday") !== -1) {
         banned_time = now.add(1, 'd');
       } else {
-        banned_time = moment(banned_time_td);
+        nb_parts = banned_time_td.split(" ").length;
+        if (nb_parts = 3) {
+          banned_time = moment(banned_time_td, "DD MMM HH:mm");
+        } else if (nb_parts == 4) {
+          banned_time = moment(banned_time_td, "DD MMM YYYY HH:mm");
+        } else {
+          banned_time = moment(banned_time_td);
+          console.log([
+            banned_time_td,
+            nb_parts,
+            banned_time
+          ]);
+        }
       }
       if (banned_time.year() == '2001') {
         banned_time.year(now.year());
@@ -493,7 +497,7 @@ function inject_init() {
         'color': '#d43f3a'
       });
     }
-    injects.bans.header.before('<hr class="small"/>')
+    injects.bans.header.before('<hr class="small"/>');
   }
 
   function table_improving() {
@@ -626,7 +630,6 @@ function inject_init() {
         break;
   
       case "accept":
-        html = '<br>';
         var prefixes = OwnReasons.prefixes.split(';');
         var reasons = OwnReasons.reasons.split(';');
         var postfixes = OwnReasons.postfixes.split(';');
@@ -637,7 +640,6 @@ function inject_init() {
         break;
   
       case "decline":
-        html = '<br>';
         var declines = OwnReasons.declines.split(';');
         var declinesPositive = OwnReasons.declinesPositive.split(';');
         var declinesNegative = OwnReasons.declinesNegative.split(';');
@@ -721,7 +723,7 @@ function inject_init() {
       return snippet;
     }
   }
-
+  
   function supportInit() {
     if (injects.claim_report.length == 0) {
       var select = $('select[name=visibility]');
@@ -791,4 +793,16 @@ function inject_init() {
       });
   });
   init();
+  
+  $('.pluscomment').on('click', function (event) {
+    event.preventDefault();
+    setReason($('form').find('textarea[name=comment]'), $(this).html());
+  });
+  
+  $('button#comments_clear').on('click', function (event) {
+    event.preventDefault();
+    $('form').find('textarea[name=comment]').val("");
+  });
+  
+  
 }
