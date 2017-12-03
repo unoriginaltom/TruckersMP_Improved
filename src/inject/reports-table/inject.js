@@ -74,7 +74,9 @@ function inject_init() {
 
     if (text == "Claim") {
       $(this).html(text + " <i class=\"fa fa-external-link\"></i>");
-      $(this).attr('target', '_blank');
+      if (settings.viewreportblank) {
+        $(this).attr('target', '_blank');
+      }
     } else {
       $(this).html(text);
     }
@@ -82,23 +84,14 @@ function inject_init() {
 
   //Claim link click
   $('a.claim').click(function (event) {
-    event.preventDefault();
-    if (event.which == 1 || event.which == 2) {
-      $(this).addClass('clicked');
-      $(this).text('Claimed!');
-    }
-
-    if (event.ctrlKey) {
-      if (settings.viewreportblank) {
+    $(this).addClass('clicked');
+    $(this).text('Claimed!');
+    if (settings.viewreportblank) {
+      event.preventDefault();
+      if (event.ctrlKey) {
         window.open($(this).attr('href'), "_top");
       } else {
         window.open($(this).attr('href'), "_blank");
-      }
-    } else {
-      if (settings.viewreportblank) {
-        window.open($(this).attr('href'), "_blank");
-      } else {
-        window.open($(this).attr('href'), "_top");
       }
     }
   });
@@ -167,6 +160,11 @@ function inject_init() {
   // ===== After All =====
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
+    if (settings.viewreportblank) {
+      $('.claim').tooltip({
+        title: "Press Ctrl to open report in the same tab",
+      });
+    }
 
     var page = $('div.row').find('li.active').text();
     if (!page) {
