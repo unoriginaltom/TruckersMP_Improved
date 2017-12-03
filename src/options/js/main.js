@@ -101,21 +101,44 @@ function inject_init() {
     $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
 
     function set_options(items) {
+      console.log(items);
       $('#steamapi').val(items.steamapi);
 
-      $('#prefixes').val(items.OwnReasons.prefixes);
-      $('#reasons').val(items.OwnReasons.reasons);
-      $('#postfixes').val(items.OwnReasons.postfixes);
+      items.OwnReasons.prefixes.forEach(function (val) {
+        createSection($('#prefixes'),val);
+      });
+      items.OwnReasons.reasons.forEach(function (val) {
+        createSection($('#reasons'),val);
+      });
+      items.OwnReasons.postfixes.forEach(function (val) {
+        createSection($('#postfixes'), val)
+      });
 
-      $('#declines').val(items.OwnReasons.declines);
-      $('#declinesPositive').val(items.OwnReasons.declinesPositive);
-      $('#declinesNegative').val(items.OwnReasons.declinesNegative);
-      $('#comments').val(items.OwnReasons.comments);
+      items.OwnReasons.declines.forEach(function (val) {
+        createSection($('#declines'),"",val);
+      });
+      items.OwnReasons.declinesPositive.forEach(function (val) {
+        createSection($('#declinesPositive'),"",val);
+      });
+      items.OwnReasons.declinesNegative.forEach(function (val) {
+        createSection($('#declinesNegative'),"",val);
+      });
+      items.OwnReasons.comments.forEach(function (val) {
+        createSection($('#comments'),"",val);
+      });
 
-      $('#declinesAppeals').val(items.OwnReasons.declinesAppeals);
-      $('#acceptsAppeals').val(items.OwnReasons.acceptsAppeals);
-      $('#modifyAppeals').val(items.OwnReasons.modifyAppeals);
-      $('#commentsAppeals').val(items.OwnReasons.commentsAppeals);
+      items.OwnReasons.declinesAppeals.forEach(function (val) {
+        createSection($('#declinesAppeals'),"",val);
+      });
+      items.OwnReasons.acceptsAppeals.forEach(function (val) {
+        createSection($('#acceptsAppeals'),"",val);
+      });
+      items.OwnReasons.modifyAppeals.forEach(function (val) {
+        createSection($('#modifyAppeals'),"",val);
+      });
+      items.OwnReasons.commentsAppeals.forEach(function (val) {
+        createSection($('#commentsAppeals'),"",val);
+      });
 
       $('#white').val(items.OwnDates.white);
       $('#yellow').val(items.OwnDates.yellow);
@@ -142,7 +165,6 @@ function inject_init() {
   }
 
   var import_file = $('#import_file');
-  console.log(import_file);
   function import_data(event) {
     if (confirm("BEWARE! All of your data will be lost after importing!\nDo you really want to do that?")) {
       $('#importExportModal').modal('hide');
@@ -153,6 +175,17 @@ function inject_init() {
     } else {
       import_file.value = '';
     }
+  }
+
+  function createSection(parent, input1 = "", input2 = "") {
+    var obj = "<div class='sortable-div'><i class='fa fa-arrows' aria-hidden='true'></i>";
+    if (input2 != "") {
+      obj += "<input type='text' style='width: 30%' value='"+input1+"'/><input type='text' style='width: 59%' value='"+input2+"'/>";
+    } else {
+      obj += "<input type='text' style='width: 90%;' value='"+input1+"'/>";
+    }
+    obj += "<button type='button' class='btn btn-danger'>X</button></div>";
+    parent.append(obj);
   }
 
   function _imp() {

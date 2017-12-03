@@ -17,6 +17,25 @@
       width: auto;
     }
 
+    .sortable-div {
+      width: 100%;
+    }
+
+    .sortable-div i {
+      width: 2%;
+    }
+
+    .sortable-div input {
+      margin: 0.5%;
+    }
+
+    .sortable-div button {
+      width: 5%;
+      height: 25px;
+      padding: 0;
+      margin: 0.5%;
+    }
+
     .material-switch>input[type="checkbox"] {
       display: none;
     }
@@ -238,34 +257,28 @@
           <div class="panel-body">
             <form class="form-horizontal">
               <fieldset>
-                <p>Use Semicolon
-                  <kbd>;</kbd> to split variants and Vertical slash
-                  <kbd>|</kbd> for separator. Click on text area to expand.</p>
-
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
                     <strong>Prefixes:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="prefixes" class="form-control"></textarea>
+                    <div id="prefixes" class="sortable-div"></div>
                   </div>
                 </div>
-
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
                     <strong>Reasons:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="reasons" class="form-control"></textarea>
+                    <div id="reasons" class="sortable-div"></div>
                   </div>
                 </div>
-
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
                     <strong>Postfixes:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="postfixes" class="form-control"></textarea>
+                    <div id="postfixes" class="sortable-div"></div>
                   </div>
                 </div>
                 <hr>
@@ -275,7 +288,7 @@
                     <strong>Report declines:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="declines" class="form-control"></textarea>
+                    <div id="declines" class="sortable-div"></div>
                   </div>
                 </div>
 
@@ -284,7 +297,7 @@
                     <strong>Report declines (Positive):</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="declinesPositive" class="form-control"></textarea>
+                    <div id="declinesPositive" class="sortable-div"></div>
                   </div>
                 </div>
 
@@ -293,7 +306,7 @@
                     <strong>Report declines (Negative):</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="declinesNegative" class="form-control"></textarea>
+                    <div id="declinesNegative" class="sortable-div"></div>
                   </div>
                 </div>
 
@@ -302,7 +315,7 @@
                     <strong>Report comments:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="comments" class="form-control"></textarea>
+                    <div id="comments" class="sortable-div"></div>
                   </div>
                 </div>
                 <hr/>
@@ -312,7 +325,7 @@
                     <strong>Appeals Accepts:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="acceptsAppeals" class="form-control"></textarea>
+                    <div id="acceptsAppeals" class="sortable-div"></div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -320,7 +333,7 @@
                     <strong>Appeals Declines:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="declinesAppeals" class="form-control"></textarea>
+                    <div id="declinesAppeals" class="sortable-div"></div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -328,7 +341,7 @@
                     <strong>Appeals Modify:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="modifyAppeals" class="form-control"></textarea>
+                    <div id="modifyAppeals" class="sortable-div"></div>
                   </div>
                 </div>
                 <div class="form-group">
@@ -336,7 +349,7 @@
                     <strong>Appeals Comments:</strong>
                   </label>
                   <div class="col-lg-10">
-                    <textarea id="commentsAppeals" class="form-control"></textarea>
+                    <div id="commentsAppeals" class="sortable-div"></div>
                   </div>
                 </div>
               </fieldset>
@@ -488,7 +501,7 @@
             </a>
           </h3>
         </div>
-        <div id="collapseTwo" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="headingOne">
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
           <div class="panel-body">
             <form class="form-horizontal">
               <fieldset>

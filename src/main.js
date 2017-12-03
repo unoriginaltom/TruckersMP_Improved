@@ -1,4 +1,4 @@
-var storage, steamapi, OwnReasons, OwnDates, last_version, date_buttons;
+var settings, storage, steamapi, OwnReasons, OwnDates, last_version, date_buttons;
 var version = chrome.runtime.getManifest().version;
 var syncAllowed = false;
 
@@ -127,6 +127,22 @@ $(function () {
   });
 });
 
+function parseItems(object) {
+  var ret = {};
+  $.each(object, function (key, val) {
+    var arr = val.split("|");
+
+    arr.forEach(function (val) {
+      var tab = [];
+      val.split(";").forEach(function (v) {
+        tab.push(v.trim());
+      });
+      ret[key] = tab;
+    });
+  });
+  return ret;
+}
+
 function loadSettings(callBack) {
   if (callBack) {
     storage.get({
@@ -143,6 +159,7 @@ function loadSettings(callBack) {
         separator: ','
       }
     }, function (items) {
+      items.OwnReasons = parseItems(items['OwnReasons']);
       if (syncAllowed && items.settings.local_storage) {
         chrome.storage.local.get(items, function (items) {
           callBack(items);
@@ -224,7 +241,6 @@ String.prototype.contains = function (needle) {
     }
   }
 };
-
 val_init().then(function(v) {
   if (v.OwnReasons == null || v.OwnDates == null) {
     alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
