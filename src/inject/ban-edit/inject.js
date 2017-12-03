@@ -2,28 +2,20 @@ function inject_init() {
   var is_add_ban = window.location.pathname.includes('/admin/ban/add/');
 
   var ban_time;
-  var empty_date;
   var reason = $('input[name=reason]');
   if (is_add_ban) {
-    if (!ban_time) {
-      empty_date = true;
-    }
     ban_time = moment().utc();
   } else {
-    $('<p class="help-block">Only change a Reason? Click <a href="#" class="plusdate" data-plus="string" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a> and do not forget to post this ban in <a href="https://forum.truckersmp.com/index.php?/topic/17815-ban-by-mistake/#replyForm" style="color: #72c02c; text-decoration: underline;" target="_blank"><b>Ban by mistake</b></a> forum topic</p>').insertAfter('input[name=reason]');
+    $('<p class="help-block">Only change a Reason? Click <a href="#" id="changedReason" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a> and do not forget to post this ban in <a href="https://forum.truckersmp.com/index.php?/topic/17815-ban-by-mistake/#replyForm" style="color: #72c02c; text-decoration: underline;" target="_blank"><b>Ban by mistake</b></a> forum topic</p>').insertAfter('input[name=reason]');
     ban_time = $('#datetimeselect').val();
   }
 
   if (ban_time) {
     var now = moment(ban_time);
-    var put_back;
 
     $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
     $(date_buttons).insertAfter('#datetimeselect');
-
-    if (empty_date) {
-      $('#current_ban_time').remove();
-    }
+    $('<button type="button" class="btn btn-link plusdate" data-plus="back" id="current_ban_time"><b>Current Ban time</b></button>').insertAfter($("#ownreasons_buttons").find("div:last-child > button:last-child"));
 
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
@@ -34,22 +26,25 @@ function inject_init() {
         case 'clear':
           now = moment().utc();
           break;
-        case 'string':
-          put_back = ban_time;
-          break;
         default:
           var key = $(this).data('key');
           now.add($(this).data("number"), key);
           break;
       }
-      if (put_back) {
-        $('#datetimeselect').val(put_back);
-        put_back = '';
+      $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+    });
+    
+    $("#changedReason").click(function (event) {
+      event.preventDefault();
+      if (moment(ban_time).isBefore(moment().utc())) {
+        $('#datetimeselect').val(ban_time);
         $('#ownreasons_buttons').remove();
       } else {
-        $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+        $('input[type=radio][name=perma]').prop("checked",true);
+        $('input[name=active]').prop('checked', false);
+        perma_perform(this);
       }
-    });
+    })
   } else {
     $('#datetimeselect').slideUp('fast');
     $('label[for=\'perma.true\']').addClass('text-uppercase');
@@ -136,37 +131,35 @@ function inject_init() {
         $(this).css("color", e.type === "mouseenter" ? "#999!important" : "");
       });
     }
-
+  
+    var reasonMax = 190;
+    $("<div id='reasonCount'>" + reason.val().length + "/" + reasonMax + "</div>").insertAfter(reason);
+    var reasonCount = $("#reasonCount");
     function reasonMaxLength() {
-      var reasonMax = 190;
-      var reasonCount = $("#reasonCount");
-      var reasonHelpLink = $("#reasonHelpLink");
-      $("<div id='reasonHelpLink'></div><div id='reasonCount'>" + reason.val().length + "/" + reasonMax + "</div>").insertAfter(reason);
-      reason.keyup(function () {
-        if (reason.val().length > reasonMax) {
-          reason.css({
-            'background-color': 'rgba(255, 0, 0, 0.5)',
-            'color': '#fff'
-          });
-          reasonCount.css({
-            'color': 'red',
-            'font-weight': 'bold'
-          });
-          reasonHelpLink.html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
-        } else {
-          reasonHelpLink.html("");
-          reasonCount.css({
-            'color': '',
-            'font-weight': ''
-          });
-          reason.css({
-            'background-color': '',
-            'color': ''
-          });
-        }
-        reasonCount.html(reason.val().length + "/" + reasonMax);
-      });
+      if (reason.val().length > reasonMax) {
+        reason.css({
+          'background-color': 'rgba(255, 0, 0, 0.5)',
+          'color': '#fff'
+        });
+        reasonCount.css({
+          'color': 'red',
+          'font-weight': 'bold'
+        });
+      } else {
+        reasonCount.css({
+          'color': '',
+          'font-weight': ''
+        });
+        reason.css({
+          'background-color': '',
+          'color': ''
+        });
+      }
+      reasonCount.html(reason.val().length + "/" + reasonMax);
     }
+    reason.keyup(function () {
+      reasonMaxLength();
+    });
 
     function evidencePasteInit() {
       reason.bind('paste', function (e) {
@@ -211,6 +204,7 @@ function inject_init() {
         reason.val($(this).html() + ' ');
       }
       reason.focus();
+      reasonMaxLength();
     });
     $('button#reason_clear').on('click', function (event) {
       event.preventDefault();

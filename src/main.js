@@ -174,7 +174,7 @@ function val_init() {
 }
 
 function construct_dates(OwnDates) {
-  var html = '<br><div id="ownreasons_buttons">';
+  var html = '<div id="ownreasons_buttons">';
 
   html += each_type('default', OwnDates.white.split(';'));
   html += each_type('warning', OwnDates.yellow.split(';'));
@@ -194,7 +194,7 @@ function construct_dates(OwnDates) {
 
       if (type == 'other') {
         if (number == 'current_utc') {
-            snippet += '<button type="button" class="btn btn-link plusdate" data-number="clear">Current UTC time</button>'
+            snippet += '<button type="button" class="btn btn-link plusdate" data-number="clear" data-plus="clear">Current UTC time</button>'
         }
       } else {
         snippet += '<button type="button" class="btn btn-'+ type+' plusdate" data-number="'+ number +'" data-key="'+ key +'">'+ title +'</button>';

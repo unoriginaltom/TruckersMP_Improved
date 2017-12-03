@@ -62,6 +62,9 @@ function inject_init() {
     $(this).text("View");
     if (settings.viewreportblank)
       $(this).attr('target', '_blank');
+      $('.claim').tooltip({
+        title: "Press Ctrl to open report in the same tab",
+      });
   });
 
   $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(10) > a').each(function () {
@@ -85,10 +88,18 @@ function inject_init() {
       $(this).text('Claimed!');
     }
 
-    if (event.ctrlKey || !settings.viewreportblank) {
-      window.open($(this).attr('href'), "_top");
+    if (event.ctrlKey) {
+      if (settings.viewreportblank) {
+        window.open($(this).attr('href'), "_top");
+      } else {
+        window.open($(this).attr('href'), "_blank");
+      }
     } else {
-      window.open($(this).attr('href'), "_blank");
+      if (settings.viewreportblank) {
+        window.open($(this).attr('href'), "_blank");
+      } else {
+        window.open($(this).attr('href'), "_top");
+      }
     }
   });
 
@@ -109,7 +120,6 @@ function inject_init() {
   $('body > div.wrapper > div.container.content > div.row.padding-top-5 > table > thead > tr > th').each(function (index, el) {
     var text = $.trim($(el).text());
     if (text) {
-      // columns_html += '<kbd><a class="toggle-vis" data-column="' + index + '">' + text + '</a></kbd>'
       columns_html += '<button type="button" class="btn btn-primary toggle-vis" data-column="' + index + '">' + text + '</button>'
     }
   });
@@ -154,19 +164,9 @@ function inject_init() {
     }
   });
 
-
-
-    function viewReportBlankInit() {
-        if (settings.viewreportblank)
-            $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
-    }
-
   // ===== After All =====
   $(function () {
     $('[data-toggle="tooltip"]').tooltip();
-    $('.claim').tooltip({
-      title: "Press Ctrl to open report in the same tab",
-    });
 
     var page = $('div.row').find('li.active').text();
     if (!page) {
