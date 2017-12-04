@@ -128,17 +128,33 @@ $(function () {
 });
 
 function parseItems(object) {
+  var toObjects = ["declines","declinesPositive","declinesNegative","comments","declinesAppeals","commentsAppeals","acceptsAppeals","modifyAppeals"];
   var ret = {};
   $.each(object, function (key, val) {
-    var arr = val.split("|");
-
-    arr.forEach(function (val) {
-      var tab = [];
-      val.split(";").forEach(function (v) {
-        tab.push(v.trim());
+    if(typeof val == "string") {
+      var arr = val.split("|");
+      var global_tab = [];
+      arr.forEach(function (val) {
+        var tab;
+        
+        if (toObjects.indexOf(key) == -1) {
+          tab = [];
+          val.split(";").forEach(function (v) {
+            tab.push(v.trim());
+          });
+        } else {
+          tab = {};
+          val.split(";").forEach(function (v) {
+            tab[v.trim()] = v.trim();
+          });
+        }
+        
+        global_tab.push(tab);
       });
-      ret[key] = tab;
-    });
+      ret[key] = global_tab;
+    } else {
+      ret[key] = val;
+    }
   });
   return ret;
 }
@@ -159,7 +175,7 @@ function loadSettings(callBack) {
         separator: ','
       }
     }, function (items) {
-      items.OwnReasons = parseItems(items['OwnReasons']);
+      items.OwnReasons = parseItems(items.OwnReasons);
       if (syncAllowed && items.settings.local_storage) {
         chrome.storage.local.get(items, function (items) {
           callBack(items);
@@ -241,6 +257,9 @@ String.prototype.contains = function (needle) {
     }
   }
 };
+
+$("#favicon").attr("href",chrome.extension.getURL("/icons/icon48.png"));
+
 val_init().then(function(v) {
   if (v.OwnReasons == null || v.OwnDates == null) {
     alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");

@@ -4,7 +4,7 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.min.css">
   <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
-
+  <link id="favicon" rel="shortcut icon" type="image/png" href="/icons/icon48.png"/>
   <title>TruckersMP Improved Settings</title>
 
   <style type="text/css">
@@ -25,14 +25,31 @@
       width: 2%;
     }
 
-    .sortable-div input {
+    .sortable-div textarea {
       margin: 0.5%;
+      height: 35px;
     }
 
+    .sortable-div textarea {
+      margin-bottom: -5.5px;
+    }
+    
     .sortable-div button {
       width: 5%;
       height: 25px;
       padding: 0;
+      margin: 0.5%;
+    }
+
+    .option-section {
+      border: 2px solid;
+      border-radius: 10px;
+      padding: 10px;
+      margin: 0 10px 10px;
+    }
+
+    .section-buttons > button {
+      width: 49%;
       margin: 0.5%;
     }
 
@@ -259,97 +276,105 @@
               <fieldset>
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Prefixes:</strong>
+                    <strong>Prefixes:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="prefixes" class="sortable-div"></div>
+                    <div id="prefixes"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Reasons:</strong>
+                    <strong>Reasons:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="reasons" class="sortable-div"></div>
+                    <div id="reasons"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Postfixes:</strong>
+                    <strong>Postfixes:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="postfixes" class="sortable-div"></div>
+                    <div id="postfixes"></div>
                   </div>
                 </div>
                 <hr>
 
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Report declines:</strong>
+                    <strong>Report declines:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="declines" class="sortable-div"></div>
+                    <div id="declines"></div>
                   </div>
                 </div>
-
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Report declines (Positive):</strong>
+                    <strong>Report declines (Positive):</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="declinesPositive" class="sortable-div"></div>
+                    <div id="declinesPositive"></div>
                   </div>
                 </div>
-
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Report declines (Negative):</strong>
+                    <strong>Report declines (Negative):</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="declinesNegative" class="sortable-div"></div>
+                    <div id="declinesNegative"></div>
                   </div>
                 </div>
-
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Report comments:</strong>
+                    <strong>Report comments:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="comments" class="sortable-div"></div>
+                    <div id="comments"></div>
                   </div>
                 </div>
                 <hr/>
 
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Appeals Accepts:</strong>
+                    <strong>Appeals Accepts:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="acceptsAppeals" class="sortable-div"></div>
+                    <div id="acceptsAppeals"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Appeals Declines:</strong>
+                    <strong>Appeals Declines:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="declinesAppeals" class="sortable-div"></div>
+                    <div id="declinesAppeals"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Appeals Modify:</strong>
+                    <strong>Appeals Modify:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="modifyAppeals" class="sortable-div"></div>
+                    <div id="modifyAppeals"></div>
                   </div>
                 </div>
                 <div class="form-group">
                   <label class="col-lg-2 control-label">
-                    <strong>Appeals Comments:</strong>
+                    <strong>Appeals Comments:</strong><br/>
+                    <button class='create-section btn btn-success'>Create section</button>
                   </label>
                   <div class="col-lg-10">
-                    <div id="commentsAppeals" class="sortable-div"></div>
+                    <div id="commentsAppeals"></div>
                   </div>
                 </div>
               </fieldset>
@@ -556,7 +581,7 @@
       </div>
     </div>
   </div>
-
+  
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
   <script src="/src/main.js"></script>

@@ -5,8 +5,9 @@ function inject_init() {
   $('#close').on('click', function () {
     window.close();
   });
-
+  
   loadSettings(function (i) {
+    saveSettings(chrome.storage.sync, parseItems(i), false);
     saveSettings(chrome.storage.sync, i, false);
   });
 }
