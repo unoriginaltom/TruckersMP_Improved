@@ -9,31 +9,29 @@ function inject_init() {
     modify: $('#confirm-modify')
   };
 
-  function construct_buttons(OwnReasons, if_decline, if_modify, isComments) {
+  function construct_buttons(OwnReasons, type) {
     var html = '';
-    if (!isComments) {
-      if (!if_modify && typeof OwnReasons.declinesAppeals !== 'undefined' && typeof OwnReasons.acceptsAppeals !== 'undefined') {
-        if (if_decline) {
-          var declines = OwnReasons.declinesAppeals.split(';');
-          html += each_type_new('Declines', declines);
-          html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
-        } else {
-          var accepts = OwnReasons.acceptsAppeals.split(';');
-          html += each_type_new('Accepts', accepts);
-          html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
-        }
-      }
-      if (if_modify && typeof OwnReasons.modifyAppeals !== 'undefined') {
-        var modify = OwnReasons.modifyAppeals.split(';');
-        html += each_type_new('Modify', modify);
-        html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
-      }
-    } else {
-      if (typeof OwnReasons.commentsAppeals !== 'undefined') {
-        var comments = OwnReasons.commentsAppeals.split(';');
-        html += each_type_new('Comments', comments);
+    console.log(type);
+    switch (type) {
+      case "comments":
+        html += each_type_new('Comments', OwnReasons.commentsAppeals);
         html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
-      }
+        break;
+  
+      case "declines":
+        html += each_type_new('Declines', OwnReasons.declinesAppeals);
+        html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+        break;
+  
+      case "accepts":
+        html += each_type_new('Accepts', OwnReasons.acceptsAppeals);
+        html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
+        break;
+  
+      case "modify":
+        html += each_type_new('Modify', OwnReasons.modifyAppeals);
+        html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
+        break;
     }
 
     function each_type_new(type, buttons) {
@@ -70,22 +68,23 @@ function inject_init() {
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
       var count = 0;
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-      buttons.forEach(function (item) {
-        if (count === 0) {
-          snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
-        }
-        if (item.trim() == '|') {
-          snippet += '</ul></div>';
-          count = 0;
+      $.each(buttons, function (key,val) {
+        snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+        if (Array.isArray(val)) {
+          val.forEach(function (item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+ encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+          });
         } else {
-          snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
-          ++count;
+          $.each(val, function (title, item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+          });
         }
+        snippet += '</ul></div>';
       });
-      snippet += '</div></div></div></li></ul></div>     ';
+      snippet += '</div></div></div></li></ul></div>';
       return snippet;
     }
-
+    
     return html;
   }
 
@@ -345,26 +344,26 @@ function inject_init() {
       }
     }
 
-    addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons(OwnReasons, false));
-    addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons(OwnReasons, false, true));
-    addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons(OwnReasons, true));
-    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons(OwnReasons, false, false, true));
+    addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons(OwnReasons, "accepts"));
+    addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons(OwnReasons, "modify"));
+    addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons(OwnReasons, "declines"));
+    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons(OwnReasons, "comments"));
 
     $('.pluscomment').on('click', function (event) {
       event.preventDefault();
-      setReason($('form').find('textarea[name=comment]'), $(this).html());
+      setReason($('form').find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
     $('.plusaccept').on('click', function (event) {
       event.preventDefault();
-      setReason(injects.accept.find('textarea[name=comment]'), $(this).html());
+      setReason(injects.accept.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
     $('.plusmodify').on('click', function (event) {
       event.preventDefault();
-      setReason(injects.modify.find('textarea[name=comment]'), $(this).html());
+      setReason(injects.modify.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
     $('.plusdecline').on('click', function (event) {
       event.preventDefault();
-      setReason(injects.decline.find('textarea[name=comment]'), $(this).html());
+      setReason(injects.decline.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
 
     $('button#comments_clear').on('click', function (event) {

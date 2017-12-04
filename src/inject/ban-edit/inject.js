@@ -70,12 +70,9 @@ function inject_init() {
   if (typeof OwnReasons !== 'undefined') {
     function construct_buttons(OwnReasons) {
       var html = '';
-      var prefixes = OwnReasons.prefixes.split(';');
-      var reasons = OwnReasons.reasons.split(';');
-      var postfixes = OwnReasons.postfixes.split(';');
-      html += each_type_new('Reasons', reasons);
-      html += each_type_new('Prefixes', prefixes);
-      html += each_type_new('Postfixes', postfixes);
+      html += each_type_new('Reasons', OwnReasons.reasons);
+      html += each_type_new('Prefixes', OwnReasons.prefixes);
+      html += each_type_new('Postfixes', OwnReasons.postfixes);
       html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
       return html;
 
@@ -98,17 +95,18 @@ function inject_init() {
         var count = 0;
 
         var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-        buttons.forEach(function (item) {
-          if (count === 0) {
-            snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
-          }
-          if (item.trim() == '|') {
-            snippet += '</ul></div>';
-            count = 0;
+        $.each(buttons, function (key,val) {
+          snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+          if (Array.isArray(val)) {
+            val.forEach(function (item) {
+              snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+            });
           } else {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
-            ++count;
+            $.each(val, function (title, item) {
+              snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+            });
           }
+          snippet += '</ul></div>';
         });
         snippet += '</div></div></div></li></ul></div>     ';
         return snippet;
@@ -195,13 +193,13 @@ function inject_init() {
       var sp = (settings.separator) ? settings.separator : ',';
 
       if ($(this).data('place') == 'before') {
-        reason.val($(this).html() + ' ' + reason_val.trim() + ' ');
-      } else if (($(this).data('place') == 'after-wo') || (reason_val.trim() == 'Intentional')) {
-        reason.val(reason_val.trim() + ' ' + $(this).html() + ' ');
+        reason.val(decodeURI($(this).data("text")) + ' ' + reason_val.trim() + ' ');
+      } else if ($(this).data('place') == 'after-wo') {
+        reason.val(reason_val.trim() + ' ' + decodeURI($(this).data("text")) + ' ');
       } else if (reason_val.length) {
-        reason.val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
+        reason.val(reason_val.trim() + sp + ' ' + decodeURI($(this).data("text")) + ' ');
       } else {
-        reason.val($(this).html() + ' ');
+        reason.val(decodeURI($(this).data("text")) + ' ');
       }
       reason.focus();
       reasonMaxLength();

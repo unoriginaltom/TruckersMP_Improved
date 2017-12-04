@@ -45,7 +45,7 @@ function inject_init() {
       var decline_buttons = construct_buttons('decline');
       var comments_buttons = construct_buttons('comments');
     } catch (e) {
-      
+      console.error(e);
     }
 
     $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
@@ -99,13 +99,13 @@ function inject_init() {
         sp = (settings.separator) ? settings.separator : ',';
     
       if ($(this).data('place') == 'before') {
-        injects.accept.reason.val($(this).html() + ' ' + reason_val.trim() + ' ');
+        injects.accept.reason.val(decodeURI($(this).data("text")) + ' ' + reason_val.trim() + ' ');
       } else if ($(this).data('place') == 'after-wo') {
-        injects.accept.reason.val(reason_val.trim() + ' ' + $(this).html() + ' ');
+        injects.accept.reason.val(reason_val.trim() + ' ' + decodeURI($(this).data("text")) + ' ');
       } else if (reason_val.length) {
-        injects.accept.reason.val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
+        injects.accept.reason.val(reason_val.trim() + sp + ' ' + decodeURI($(this).data("text")) + ' ');
       } else {
-        injects.accept.reason.val($(this).html() + ' ');
+        injects.accept.reason.val(decodeURI($(this).data("text")) + ' ');
       }
       injects.accept.reason.focus();
       checkReasonLength();
@@ -181,7 +181,7 @@ function inject_init() {
     });
     $('.plusdecline').on('click', function (event) {
       event.preventDefault();
-      setReason(injects.decline.comment, $(this).html());
+      setReason(injects.decline.comment, decodeURI($(this).data("text")));
 
       switch ($(this).data('action')) {
         case "negative":
@@ -322,8 +322,6 @@ function inject_init() {
       var link = $(this).data("link");
       var length = ($(this).data("link")).length;
 
-      
-      
       if (length < 30) {
         copyToClipboard($(this).data("link"));
         chrome.runtime.sendMessage({
@@ -632,22 +630,16 @@ function inject_init() {
         break;
   
       case "accept":
-        var prefixes = OwnReasons.prefixes.split(';');
-        var reasons = OwnReasons.reasons.split(';');
-        var postfixes = OwnReasons.postfixes.split(';');
-        html += each_type_new('Reasons', reasons);
-        html += each_type_new('Prefixes', prefixes);
-        html += each_type_new('Postfixes', postfixes);
+        html += each_type_new('Reasons', OwnReasons.reasons);
+        html += each_type_new('Prefixes', OwnReasons.prefixes);
+        html += each_type_new('Postfixes', OwnReasons.postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
         break;
   
       case "decline":
-        var declines = OwnReasons.declines.split(';');
-        var declinesPositive = OwnReasons.declinesPositive.split(';');
-        var declinesNegative = OwnReasons.declinesNegative.split(';');
-        html += each_type_new('Declines', declines);
-        html += each_type_new('Declines (Positive)', declinesPositive);
-        html += each_type_new('Declines (Negative)', declinesNegative);
+        html += each_type_new('Declines', OwnReasons.declines);
+        html += each_type_new('Declines (Positive)', OwnReasons.declinesPositive);
+        html += each_type_new('Declines (Negative)', OwnReasons.declinesNegative);
         html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
         break;
     }
@@ -710,19 +702,17 @@ function inject_init() {
       var count = 0;
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
       $.each(buttons, function (key,val) {
-        console.log([key,val]);
-      });
-      buttons.forEach(function (item) {
-        if (count === 0) {
-          snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
-        }
-        if (item.trim() == '|') {
-          snippet += '</ul></div>';
-          count = 0;
+        snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+        if (Array.isArray(val)) {
+          val.forEach(function (item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="'+encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+          });
         } else {
-          snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '">' + item.trim() + '</a></li>';
-          ++count;
+          $.each(val, function (title, item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+          });
         }
+        snippet += '</ul></div>';
       });
       snippet += '</div></div></div></li></ul></div>     ';
       return snippet;
@@ -801,7 +791,7 @@ function inject_init() {
   
   $('.pluscomment').on('click', function (event) {
     event.preventDefault();
-    setReason($('form').find('textarea[name=comment]'), $(this).html());
+    setReason($('form').find('textarea[name=comment]'), decodeURI($(this).data("text")));
   });
   
   $('button#comments_clear').on('click', function (event) {
