@@ -40,11 +40,14 @@ function inject_init() {
     var reasonMax = 190;
     $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
     var reasonCount = $('#reasonCount');
-    
-    var reason_buttons = construct_buttons('accept');
-    var decline_buttons = construct_buttons('decline');
-    var comments_buttons = construct_buttons('comments');
-  
+    try {
+      var reason_buttons = construct_buttons('accept');
+      var decline_buttons = construct_buttons('decline');
+      var comments_buttons = construct_buttons('comments');
+    } catch (e) {
+      
+    }
+
     $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
     $(decline_buttons).insertAfter(injects.decline.comment);
   
@@ -624,8 +627,7 @@ function inject_init() {
     var html = '';
     switch (type) {
       case "comments":
-        var comments = OwnReasons.comments.split(';');
-        html += each_type_new('Comments', comments);
+        html += each_type_new('Comments', OwnReasons.comments);
         html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
         break;
   
@@ -707,6 +709,9 @@ function inject_init() {
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
       var count = 0;
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
+      $.each(buttons, function (key,val) {
+        console.log([key,val]);
+      });
       buttons.forEach(function (item) {
         if (count === 0) {
           snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';

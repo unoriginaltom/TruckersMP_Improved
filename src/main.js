@@ -194,7 +194,6 @@ function saveSettings(storage, data, with_message) {
     } else {
       if (with_message) {
         alert('Settings are saved! Please reload all TruckersMP tabs in order to fetch new settings.');
-        window.close();
       }
     }
   });

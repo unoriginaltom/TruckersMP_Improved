@@ -3,8 +3,6 @@ function inject_init() {
   function save_options(with_message = true, data = false) {
     var steamapi_group = $('#steamapi_group');
     steamapi_group.removeClass('has-error');
-
-    console.log(data);
     
     if (!data) {
       data = {};
@@ -64,7 +62,7 @@ function inject_init() {
     if (steamapi_error) {
       return;
     }
-    
+
     if (data.settings.local_storage || !syncAllowed) {
       if (data.settings.local_storage && syncAllowed) {
         saveSettings(chrome.storage.sync, {
@@ -79,7 +77,7 @@ function inject_init() {
     }
     
     function getReasons(reason) {
-      var obj = {};
+      var obj = [];
       $.each($('#'+reason).find(".option-section"), function (key, div) {
         var arr;
         if($(div).data("columns") == 2) {
@@ -97,7 +95,6 @@ function inject_init() {
         });
         obj[key] = arr;
       });
-      console.log(obj);
       return obj;
     }
   }
