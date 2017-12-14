@@ -40,22 +40,10 @@ function inject_init() {
     var reasonMax = 190;
     $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
     var reasonCount = $('#reasonCount');
-    try {
-      var reason_buttons = construct_buttons('accept');
-      var decline_buttons = construct_buttons('decline');
-      var comments_buttons = construct_buttons('comments');
-    } catch (e) {
-      console.error(e);
-    }
 
-    $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
-    $(decline_buttons).insertAfter(injects.decline.comment);
-  
-    if (comments_buttons.length > 0) {
-      var textArea = $('div.container.content').find('textarea[name=comment]');
-      $(textArea).css('margin-bottom', '10px');
-      $(textArea).parent().append(comments_buttons);
-    }
+    addButtons($('input[name=reason]'),'<div class="ban-reasons">' + construct_buttons('accept') + '</div>');
+    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons('comments'));
+
     var date_buttons = construct_dates(OwnDates);
     $(date_buttons).insertAfter(injects.date_buttons);
     $('input[id="perma.false"]').prop("checked", true);
@@ -99,13 +87,13 @@ function inject_init() {
         sp = (settings.separator) ? settings.separator : ',';
     
       if ($(this).data('place') == 'before') {
-        injects.accept.reason.val(decodeURI($(this).data("text")) + ' ' + reason_val.trim() + ' ');
+        injects.accept.reason.val(decodeURI(String($(this).data("text"))) + ' ' + reason_val.trim() + ' ');
       } else if ($(this).data('place') == 'after-wo') {
-        injects.accept.reason.val(reason_val.trim() + ' ' + decodeURI($(this).data("text")) + ' ');
+        injects.accept.reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data("text"))) + ' ');
       } else if (reason_val.length) {
-        injects.accept.reason.val(reason_val.trim() + sp + ' ' + decodeURI($(this).data("text")) + ' ');
+        injects.accept.reason.val(reason_val.trim() + sp + ' ' + decodeURI(String($(this).data("text"))) + ' ');
       } else {
-        injects.accept.reason.val(decodeURI($(this).data("text")) + ' ');
+        injects.accept.reason.val(decodeURI(String($(this).data("text"))) + ' ');
       }
       injects.accept.reason.focus();
       checkReasonLength();
@@ -160,6 +148,8 @@ function inject_init() {
   }
 
   function decline_modal_init() {
+    addButtons(injects.decline.comment, construct_buttons('decline'));
+
     injects.decline.form.on('submit', function (event) {
       var comment_check = injects.decline.comment.val();
       var error_style = {
@@ -181,15 +171,15 @@ function inject_init() {
     });
     $('.plusdecline').on('click', function (event) {
       event.preventDefault();
-      setReason(injects.decline.comment, decodeURI($(this).data("text")));
+      setReason(injects.decline.comment, decodeURI(String($(this).data("text"))));
 
       switch ($(this).data('action')) {
         case "negative":
-          document.getElementById('decline.rating.negative').checked = true;
+          $("input[id='decline.rating.negative']").prop("checked",true);
           break;
 
         case "positive":
-          document.getElementById('decline.rating.positive').checked = true;
+          $("input[id='decline.rating.positive']").prop("checked", true);
           break;
       }
       injects.decline.comment.focus();
@@ -277,8 +267,8 @@ function inject_init() {
           min = min * 60;
           start = hrs + min + sec;
         }
-      } else if (params.time_continue) {
-        start = params.time_continue[0];
+      } else if (params['time_continue']) {
+        start = params['time_continue'][0];
       } else {
         start = params[0];
       }
@@ -347,10 +337,10 @@ function inject_init() {
       url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
       type: 'GET',
       success: function (val) {
-        if (val.result.url_short === undefined || val.result.url_short === null) {
+        if (val.result['url_short'] === undefined || val.result['url_short'] === null) {
           alert('Looks like we have a problem with URL shortener... Try again!');
         } else {
-          copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
+          copyToClipboard('https://jmdev.ca/url/?l=' + val.result['url_short']);
 
           if (paste) {
             msg = "Steam info just saved! Check your clipboard for the link!"
@@ -380,7 +370,7 @@ function inject_init() {
   function copyToClipboard(text) {
     const input = document.createElement('input');
     input.style.position = 'fixed';
-    input.style.opacity = 0;
+    input.style.opacity = "0";
     input.value = text;
     document.body.appendChild(input);
     input.select();
@@ -527,7 +517,7 @@ function inject_init() {
             return;
           }
 
-          var steam_name = escapeHTML(steam_data.response.players[0].personaname);
+          var steam_name = escapeHTML(steam_data.response['players'][0]['personaname']);
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
 
           $.ajax({
@@ -535,10 +525,10 @@ function inject_init() {
             type: "GET",
             success: function (tmp_data) {
               if (tmp_data !== true) {
-                injects.summary.perpetrator_link.after(' <img src="' + tmp_data.response.avatar + '" class="img-rounded" style="width: 32px; height: 32px;">');
+                injects.summary.perpetrator_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
                 injects.summary.perpetrator_link.wrap('<kbd>');
 
-                var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
+                var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
                 $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
 
                 injects.summary.perpetrator_label.css('text-align', 'right');
@@ -699,8 +689,7 @@ function inject_init() {
           break;
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-      var count = 0;
-      var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
+      var md = 12 / (Math.max(buttons.length,1));
       $.each(buttons, function (key,val) {
         snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
         if (Array.isArray(val)) {
@@ -757,6 +746,13 @@ function inject_init() {
     rateDecline.find("label[for='rating.negative']").attr("for", "decline.rating.negative");
   }
 
+  function addButtons(textArea, html) {
+    if (typeof textArea !== 'undefined' && html.length > 0) {
+      $(textArea).css('margin-bottom', '10px');
+      $(html).insertAfter(textArea);
+    }
+  }
+
   /*
       INIT SCRIPT
    */
@@ -791,7 +787,7 @@ function inject_init() {
   
   $('.pluscomment').on('click', function (event) {
     event.preventDefault();
-    setReason($('form').find('textarea[name=comment]'), decodeURI($(this).data("text")));
+    setReason($('form').find('textarea').not($('.modal-body').find('textarea')), decodeURI(String($(this).data("text"))));
   });
   
   $('button#comments_clear').on('click', function (event) {

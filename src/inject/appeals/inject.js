@@ -9,25 +9,31 @@ function inject_init() {
     modify: $('#confirm-modify')
   };
 
-  function construct_buttons(OwnReasons, type) {
+  function construct_buttons(type) {
     var html = '';
-    console.log(type);
     switch (type) {
       case "comments":
         html += each_type_new('Comments', OwnReasons.commentsAppeals);
         html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
         break;
-  
+
       case "declines":
         html += each_type_new('Declines', OwnReasons.declinesAppeals);
         html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
         break;
-  
+
       case "accepts":
         html += each_type_new('Accepts', OwnReasons.acceptsAppeals);
         html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
         break;
-  
+
+      case "reasons":
+        html += each_type_new('Reasons', OwnReasons.reasons);
+        html += each_type_new('Prefixes', OwnReasons.prefixes);
+        html += each_type_new('Postfixes', OwnReasons.postfixes);
+        html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
+        break;
+
       case "modify":
         html += each_type_new('Modify', OwnReasons.modifyAppeals);
         html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
@@ -66,7 +72,6 @@ function inject_init() {
         change = 'comment';
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-      var count = 0;
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
       $.each(buttons, function (key,val) {
         snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
@@ -84,7 +89,7 @@ function inject_init() {
       snippet += '</div></div></div></li></ul></div>';
       return snippet;
     }
-    
+
     return html;
   }
 
@@ -340,14 +345,18 @@ function inject_init() {
     function addButtons(textArea, html) {
       if (typeof textArea !== 'undefined' && html.length > 0) {
         $(textArea).css('margin-bottom', '10px');
-        $(textArea).parent().append(html);
+        $(html).insertAfter(textArea);
       }
     }
 
-    addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons(OwnReasons, "accepts"));
-    addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons(OwnReasons, "modify"));
-    addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons(OwnReasons, "declines"));
-    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons(OwnReasons, "comments"));
+    addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons("accepts"));
+    addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('reasons') + '</div>');
+    addButtons($("#datetimeselect"), construct_dates(OwnDates));
+    addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons("modify"));
+    addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons("declines"));
+    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons("comments"));
+
+
 
     $('.pluscomment').on('click', function (event) {
       event.preventDefault();
