@@ -57,17 +57,18 @@ function inject_init() {
   }
 
   // ===== Transform links =====
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(9) > a').each(function () {
+  $('table.table > tbody > tr > td:nth-child(9) > a').each(function () {
     $(this).addClass('btn btn-default btn-block btn-sm');
     $(this).text("View");
-    if (settings.viewreportblank)
+    if (settings.viewreportblank) {
       $(this).attr('target', '_blank');
       $('.claim').tooltip({
         title: "Press Ctrl to open report in the same tab",
       });
+    }
   });
 
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(10) > a').each(function () {
+  $('table.table > tbody > tr > td:nth-child(10) > a').each(function () {
     $(this).addClass('btn btn-primary btn-block btn-sm claim');
 
     var text = $(this).text().replace(" report", "").trim();
@@ -110,7 +111,7 @@ function inject_init() {
   });
 
   var columns_html = '<div><label style="margin-right: 5px;">Column visibility</label><div class="btn-group btn-group-xs" id="toggle_column">';
-  $('body > div.wrapper > div.container.content > div.row.padding-top-5 > table > thead > tr > th').each(function (index, el) {
+  $('table.table th').each(function (index, el) {
     var text = $.trim($(el).text());
     if (text) {
       columns_html += '<button type="button" class="btn btn-primary toggle-vis" data-column="' + index + '">' + text + '</button>'
@@ -127,7 +128,7 @@ function inject_init() {
     stateSave: true,
     fixedHeader: true,
     order: [
-      [7, "desc"]
+      [7, "asc"]
     ],
     columnDefs: [{
       "targets": 'no-sort',

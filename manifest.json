@@ -111,21 +111,6 @@
 
     {
       "matches": [
-        "https://truckersmp.com/user/*"
-      ],
-      "css": [
-        "src/inject/profile/inject.css"
-      ],
-      "js": [
-        "js/jquery.min.js",
-        "js/bootstrap.min.js",
-        "src/main.js",
-        "src/inject/profile/inject.js"
-      ]
-    },
-
-    {
-      "matches": [
         "https://truckersmp.com/appeals/view/*"
       ],
       "css": [
@@ -143,17 +128,35 @@
 
     {
       "matches": [
+        "https://truckersmp.com/appeals/adminindex*"
+      ],
+      "css": [
+        "css/datatables.min.css"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/bootstrap.min.js",
+        "js/dataTables.min.js",
+        "js/moment-with-locales.min.js",
+        "src/main.js",
+        "src/inject/appeals-table/inject.js"
+      ]
+    },
+
+    {
+      "matches": [
         "https://truckersmp.com/user/*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/user/search*",
-        "https://truckersmp.com/user/edit*",
-        "https://truckersmp.com/user/appeals*"
+        "https://truckersmp.com/user/edit/*",
+        "https://truckersmp.com/user/appeals/*"
       ],
       "js": [
         "js/jquery.min.js",
+        "js/bootstrap.min.js",
         "src/main.js",
-        "src/inject/user/inject.js"
+        "src/inject/profile/inject.js"
       ]
     }
   ]
