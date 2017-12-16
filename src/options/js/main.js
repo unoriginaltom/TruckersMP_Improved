@@ -124,6 +124,7 @@ function inject_init() {
 
     function set_options(items) {
       try {
+        console.log(items);
         $('#steamapi').val(items.steamapi);
   
         items.OwnReasons.prefixes.forEach(function (val) {
@@ -217,7 +218,6 @@ function inject_init() {
       } catch (e) {
         console.error(e);
       }
-      
     }
     loadSettings(set_options);
   }
@@ -271,6 +271,7 @@ function inject_init() {
           }
           save_options(false, _data);
           alert("Imported and saved! Nice job!\nYou can review new settings right now.");
+          $(".option-section").remove();
           restore_options();
         }
       } else {
@@ -334,7 +335,11 @@ function inject_init() {
 
       vLink.setAttribute('href', vUrl);
       vLink.setAttribute('download', vName);
+      vLink.style.display = "none";
+      
+      document.body.appendChild(vLink);
       vLink.click();
+      document.body.removeChild(vLink);
     });
   });
 
