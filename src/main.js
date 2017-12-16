@@ -188,6 +188,8 @@ function loadSettings(callBack) {
 }
 
 function saveSettings(storage, data, with_message) {
+  data.OwnReasons = parseItems(data.OwnReasons);
+  console.log(data);
   storage.set(data, function () {
     if (chrome.runtime.lastError) {
       alert('Save settings ERROR!\n\t\n\t' + chrome.runtime.lastError.message + '\n\t\n\tFor save large data you can use "Local Storage".');

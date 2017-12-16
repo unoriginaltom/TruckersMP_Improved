@@ -418,42 +418,55 @@ function inject_init() {
   }
 
   function bans_count_fetch() {
+    
+    function getUnbanTime(unban_time_td, banned_reason_td) {
+      var unban_time;
+      if (unban_time_td.indexOf("Today") !== -1) {
+        unban_time = now;
+      } else if (unban_time_td.indexOf("Tomorrow") !== -1) {
+        unban_time = now.add(1, 'd');
+      } else if (unban_time_td.indexOf("Yesterday") !== -1) {
+        unban_time = now.add(1, 'd');
+      } else {
+        nb_parts = unban_time_td.split(" ").length;
+        if (nb_parts = 3) {
+          unban_time = moment(unban_time_td, "DD MMM HH:mm");
+        } else if (nb_parts == 4) {
+          unban_time = moment(unban_time_td, "DD MMM YYYY HH:mm");
+        } else {
+          unban_time = moment(unban_time_td);
+          console.log([
+            unban_time_td,
+            nb_parts,
+            unban_time
+          ]);
+        }
+      }
+      if (unban_time.year() == '2001') {
+        unban_time.year(now.year());
+      }
+      if (banned_reason_td == '@BANBYMISTAKE') {
+        unban_time.year('1998');
+      }
+      
+      return unban_time;
+    }
+    
     var bans_count = 0;
     var expired_bans_count = 0;
     var nb_parts;
     injects.bans.table.each(function () {
-      var banned_time_td = $(this).find('td:nth-child(2)').text();
+      var ban_time_td = $(this).find('td:nth-child(1)').text();
+      var unban_time_td = $(this).find('td:nth-child(2)').text();
       var banned_reason_td = $(this).find('td:nth-child(3)').text();
-      var banned_time;
-      if (banned_time_td.indexOf("Today") !== -1) {
-        banned_time = now;
-      } else if (banned_time_td.indexOf("Tomorrow") !== -1) {
-        banned_time = now.add(1, 'd');
-      } else if (banned_time_td.indexOf("Yesterday") !== -1) {
-        banned_time = now.add(1, 'd');
+      var unban_time;
+      if (unban_time_td == "Never") {
+        unban_time = getUnbanTime(ban_time_td, banned_reason_td).add(1, 'y');
       } else {
-        nb_parts = banned_time_td.split(" ").length;
-        if (nb_parts = 3) {
-          banned_time = moment(banned_time_td, "DD MMM HH:mm");
-        } else if (nb_parts == 4) {
-          banned_time = moment(banned_time_td, "DD MMM YYYY HH:mm");
-        } else {
-          banned_time = moment(banned_time_td);
-          console.log([
-            banned_time_td,
-            nb_parts,
-            banned_time
-          ]);
-        }
+        unban_time = getUnbanTime(unban_time_td, banned_reason_td);
       }
-      if (banned_time.year() == '2001') {
-        banned_time.year(now.year());
-      }
-      if (banned_reason_td == '@BANBYMISTAKE') {
-        banned_time.year('1998');
-      }
-      if (banned_time.isValid()) {
-        if (Math.abs(banned_time.diff(now, 'd')) >= 365) {
+      if (unban_time.isValid()) {
+        if (Math.abs(unban_time.diff(now, 'd')) >= 365) {
           $(this).hide();
           $(this).addClass('expired_bans');
           $(this).find('td').css('color', '#555');
