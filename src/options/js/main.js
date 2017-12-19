@@ -336,7 +336,7 @@ function inject_init() {
       vLink.setAttribute('href', vUrl);
       vLink.setAttribute('download', vName);
       vLink.style.display = "none";
-      
+
       document.body.appendChild(vLink);
       vLink.click();
       document.body.removeChild(vLink);
