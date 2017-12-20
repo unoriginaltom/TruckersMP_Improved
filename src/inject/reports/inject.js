@@ -103,19 +103,20 @@ function inject_init() {
       injects.accept.reason.val("");
     });
     // ===== Timing FTW! =====
+    var unban_time = moment.utc();
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
       var number = $(this).data('number');
       switch (number) {
         case 'clear':
-          now = moment.utc();
+          unban_time = moment.utc();
           break;
         default:
           var key = $(this).data('key');
-          now.add(number, key);
+          unban_time.add(number, key);
           break;
       }
-      injects.accept.time.val(now.format("YYYY/MM/DD HH:mm"));
+      injects.accept.time.val(unban_time.format("YYYY/MM/DD HH:mm"));
     });
   
     //Ban reason length check
@@ -421,6 +422,7 @@ function inject_init() {
     
     function getUnbanTime(unban_time_td, banned_reason_td) {
       var unban_time;
+      now = moment.utc();
       if (unban_time_td.indexOf("Today") !== -1) {
         unban_time = now;
       } else if (unban_time_td.indexOf("Tomorrow") !== -1) {
