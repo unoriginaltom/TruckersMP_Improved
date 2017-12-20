@@ -13,14 +13,14 @@ var default_OwnReasons = {
   prefixes: [["Intentional"]],
   reasons: [["Ramming","Blocking","Incorrect Way","Insulting Users","Insulting Administration"], ["Change your TruckersMP name and make a ban appeal"], ["Horn Spamming","Inappropriate License/Interior Plates","Impressionating Administration","Racing","Inappropriate Overtaking","Profanity", "Chat Spamming","Hacking","Speedhacking","Bug Abusing","Inappropriate Parking","Unsupported Mods","Ban Evading","Driving w/o lights","Exiting Map Boundaries","Inappropriate Convoy Management","Bullying/Harrassment","Trolling","CB Abuse","Car w/ trailer","Excessive Save Editing","Reckless Driving"]],
   postfixes: [["// 1 m due to history","// 3 m due to history"],["// Perma due to history"]],
-  declines: [["Only a kickable offence; Wrong ID","Already banned for this evidence"]],
-  declinesNegative: [["Insufficient Evidence","No evidence","No offence"]],
-  declinesPositive: [["Proof added to existing ban"]],
-  comments: [["Passed to the right admin"]],
-  declinesAppeals: [[]],
-  acceptsAppeals: [["The ban will be marked with \"@BANBYMISTAKE\" and will be removed","This time I will give you a chance, however be careful in the future!"]],
-  commentsAppeals: [["Change your tag and prove with a screenshot that it was changed"]],
-  modifyAppeals: [["Due to the lack of violations in your history I shorten your ban period. However be careful in the future and follow the rules of MP.","Due to newly emerged circumstances the period of the ban increased."]]
+  declines: [{"Only a kickable offence": "Only a kickable offence", "Wrong ID": "Wrong ID", "Already banned for this evidence": "Already banned for this evidence"}],
+  declinesNegative: [{"Insufficient Evidence": "Insufficient Evidence", "No evidence": "No evidence", "No offence": "No offence"}],
+  declinesPositive: [{"Proof added to existing ban": "Proof added to existing ban"}],
+  comments: [{"Passed to the right admin": "Passed to the right admin"}],
+  declinesAppeals: [{}],
+  acceptsAppeals: [{"@BANBYMISTAKE": "The ban will be marked with \"@BANBYMISTAKE\" and will be removed", "Be careful in the future": "This time I will give you a chance, however be careful in the future!"}],
+  commentsAppeals: [{"Change your tag": "Change your tag and prove with a screenshot that it was changed"}],
+  modifyAppeals: [{"Ban decreased": "Due to the lack of violations in your history I shorten your ban period. However be careful in the future and follow the rules of MP.", "Ban increased": "Due to newly emerged circumstances the period of the ban increased."}]
 };
 
 var default_OwnDates = {
