@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.7",
+  "version": "1.7.2",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "icons": {
@@ -12,7 +12,7 @@
   "minimum_chrome_version": "42",
   "applications": {
     "gecko": {
-      "id": "tmpimproved@bigmp.ru",
+      "id": "{9d134ea1-d324-4dff-bed6-170bdef5e439}",
       "strict_min_version": "48.0",
       "update_url": "https://bigmp.ru/improved/firefox_update/updates.json"
     }
