@@ -3,7 +3,7 @@ function inject_init() {
   function save_options(with_message = true, data = false) {
     var steamapi_group = $('#steamapi_group');
     steamapi_group.removeClass('has-error');
-    
+
     if (!data) {
       data = {};
       data.steamapi = $('#steamapi').val();
@@ -47,7 +47,9 @@ function inject_init() {
     };
 
     var steamapi_error = false;
+    if (data.steamapi === 'none') data.steamapi = ''
     if (data.steamapi) {
+      alert(data.steamapi)
       if (data.steamapi.length !== 32) {
         steamapi_group.addClass('has-error');
         $('#steamapi_body').addClass('bg-danger');
@@ -75,12 +77,12 @@ function inject_init() {
     } else {
       saveSettings(chrome.storage.sync, new_data, with_message);
     }
-    
+
     function getReasons(reason) {
       var obj = [];
-      $.each($('#'+reason).find(".option-section"), function (key, div) {
+      $.each($('#' + reason).find(".option-section"), function (key, div) {
         var arr;
-        if($(div).data("columns") == 2) {
+        if ($(div).data("columns") == 2) {
           arr = {}
         } else {
           arr = [];
@@ -126,7 +128,7 @@ function inject_init() {
       try {
         console.log(items);
         $('#steamapi').val(items.steamapi);
-  
+
         items.OwnReasons.prefixes.forEach(function (val) {
           var parent = createSection($('#prefixes'), 1);
           val.forEach(function (text) {
@@ -145,7 +147,7 @@ function inject_init() {
             createField(parent, text);
           });
         });
-  
+
         items.OwnReasons.declines.forEach(function (val) {
           var parent = createSection($('#declines'), 2);
           $.each(val, function (key, text) {
@@ -170,7 +172,7 @@ function inject_init() {
             createField(parent, key, text);
           });
         });
-  
+
         items.OwnReasons.declinesAppeals.forEach(function (val) {
           var parent = createSection($('#declinesAppeals'), 2);
           $.each(val, function (key, text) {
@@ -195,22 +197,22 @@ function inject_init() {
             createField(parent, key, text);
           });
         });
-  
+
         $('#white').val(items.OwnDates.white);
         $('#yellow').val(items.OwnDates.yellow);
         $('#red').val(items.OwnDates.red);
         $('#other').val(items.OwnDates.other);
-  
+
         $('#separator').val(items.settings.separator);
         $('#own_comment').val(items.settings.own_comment);
-  
+
         var local_storage = $('#local_storage');
         local_storage.prop("checked", items.settings.local_storage);
         if (!syncAllowed) {
           local_storage.prop("disabled", true);
           $('.storage-settings').addClass('panel-default').removeClass('panel-success');
         }
-  
+
         $('#img_previews').prop("checked", items.settings.img_previews);
         $('#wide').prop("checked", items.settings.wide);
         $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
@@ -221,8 +223,9 @@ function inject_init() {
     }
     loadSettings(set_options);
   }
-  
+
   var import_file = $('#import_file');
+
   function import_data(event) {
     if (confirm("BEWARE! All of your data will be lost after importing!\nDo you really want to do that?")) {
       $('#importExportModal').modal('hide');
@@ -234,26 +237,39 @@ function inject_init() {
       import_file.value = '';
     }
   }
-  
+
   function createField(parent, input1 = "", input2 = "") {
-    var obj = "<div class='sortable-div'>";
-    
+    var obj = "<div class='sortable-div panel-body'>";
+
     if (parent.parent().data("columns") == 2) {
       obj += "<textarea style='width: 32%' id='input1'/><textarea style='width: 60%' id='input2'/>";
     } else {
       obj += "<textarea style='width: 93%;' id='input1'/>";
     }
     obj += "<button type='button' class='btn btn-danger delete-field'>X</button></div>";
-    $(obj).insertBefore(parent);
+    var $obj = $(obj).hide()
+
+    $obj.insertBefore(parent);
+    $obj.slideDown('fast');
+
     $("#input1").val(input1).removeAttr("id");
     $("#input2").val(input2).removeAttr("id");
   }
-  
+
   function createSection(parent, numbercolumns) {
-    parent.append("<div class='option-section' data-columns="+numbercolumns+"><div class='section-buttons'><button class='delete-section btn btn-danger'>Delete section</button><button class='create-field btn btn-success'>Create field</button></div></div>");
+    var $new = $(`
+     <div class='option-section panel panel-default' data-columns="` + numbercolumns + `">
+        <div class='section-buttons panel-footer'>
+          <button class='create-field btn btn-success'>Create field</button><button class='delete-section btn btn-danger'>Delete section</button>
+        </div>
+      </div>
+    `).hide()
+
+    parent.append($new);
+    $new.slideDown('fast');
     return $(parent).find("div:last");
   }
-  
+
   function _imp() {
     var _data = JSON.parse(this.result);
 
@@ -301,6 +317,8 @@ function inject_init() {
 
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
+    $('div.content-body').fadeIn('slow')
+    $('div.loadingoverlay').fadeOut('slow')
   });
 
   $('.version_detected').on('click', function (event) {
@@ -347,31 +365,53 @@ function inject_init() {
     event.preventDefault();
     import_file.click();
   });
-  
+
   var body = $("body");
-  body.on("click", ".delete-field",function () {
-    $(this).parent().remove();
+  body.on("click", ".delete-field", function (event) {
+    event.preventDefault();
+
+    if ($(this).siblings('textarea').val().length !== 0) {
+      if (!confirm('Are you sure you want to delete a non-empty field?')) return;
+    }
+
+    var $target = $(this).parent()
+    $target.slideUp('fast', function () {
+      $target.remove();
+    })
   });
+
   body.on("click", ".create-field", function (event) {
     event.preventDefault();
     if ($(this).parent().data("columns") == 2) {
-      createField($(this).parent(),"","");
+      createField($(this).parent(), "", "");
     } else {
       createField($(this).parent());
     }
   });
-  body.on("click", ".delete-section", function () {
-    if(confirm("Are you sure you want to delete the WHOLE section?")) {
-      $(this).parent().parent().remove();
+
+  body.on("click", ".delete-section", function (event) {
+    event.preventDefault();
+    if (confirm("Are you sure you want to delete the WHOLE section?")) {
+      var $target = $(this).parent().parent()
+      $target.slideUp('fast', function () {
+        $target.remove();
+      })
     }
   });
+
   $(".create-section").click(function (event) {
     event.preventDefault();
     var div = $(this).parent().parent().find("div > div:first");
-    var section = createSection(div,div.data("columns"));
+    var section = createSection(div, div.data("columns"));
     createField(section);
   });
 
-  
+
   restore_options();
 }
+
+window.onbeforeunload = function (e) {
+  var dialogText = 'Check twice before closing the tab!'
+  e.returnValue = dialogText
+  return e
+};
