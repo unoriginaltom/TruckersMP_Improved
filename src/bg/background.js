@@ -1,6 +1,5 @@
 chrome.runtime.onMessage.addListener(
   function (request) {
-    // console.log(request);
     if (request.msg) {
       var notification = {
         'type': 'basic',
@@ -8,13 +7,13 @@ chrome.runtime.onMessage.addListener(
         'title': 'This is a notification',
         'message': request.msg,
         'contextMessage': 'Happy trucking!'
-      }
+      };
       chrome.notifications.create(notification)
-    };
+    }
   }
-)
+);
 
-chrome.runtime.onInstalled.addListener(function (object) {
+chrome.runtime.onInstalled.addListener(function () {
   val_init().then(function (v) {
     if (!v.steamapi) {
       if (chrome.runtime.openOptionsPage) {
@@ -29,18 +28,5 @@ chrome.runtime.onInstalled.addListener(function (object) {
     }
   }).catch(function (v) {
     alert('Oops... -> ' + v)
-  })
-
-  // chrome.browserAction.setBadgeText({'text': chrome.runtime.getManifest().version});
-  storage.set({
-    last_version: chrome.runtime.getManifest().version
-  })
-})
-
-
-function val_init() {
-  var steamapi, last_version
-  return new Promise(function (resolve, reject) {
-    loadSettings(resolve)
-  })
-}
+  });
+});

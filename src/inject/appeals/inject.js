@@ -1,44 +1,43 @@
-if (!chrome.extension.sendMessage) {
-  inject_init('firefox');
-} else {
-  chrome.extension.sendMessage({}, function (response) {
-    var readyStateCheckInterval = setInterval(function () {
-      if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-        inject_init('chrome');
-      }
-    }, 10);
-  });
-}
-
-function inject_init(browser) {
+function inject_init() {
   var steam_id = $('input[name="steam_id"]').val();
+  var summary = $('#summary');
+  var injects = {
+    header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
+    spinner: $("#loading-spinner"),
+    accept: $('#confirm-accept'),
+    decline: $('#confirm-decline'),
+    modify: $('#confirm-modify')
+  };
 
-  function construct_buttons(OwnReasons, if_decline, if_modify, isComments) {
+  function construct_buttons(type) {
     var html = '';
-    if (!isComments) {
-      if (!if_modify && typeof OwnReasons.declinesAppeals !== 'undefined' && typeof OwnReasons.acceptsAppeals !== 'undefined') {
-        if (if_decline) {
-          var declines = OwnReasons.declinesAppeals.split(';');
-          html += each_type_new('Declines', declines);
-          html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
-        } else {
-          var accepts = OwnReasons.acceptsAppeals.split(';');
-          html += each_type_new('Accepts', accepts);
-          html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
-        }
-      }
-      if (if_modify && typeof OwnReasons.modifyAppeals !== 'undefined') {
-        var modify = OwnReasons.modifyAppeals.split(';');
-        html += each_type_new('Modify', modify);
-        html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
-      }
-    } else {
-      if (typeof OwnReasons.commentsAppeals !== 'undefined') {
-        var comments = OwnReasons.commentsAppeals.split(';');
-        html += each_type_new('Comments', comments);
+    switch (type) {
+      case "comments":
+        html += each_type_new('Comments', OwnReasons.commentsAppeals);
         html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
-      }
+        break;
+
+      case "declines":
+        html += each_type_new('Declines', OwnReasons.declinesAppeals);
+        html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+        break;
+
+      case "accepts":
+        html += each_type_new('Accepts', OwnReasons.acceptsAppeals);
+        html += '<button type="button" class="btn btn-link" id="accept_clear">Clear</button>';
+        break;
+
+      case "reasons":
+        html += each_type_new('Reasons', OwnReasons.reasons);
+        html += each_type_new('Prefixes', OwnReasons.prefixes);
+        html += each_type_new('Postfixes', OwnReasons.postfixes);
+        html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
+        break;
+
+      case "modify":
+        html += each_type_new('Modify', OwnReasons.modifyAppeals);
+        html += '<button type="button" class="btn btn-link" id="modify_clear">Clear</button>';
+        break;
     }
 
     function each_type_new(type, buttons) {
@@ -73,23 +72,24 @@ function inject_init(browser) {
         change = 'comment';
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-      var count = 0;
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-      buttons.forEach(function (item, i, arr) {
-        if (count === 0) {
-          snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
-        }
-        if (item.trim() == '|') {
-          snippet += '</ul></div>';
-          count = 0;
+      $.each(buttons, function (key,val) {
+        snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+        if (Array.isArray(val)) {
+          val.forEach(function (item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+ encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+          });
         } else {
-          snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
-          ++count;
+          $.each(val, function (title, item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+          });
         }
+        snippet += '</ul></div>';
       });
-      snippet += '</div></div></div></li></ul></div>     ';
+      snippet += '</div></div></div></li></ul></div>';
       return snippet;
     }
+
     return html;
   }
 
@@ -110,164 +110,13 @@ function inject_init(browser) {
     });
   }
 
-  val_init().then(function (v) {
-    if (v.OwnReasons == null) {
-      alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage();
-      } else {
-        window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-      }
+  function setReason(reason, reason_val) {
+    if ($(reason).val() == "") {
+      $(reason).val(reason_val);
     } else {
-      OwnReasons = v.OwnReasons;
-      last_version = v.last_version;
-      steamapi = v.steamapi;
-      settings = v.settings;
-      init();
-      dropdown_enchancements();
-
-      function setReason(reason, reason_val) {
-        $(reason).val($(reason).val() + ' ' + reason_val + ' ');
-        $(reason).focus();
-      }
-      $('.pluscomment').on('click', function (event) {
-        event.preventDefault();
-        setReason($('form').find('textarea[name=comment]'), $(this).html());
-      });
-      $('.plusaccept').on('click', function (event) {
-        event.preventDefault();
-        setReason($('#confirm-accept').find('textarea[name=comment]'), $(this).html());
-      });
-      $('.plusmodify').on('click', function (event) {
-        event.preventDefault();
-        setReason($('#confirm-modify').find('textarea[name=comment]'), $(this).html());
-      });
-      $('.plusdecline').on('click', function (event) {
-        event.preventDefault();
-        setReason($('#confirm-decline').find('textarea[name=comment]'), $(this).html());
-      });
-
-      $('button#comments_clear').on('click', function (event) {
-        event.preventDefault();
-        $('form').find('textarea[name=comment]').val("");
-      });
-      $('button#accept_clear').on('click', function (event) {
-        event.preventDefault();
-        $('#confirm-accept').find('textarea[name=comment]').val("");
-      });
-      $('button#modify_clear').on('click', function (event) {
-        event.preventDefault();
-        $('#confirm-modify').find('textarea[name=comment]').val("");
-      });
-      $('button#decline_clear').on('click', function (event) {
-        event.preventDefault();
-        $('#confirm-decline').find('textarea[name=comment]').val("");
-      });
-
+      $(reason).val($(reason).val() + ' ' + reason_val);
     }
-  }).catch(function (v) {
-    console.error(v);
-  });
-
-  function val_init() {
-    var steamapi, OwnReasons, last_version;
-    return new Promise(function (resolve, reject) {
-      loadSettings(resolve);
-    });
-  }
-
-  function init() {
-    var version = chrome.runtime.getManifest().version;
-
-    $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>');
-
-    var bans_template = `<div class="col-md-6 col-xs-12">
-            <h2>Latest 5 bans</h2>
-            <h1 id="loading" class="text-center">Loading...</h1>
-                <div class="table-responsive">
-                    <table class="table table-condensed table-hover" id="bans-table">
-                        <tbody>
-                        </tbody>
-                    </table>
-                </div>
-            </div>`;
-    var table_wrap = '<div id="bans" class="row"><div class="col-md-6 col-xs-12" id="summary"></div></div>';
-
-    $('body > div.wrapper > div.container.content > div > table').addClass('table-condensed table-hover');
-    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(1)').removeAttr('style');
-    $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function (index, el) {
-      $(this).css('font-weight', 'bold');
-    });
-    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('In-game Nick');
-
-    $('body > div.wrapper > div.container.content > div > h2').remove();
-    $('.table').wrap(table_wrap);
-    $(bans_template).insertAfter('#summary');
-    $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
-
-    var steam_id = $('#confirm-modify > div > div > form > div.modal-body > div:nth-child(3) > input').val();
-
-    $.ajax({
-      url: "https://api.truckersmp.com/v2/bans/" + steam_id,
-      type: 'GET',
-      success: function (val) {
-        $('#bans-table > tbody:last-child').append("<tr style=\"font-weight: bold;\"><th>Banned</th><th>Expires</th><th>Reason</th><th>By</th><th>Active</th></tr>");
-        $(val.response).each(function () {
-          var row;
-          row += '<tr>';
-
-          this.timeAdded = new moment(this.timeAdded);
-          this.timeAdded = this.timeAdded.format("DD MMM YYYY HH:mm");
-          row += "<td>" + this.timeAdded + "</td>";
-
-          if (this.expiration === null) {
-            this.expiration = "Never"
-          } else {
-            this.expiration = new moment(this.expiration);
-            this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
-          }
-          row += "<td>" + this.expiration + "</td>";
-
-          row += "<td class='autolink'>" + this.reason + "</td>";
-          row += "<td><a href='/user/" + this.adminID + "' target='_blank'>" + this.adminName + "</a></td>";
-
-          if (this.active == false) {
-            this.active = 'times';
-          } else if (this.active == true) {
-            this.active = 'check';
-          }
-          row += "<td><i class='fa fa-" + this.active + "'></i></td>";
-
-          row += '</tr>';
-          $('#bans-table > tbody:last-child').append(row);
-        });
-        $('#loading').remove();
-        content_links();
-        table_impoving();
-        aftermath();
-      },
-      error: function (val) {
-        // console.log(val);
-      }
-    });
-
-    function addButtons(textArea, html) {
-      if (typeof textArea !== 'undefined' && html.length > 0) {
-        $(textArea).css('margin-bottom', '10px');
-        $(textArea).parent().append(html);
-      }
-    }
-
-    addButtons($('#confirm-accept').find('textarea[name=comment]'), construct_buttons(OwnReasons, false));
-    addButtons($('#confirm-modify').find('textarea[name=comment]'), construct_buttons(OwnReasons, false, true));
-    addButtons($('#confirm-decline').find('textarea[name=comment]'), construct_buttons(OwnReasons, true));
-    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons(OwnReasons, false, false, true));
-
-    if ($('div.container.content > div.row').children('a.btn').length == 0) {
-      var select = $('select[name=visibility]');
-      $(select).find('option:selected').removeProp('selected');
-      $(select).find('option[value=Private]').prop('selected', 'selected');
-    }
+    $(reason).focus();
   }
 
   function escapeHTML(s) {
@@ -284,14 +133,14 @@ function inject_init(browser) {
         success: function (val) {
           if (val === undefined) {
             $("#loading-error").show();
-            $("#loading-spinner").hide();
-            blink('#loading-error');
+            injects.spinner.hide();
             return;
           }
           var player_data = val;
+          var tmpname = summary.find('table > tbody > tr:nth-child(2) > td:nth-child(2)');
           var steam_name = escapeHTML(player_data.response.players[0].personaname);
-          $('#summary > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
-          $('#summary > table > tbody > tr:nth-child(2) > td:nth-child(2)').html('<kbd>' + $('#summary > table > tbody > tr:nth-child(2) > td:nth-child(2)').text() + '</kbd>');
+          summary.find('table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
+          tmpname.html('<kbd>' + tmpname.text() + '</kbd>');
 
           var steam_link = '<tr><td>Steam</td><td> <a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank"><kbd>' + steam_name + '</kbd></a> <img src="' + player_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
           $(steam_link).insertAfter('#summary > table > tbody > tr:nth-child(2)');
@@ -307,25 +156,9 @@ function inject_init(browser) {
   }
 
   function aftermath() {
-    $(function () {
-      $('#go_to_options').on('click', function (event) {
-        event.preventDefault();
-        if (chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-        }
-      });
-
-      $('#version_detected').on('click', function (event) {
-        event.preventDefault();
-        window.open(chrome.runtime.getURL('src/options/new_version.html'), "_blank");
-      });
-    });
-
     $(document).prop('title', $('table.table > tbody > tr:nth-child(1) > td:nth-child(2) > a').text() + '\'s Ban Appeal - TruckersMP');
 
-    $(".comment > p").each(function (index, el) {
+    $(".comment > p").each(function () {
       $('<hr style="margin: 10px 0 !important;">').insertAfter(this);
       $(this).wrap("<blockquote></blockquote>");
       if (!$(this).text().length) {
@@ -345,7 +178,7 @@ function inject_init(browser) {
       });
     });
 
-    $("#loading-spinner").remove();
+    injects.spinner.remove();
   }
 
   String.prototype.contains = function (needle) {
@@ -383,16 +216,15 @@ function inject_init(browser) {
 
     $('a.jmdev_ca').on('click', function (event) {
       event.preventDefault();
-      $("#loading-spinner").show();
+      injects.spinner.show();
       var link = encodeURIComponent($(this).data("link"));
       var length = ($(this).data("link")).length;
-      // console.log(chrome);
       if (length < 30) {
         copyToClipboard($(this).data("link"));
         chrome.runtime.sendMessage({
           msg: "This URL is short enough. Check your clipboard!"
         });
-        $("#loading-spinner").hide();
+        injects.spinner.hide();
       } else {
 
         $.ajax({
@@ -413,7 +245,7 @@ function inject_init(browser) {
             alert('Looks like we have a problem with URL shortener... Try again!');
           },
           complete: function () {
-            $("#loading-spinner").hide();
+            injects.spinner.hide();
           }
         });
       }
@@ -442,5 +274,132 @@ function inject_init(browser) {
       $('label[for=\'perma.true\']').removeClass('text-danger').removeClass('lead').removeClass('text-uppercase');
     }
   }
-  permcheck();
+
+  function init() {
+    var bans_template = `<div class="col-md-6 col-xs-12">
+          <h2>Latest 5 bans</h2>
+          <h1 id="loading" class="text-center">Loading...</h1>
+              <div class="table-responsive">
+                  <table class="table table-condensed table-hover" id="bans-table">
+                      <tbody>
+                      </tbody>
+                  </table>
+              </div>
+          </div>`;
+    var table_wrap = '<div id="bans" class="row"><div class="col-md-6 col-xs-12" id="summary"></div></div>';
+
+    $('body > div.wrapper > div.container.content > div > table').addClass('table-condensed table-hover');
+    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(1)').removeAttr('style');
+    $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
+      $(this).css('font-weight', 'bold');
+    });
+    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('In-game Nick');
+
+    $('body > div.wrapper > div.container.content > div > h2').remove();
+    $('.table').wrap(table_wrap);
+    $(bans_template).insertAfter('#summary');
+    $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
+
+    var steam_id = injects.modify.find('div > div > form > div.modal-body > div:nth-child(3) > input').val();
+
+    $.ajax({
+      url: "https://api.truckersmp.com/v2/bans/" + steam_id,
+      type: 'GET',
+      success: function (val) {
+        $('#bans-table').find('tbody:last-child').append("<tr style=\"font-weight: bold;\"><th>Banned</th><th>Expires</th><th>Reason</th><th>By</th><th>Active</th></tr>");
+        $(val.response).each(function () {
+          var row = '<tr>';
+
+          this.timeAdded = moment(this.timeAdded, "YYYY-MM-DD HH:mm:dd");
+          this.timeAdded = this.timeAdded.format("DD MMM YYYY HH:mm");
+          row += "<td>" + this.timeAdded + "</td>";
+
+          if (this.expiration === null) {
+            this.expiration = "Never"
+          } else {
+            this.expiration = moment(this.expiration, "YYYY-MM-DD HH:mm:dd");
+            this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
+          }
+          row += "<td>" + this.expiration + "</td>";
+
+          row += "<td class='autolink'>" + this.reason + "</td>";
+          row += "<td><a href='/user/" + this.adminID + "' target='_blank'>" + this.adminName + "</a></td>";
+
+          if (this.active == false) {
+            this.active = 'times';
+          } else if (this.active == true) {
+            this.active = 'check';
+          }
+          row += "<td><i class='fa fa-" + this.active + "'></i></td>";
+
+          row += '</tr>';
+          $('#bans-table').find('tbody:last-child').append(row);
+        });
+        $('#loading').remove();
+        content_links();
+        table_impoving();
+        aftermath();
+      }
+    });
+
+    function addButtons(textArea, html) {
+      if (typeof textArea !== 'undefined' && html.length > 0) {
+        $(textArea).css('margin-bottom', '10px');
+        $(html).insertAfter(textArea);
+      }
+    }
+
+    addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons("accepts"));
+    addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('reasons') + '</div>');
+    addButtons($("#datetimeselect"), construct_dates(OwnDates));
+    addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons("modify"));
+    addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons("declines"));
+    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons("comments"));
+
+
+
+    $('.pluscomment').on('click', function (event) {
+      event.preventDefault();
+      setReason($('form').find('textarea[name=comment]'), decodeURI($(this).data("text")));
+    });
+    $('.plusaccept').on('click', function (event) {
+      event.preventDefault();
+      setReason(injects.accept.find('textarea[name=comment]'), decodeURI($(this).data("text")));
+    });
+    $('.plusmodify').on('click', function (event) {
+      event.preventDefault();
+      setReason(injects.modify.find('textarea[name=comment]'), decodeURI($(this).data("text")));
+    });
+    $('.plusdecline').on('click', function (event) {
+      event.preventDefault();
+      setReason(injects.decline.find('textarea[name=comment]'), decodeURI($(this).data("text")));
+    });
+
+    $('button#comments_clear').on('click', function (event) {
+      event.preventDefault();
+      $('form').find('textarea[name=comment]').val("");
+    });
+    $('button#accept_clear').on('click', function (event) {
+      event.preventDefault();
+      injects.accept.find('textarea[name=comment]').val("");
+    });
+    $('button#modify_clear').on('click', function (event) {
+      event.preventDefault();
+      injects.modify.find('textarea[name=comment]').val("");
+    });
+    $('button#decline_clear').on('click', function (event) {
+      event.preventDefault();
+      injects.decline.find('textarea[name=comment]').val("");
+    });
+
+    if ($('div.container.content > div.row').find('a.btn').length == 0) {
+      var select = $('select[name=visibility]');
+      $(select).find('option:selected').removeProp('selected');
+      $(select).find('option[value=Private]').prop('selected', 'selected');
+    }
+    dropdown_enchancements();
+    permcheck();
+  }
+
+  init();
 }

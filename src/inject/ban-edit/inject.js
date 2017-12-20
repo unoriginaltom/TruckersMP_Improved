@@ -1,128 +1,50 @@
-var OwnReasons, settings;
-
-if (!chrome.extension.sendMessage) {
-  init();
-} else {
-  chrome.extension.sendMessage({}, function (response) {
-    var readyStateCheckInterval = setInterval(function () {
-      if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-
-        function val_init() {
-          return new Promise(function (resolve, reject) {
-            loadSettings(resolve);
-          });
-        }
-
-        val_init().then(function (v) {
-          if (v.OwnReasons == null) {
-            alert("Hello! Looks like this is your first try in TruckersMP Improved! I'll open the settings for you...");
-            if (chrome.runtime.openOptionsPage) {
-              chrome.runtime.openOptionsPage();
-            } else {
-              window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-            }
-          } else {
-            OwnReasons = v.OwnReasons;
-            settings = v.settings;
-          }
-          init();
-        }).catch(function (v) {
-          console.log(v)
-        });
-      }
-    }, 10);
-  });
-}
-
-function init() {
-  var date_buttons = `<div id="ownreasons_buttons">
-            <br>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default plusdate" data-plus="3hrs">+3 hrs</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-default plusdate" data-plus="1day">+1 day</button>
-                    <button type="button" class="btn btn-default plusdate" data-plus="3day">+3</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-warning plusdate" data-plus="1week">+1 week</button>
-                </div>
-                <div class="btn-group" role="group">
-                    <button type="button" class="btn btn-danger plusdate" data-plus="1month">+1 month</button>
-                    <button type="button" class="btn btn-danger plusdate" data-plus="3month">+3</button>
-                    <button type="button" class="btn btn-link plusdate" data-plus="back" id="current_ban_time"><b>Current Ban time</b></button>
-                    <button type="button" class="btn btn-link plusdate" data-plus="clear">Current UTC time</button>
-                </div>
-            </div>`;
-
-  var version = chrome.runtime.getManifest().version;
+function inject_init() {
   var is_add_ban = window.location.pathname.includes('/admin/ban/add/');
 
-  $('body > div.wrapper > div.breadcrumbs > div > h1').append(' Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading...">');
-
   var ban_time;
-  var empty_date;
+  var reason = $('input[name=reason]');
   if (is_add_ban) {
-    if (!ban_time) {
-      empty_date = true;
-    }
     ban_time = moment().utc();
   } else {
-    $('<p class="help-block">Only change a Reason? Click <a href="#" class="plusdate" data-plus="string" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a> and do not forget to post this ban in <a href="https://forum.truckersmp.com/index.php?/topic/17815-ban-by-mistake/#replyForm" style="color: #72c02c; text-decoration: underline;" target="_blank"><b>Ban by mistake</b></a> forum topic</p>').insertAfter('input[name=reason]');
+    $('<p class="help-block">Only change a Reason? Click <a href="#" id="changedReason" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a> and do not forget to post this ban in <a href="https://forum.truckersmp.com/index.php?/topic/17815-ban-by-mistake/#replyForm" style="color: #72c02c; text-decoration: underline;" target="_blank"><b>Ban by mistake</b></a> forum topic</p>').insertAfter('input[name=reason]');
     ban_time = $('#datetimeselect').val();
   }
 
   if (ban_time) {
     var now = moment(ban_time);
-    var put_back;
 
     $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
     $(date_buttons).insertAfter('#datetimeselect');
-
-    if (empty_date) {
-      $('#current_ban_time').remove();
-    }
+    $('<button type="button" class="btn btn-link plusdate" data-plus="back" id="current_ban_time"><b>Current Ban time</b></button>').insertAfter($("#ownreasons_buttons").find("div:last-child > button:last-child"));
 
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
       switch ($(this).data("plus")) {
-        case '3hrs':
-          now.add(3, 'h');
-          break;
-        case '1day':
-          now.add(1, 'd');
-          break;
-        case '3day':
-          now.add(3, 'd');
-          break;
-        case '1week':
-          now.add(1, 'w');
-          break;
-        case '1month':
-          now.add(1, 'M');
-          break;
-        case '3month':
-          now.add(3, 'M');
-          break;
         case 'back':
           now = moment(ban_time);
           break;
         case 'clear':
           now = moment().utc();
           break;
-        case 'string':
-          put_back = ban_time;
+        default:
+          var key = $(this).data('key');
+          now.add($(this).data("number"), key);
           break;
       }
-      if (put_back) {
-        $('#datetimeselect').val(put_back);
-        put_back = '';
-        $('#ownreasons_buttons').remove();
-      } else {
-        $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
-      }
+      $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
     });
+    
+    $("#changedReason").click(function (event) {
+      event.preventDefault();
+      if (moment(ban_time).isBefore(moment().utc())) {
+        $('input[id="perma.true"]').prop("checked",true);
+        $('input[name=active]').prop('checked', false);
+        perma_perform(this);
+      } else {
+        $('#datetimeselect').val(ban_time);
+      }
+      $('#ownreasons_buttons').remove();
+    })
   } else {
     $('#datetimeselect').slideUp('fast');
     $('label[for=\'perma.true\']').addClass('text-uppercase');
@@ -131,26 +53,12 @@ function init() {
   $('input[type=radio][name=perma]').change(function () {
     perma_perform(this);
   });
-  $('input[name=reason]').attr('autocomplete', 'off');
+  reason.attr('autocomplete', 'off');
   $('input[name=expire]').attr('autocomplete', 'off');
-
-  $('#go_to_options').on('click', function (event) {
-    event.preventDefault();
-    if (chrome.runtime.openOptionsPage) {
-      chrome.runtime.openOptionsPage();
-    } else {
-      window.open(chrome.runtime.getURL('src/options/index.html'));
-    }
-  });
-
-  $('#version_detected').on('click', function (event) {
-    event.preventDefault();
-    window.open(chrome.runtime.getURL('src/options/new_version.html'));
-  });
 
   $('#by_mistake').on('click', function (event) {
     event.preventDefault();
-    $('input[name=reason]').val('@BANBYMISTAKE');
+    reason.val('@BANBYMISTAKE');
     $('input[name=active]').prop('checked', false);
   });
 
@@ -158,155 +66,212 @@ function init() {
 
   $('[data-toggle="tooltip"]').tooltip();
   $("#loading-spinner").remove();
+  
+  function construct_buttons(OwnReasons) {
+    var html = '';
+    html += each_type_new('Reasons', OwnReasons.reasons);
+    html += each_type_new('Prefixes', OwnReasons.prefixes);
+    html += each_type_new('Postfixes', OwnReasons.postfixes);
+    html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
+    return html;
 
-  if (typeof OwnReasons !== 'undefined') {
-    function construct_buttons(OwnReasons) {
-      var html = '';
-      html = '';
-      var prefixes = OwnReasons.prefixes.split(';');
-      var reasons = OwnReasons.reasons.split(';');
-      var postfixes = OwnReasons.postfixes.split(';');
-      html += each_type_new('Reasons', reasons);
-      html += each_type_new('Prefixes', prefixes);
-      html += each_type_new('Postfixes', postfixes);
-      html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
-      return html;
-
-      function each_type_new(type, buttons) {
-        var place, color, change;
-        if (type == 'Prefixes') {
-          place = 'before';
-          color = 'warning';
-          change = 'reason';
-        } else if (type == 'Reasons') {
-          place = 'after';
-          color = 'default';
-          change = 'reason';
-        } else if (type == 'Postfixes') {
-          place = 'after-wo';
-          color = 'danger';
-          change = 'reason';
-        }
-        var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-        var count = 0;
-        // console.log(buttons);
-        var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-        buttons.forEach(function (item, i, arr) {
-          if (count === 0) {
-            snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
-          }
-          if (item.trim() == '|') {
-            snippet += '</ul></div>';
-            count = 0;
-          } else {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '">' + item.trim() + '</a></li>';
-            ++count;
-          }
-        });
-        snippet += '</div></div></div></li></ul></div>     ';
-        return snippet;
+    function each_type_new(type, buttons) {
+      var place, color, change;
+      if (type == 'Prefixes') {
+        place = 'before';
+        color = 'warning';
+        change = 'reason';
+      } else if (type == 'Reasons') {
+        place = 'after';
+        color = 'default';
+        change = 'reason';
+      } else if (type == 'Postfixes') {
+        place = 'after-wo';
+        color = 'danger';
+        change = 'reason';
       }
-    }
+      var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
+      var count = 0;
 
-    function dropdown_enchancements() {
-      $('ul.dropdown-menu').css('top', '95%');
-      $(".dropdown").hover(function () {
-        $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
-        $(this).toggleClass('open');
-        $('b', this).toggleClass("caret caret-up");
-      }, function () {
-        $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
-        $(this).toggleClass('open');
-        $('b', this).toggleClass("caret caret-up");
-      });
-      $("a.hovery").hover(function (e) {
-        $(this).css("background", e.type === "mouseenter" ? "#303030" : "transparent");
-        $(this).css("color", e.type === "mouseenter" ? "#999!important" : "");
-      });
-    }
-
-    function reasonMaxLength() {
-      var reasonMax = 190;
-      var reason = $('input[name="reason"]');
-      $("<div id='reasonHelpLink'></div><div id='reasonCount'>" + reason.val().length + "/" + reasonMax + "</div>").insertAfter(reason);
-      reason.keyup(function () {
-        if (reason.val().length > reasonMax) {
-          reason.css({
-            'background-color': 'rgba(255, 0, 0, 0.5)',
-            'color': '#fff'
+      var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
+      $.each(buttons, function (key,val) {
+        snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+        if (Array.isArray(val)) {
+          val.forEach(function (item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
           });
-          $("#reasonCount").css({
-            'color': 'red',
-            'font-weight': 'bold'
-          });
-          $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
         } else {
-          $("#reasonHelpLink").html("");
-          $("#reasonCount").css({
-            'color': '',
-            'font-weight': ''
-          });
-          reason.css({
-            'background-color': '',
-            'color': ''
+          $.each(val, function (title, item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
           });
         }
-        $("#reasonCount").html(reason.val().length + "/" + reasonMax);
+        snippet += '</ul></div>';
+      });
+      snippet += '</div></div></div></li></ul></div>     ';
+      return snippet;
+    }
+  }
+
+  function dropdown_enchancements() {
+    $('ul.dropdown-menu').css('top', '95%');
+    $(".dropdown").hover(function () {
+      $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
+      $(this).toggleClass('open');
+      $('b', this).toggleClass("caret caret-up");
+    }, function () {
+      $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
+      $(this).toggleClass('open');
+      $('b', this).toggleClass("caret caret-up");
+    });
+    $("a.hovery").hover(function (e) {
+      $(this).css("background", e.type === "mouseenter" ? "#303030" : "transparent");
+      $(this).css("color", e.type === "mouseenter" ? "#999!important" : "");
+    });
+  }
+
+  var reasonMax = 190;
+  $("<div id='reasonCount'>" + reason.val().length + "/" + reasonMax + "</div>").insertAfter(reason);
+  var reasonCount = $("#reasonCount");
+  function reasonMaxLength() {
+    if (reason.val().length > reasonMax) {
+      reason.css({
+        'background-color': 'rgba(255, 0, 0, 0.5)',
+        'color': '#fff'
+      });
+      reasonCount.css({
+        'color': 'red',
+        'font-weight': 'bold'
+      });
+    } else {
+      reasonCount.css({
+        'color': '',
+        'font-weight': ''
+      });
+      reason.css({
+        'background-color': '',
+        'color': ''
       });
     }
-
-    function evidencePasteInit() {
-      $('input[name="reason"]').bind('paste', function (e) {
-        var self = this,
-          data = e.originalEvent.clipboardData.getData('Text').trim(),
-          dataLower = data.toLowerCase();
-        if ((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep) {
-          e.preventDefault();
-          insertAtCaret($(self)[0], '- ' + data, true);
-        }
-      });
-    }
-
-    var reason_buttons = construct_buttons(OwnReasons);
-    $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
-
-    $('.plusreason').on('click', function (event) {
-      event.preventDefault();
-
-      var reason_val = $('input[name="reason"]').val();
-      var sp = (settings.separator) ? settings.separator : ',';
-
-      if ($(this).data('place') == 'before') {
-        $('input[name="reason"]').val($(this).html() + ' ' + reason_val.trim() + ' ');
-      } else if (($(this).data('place') == 'after-wo') || (reason_val.trim() == 'Intentional')) {
-        $('input[name="reason"]').val(reason_val.trim() + ' ' + $(this).html() + ' ');
-      } else if (reason_val.length) {
-        $('input[name="reason"]').val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
-      } else {
-        $('input[name="reason"]').val($(this).html() + ' ');
-      }
-      $('input[name="reason"]').focus();
-    });
-    $('button#reason_clear').on('click', function (event) {
-      event.preventDefault();
-      $('input[name="reason"]').val("");
-    });
+    reasonCount.html(reason.val().length + "/" + reasonMax);
+  }
+  reason.keyup(function () {
     reasonMaxLength();
-    dropdown_enchancements();
-    evidencePasteInit();
+  });
+
+  function evidencePasteInit() {
+    reason.bind('paste', function (e) {
+      var self = this,
+        data = e.originalEvent.clipboardData.getData('Text').trim(),
+        dataLower = data.toLowerCase();
+      if ((dataLower.indexOf('http://') == 0 || dataLower.indexOf('https://') == 0) && !checkDoubleSlash(this) && settings.autoinsertsep) {
+        e.preventDefault();
+        insertAtCaret($(self)[0], '- ' + data, true);
+      }
+    });
   }
 
-
-}
-
-function perma_perform(el) {
-  if (el.id == 'perma.true') {
-    $('#ownreasons_buttons').slideUp('fast');
-    $('#datetimeselect').slideUp('fast');
-    $('label[for=\'perma.true\']').addClass('text-uppercase');
-  } else if (el.id == 'perma.false') {
-    $('#ownreasons_buttons').slideDown('fast');
-    $('#datetimeselect').slideDown('fast');
-    $('label[for=\'perma.true\']').removeClass('text-uppercase');
+  function perma_perform(el) {
+    if (el.id == 'perma.true') {
+      $('#ownreasons_buttons').slideUp('fast');
+      $('#datetimeselect').slideUp('fast');
+      $('label[for=\'perma.true\']').addClass('text-uppercase');
+    } else if (el.id == 'perma.false') {
+      $('#ownreasons_buttons').slideDown('fast');
+      $('#datetimeselect').slideDown('fast');
+      $('label[for=\'perma.true\']').removeClass('text-uppercase');
+    }
   }
+
+  var reason_buttons = construct_buttons(OwnReasons);
+  $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
+
+  $('.plusreason').on('click', function (event) {
+    event.preventDefault();
+
+    var reason_val = reason.val();
+    var sp = (settings.separator) ? settings.separator : ',';
+
+    if ($(this).data('place') == 'before') {
+      reason.val(decodeURI($(this).data("text")) + ' ' + reason_val.trim() + ' ');
+    } else if ($(this).data('place') == 'after-wo') {
+      reason.val(reason_val.trim() + ' ' + decodeURI($(this).data("text")) + ' ');
+    } else if (reason_val.length) {
+      reason.val(reason_val.trim() + sp + ' ' + decodeURI($(this).data("text")) + ' ');
+    } else {
+      reason.val(decodeURI($(this).data("text")) + ' ');
+    }
+    reason.focus();
+    reasonMaxLength();
+  });
+  $('button#reason_clear').on('click', function (event) {
+    event.preventDefault();
+    reason.val("");
+  });
+  try {
+    var bans_template = `
+      <label>Latest 5 bans</label>
+      <h1 id="loading" class="text-center">Loading...</h1>
+      <div class="table-responsive">
+        <table class="table table-condensed table-hover" id="bans-table">
+          <tbody>
+          </tbody>
+        </table>
+      </div>
+    `;
+  
+    $('body > div.wrapper > div.container.content > div > table').addClass('table-condensed table-hover');
+    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(1)').removeAttr('style');
+    $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
+      $(this).css('font-weight', 'bold');
+    });
+  
+    $('body > div.wrapper > div.container.content > div > h2').remove();
+    $(bans_template).insertAfter('.sky-form > h2');
+    $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
+  
+    var steam_id = $('input[name="steam_id"]').val();
+  
+    $.ajax({
+      url: "https://api.truckersmp.com/v2/bans/" + steam_id,
+      type: 'GET',
+      success: function (val) {
+        $('#bans-table').find('tbody:last-child').append("<tr style=\"font-weight: bold;\"><th>Banned</th><th>Expires</th><th>Reason</th><th>By</th><th>Active</th></tr>");
+        $(val.response).each(function () {
+          var row = '<tr>';
+        
+          this.timeAdded = moment(this.timeAdded, "YYYY-MM-DD HH:mm:dd");
+          this.timeAdded = this.timeAdded.format("DD MMM YYYY HH:mm");
+          row += "<td>" + this.timeAdded + "</td>";
+        
+          if (this.expiration === null) {
+            this.expiration = "Never"
+          } else {
+            this.expiration = moment(this.expiration, "YYYY-MM-DD HH:mm:dd");
+            this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
+          }
+          row += "<td>" + this.expiration + "</td>";
+        
+          row += "<td class='autolink'>" + this.reason + "</td>";
+          row += "<td><a href='/user/" + this.adminID + "' target='_blank'>" + this.adminName + "</a></td>";
+        
+          if (this.active == false) {
+            this.active = 'times';
+          } else if (this.active == true) {
+            this.active = 'check';
+          }
+          row += "<td><i class='fa fa-" + this.active + "'></i></td>";
+        
+          row += '</tr>';
+          $('#bans-table').find('tbody:last-child').append(row);
+        });
+        $('#loading').remove();
+      }
+    });
+    console.log("test");
+  } catch (e) {
+    console.error(e);
+  }
+  reasonMaxLength();
+  dropdown_enchancements();
+  evidencePasteInit();
 }

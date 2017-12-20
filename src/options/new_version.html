@@ -3,7 +3,7 @@
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.min.css">
-
+  <link id="favicon" rel="shortcut icon" type="image/png" href=""/>
   <title>New version of TruckersMP Improved!</title>
 
   <style type="text/css">
@@ -57,13 +57,16 @@
       <div class="col">
         <h3 class="text-center">Changelog</h3>
         <ul class="disc changelog">
-          <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine,
-            but the settings were not saved)</li>
-          <li>Added setting "Local Storage" - use this for save large settings data</li>
-          <li>Added setting "View report in new tab" - use this if you need to open reports in new tab in the forms "Report list"
-            and "Other Open Reports"</li>
-          <li>Bug fixed when load settings data from local storage</li>
-          <li>Bug fixed at "Auto-insert separator"</li>
+          <li>Multi-browser compatibility: Works <strong>FINALLY</strong> in Firefox</li>
+          <li>Moved out some functions to a common file (So only one file to edit now)</li>
+          <li>Auto-update storage now when opening the changelog page: Solves that bug of having to go to options and click on "Save" when the extension gets updated</li>
+          <li>Optimized code as much as possible (Removed commented parts, stored some JQuery searches in vars rather than always redoing them)</li>
+          <li>New option storage system, options storage has been reworked to be easier to handle. Things have been done to auto-convert your old preferences into the new format</li>
+          <li>Popup has been a bit visually reworked (It may be more improved in the future)</li>
+          <li>Reports table has been improved on some points + Ban appeals list now also have these improvements</li>
+          <li>Third parties JS & CSS files have been minified to improve loading times</li>
+          <li>Ban history now also display on Add/Edit ban page</li>
+          <li>Fixed pagination on appeals page</li>
         </ul>
       </div>
     </div>
@@ -106,6 +109,14 @@
             <div class="tab-content">
               <div class="tab-pane active in fade" id="v160">
                 <ul>
+                  <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine,
+                    but the settings were not saved)</li>
+                  <li>Added setting "Local Storage" - use this for save large settings data</li>
+                  <li>Added setting "View report in new tab" - use this if you need to open reports in new tab in the forms "Report list"
+                    and "Other Open Reports"</li>
+                  <li>Bug fixed when load settings data from local storage</li>
+                  <li>Bug fixed at "Auto-insert separator"</li>
+                  <hr/>
                   <li>Added claim/unclaim report buttons for trial-IGAs</li>
                   <li>Removed the steam alliases on the appeals</li>
                   <li>Some decline-report reasons now auto-check the positive/negative radio button, they can be customized in
@@ -298,6 +309,7 @@
 
   <script src="/js/jquery.min.js"></script>
   <script src="/js/bootstrap.min.js"></script>
+  <script src="/src/main.js"></script>
   <script src="js/new_version.js"></script>
 </body>
 

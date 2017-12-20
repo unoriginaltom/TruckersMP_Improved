@@ -158,7 +158,7 @@
     }
 
     function getYouTubePlayer(URL, width, height) {
-        return '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="YouTube video player" width="' + width + '" height="' + height + '" style="margin:0; padding:0; box-sizing:border-box; border:0; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:' + (margin - 1) + 'px;" src="' + URL + '" frameborder="0" allowfullscreen seamless></iframe></div>';
+        return '<div class="embed-responsive embed-responsive-16by9"><iframe class="embed-responsive-item" title="YouTube video player" width="' + width + '" height="' + height + '" style="padding:0; box-sizing:border-box; border:0; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:0.5%; width: 99%; height: 98.5%;" src="' + URL + '" frameborder="0" allowfullscreen seamless></iframe></div>';
     }
 
     function getYouTubeIdFromUrl(youtubeUrl) {

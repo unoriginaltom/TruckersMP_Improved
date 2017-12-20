@@ -1,222 +1,289 @@
-var default_OwnReasons = {
-  prefixes: "Intentional",
-  reasons: "Ramming; Blocking; Incorrect Way; Insulting Users; Insulting Administration; |; Change your TruckersMP name and make a ban appeal; |; Horn Spamming; Inappropriate License/Interior Plates; Impressionating Administration; Racing; Inappropriate Overtaking; Profanity; Chat Spamming; Hacking; Speedhacking; Bug Abusing; Inappropriate Parking; Unsupported Mods; Ban Evading; Driving w/o lights; Exiting Map Boundaries; Inappropriate Convoy Management; Bullying/Harrassment; Trolling; CB Abuse; Car w/ trailer; Excessive Save Editing; Reckless Driving",
-  postfixes: "// 1 m due to history; // 3 m due to history; |; // Perma due to history",
-  declines: "Only a kickable offence; Wrong ID; Already banned for this evidence",
-  declinesNegative: "Insufficient Evidence; No evidence; No offence",
-  declinesPositive: "Proof added to existing ban",
-  comments: "Passed to the right admin",
-  declinesAppeals: "This time I will give you a chance but don't do this again in the feauture!; The ban will be marked with \"@BANBYMISTAKE\" and will be removed; You were banned for reckless driving.\n\nHere is a copy of the rules you broke:\n\n§2.18 Reckless Driving\nDriving in such a way that is considered unsafe, driving backwards, wrong way, failing to yield, ignoring other players and rules.\n\nYou can find these rules here: https://truckersmp.com/rules \n\nDeclined.",
-  acceptsAppeals: "This time I will give you a chance, however be careful in the future!",
-  commentsAppeals: "Change your tag and prove with a screenshot that it was changed",
-  modifyAppeals: "Due to the lack of violations in your history I shorten your ban period. However be careful in the future and follow the rules of MP.; Due to newly emerged circumstances the period of the ban increased."
-};
-var default_OwnDates = {
-  white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
-  yellow: "1,w,+1 week",
-  red: "1,M,+1 month; 3,M",
-  other: "current_utc"
-};
-
-// Saves options to chrome.storage
-function save_options(with_message = true, data = false) {
-  $('#steamapi_group').removeClass('has-error');
-
-  if (!data) {
-    data = {};
-    data.steamapi = $('#steamapi').val();
-    data.settings = {
-      local_storage: $('#local_storage').is(':checked'),
-      img_previews: $('#img_previews').is(':checked'),
-      wide: $('#wide').is(':checked'),
-      separator: $('#separator').val(),
-      own_comment: $('#own_comment').val().trim(),
-      autoinsertsep: $('#autoinsertsep').is(':checked'),
-      viewreportblank: $('#viewreportblank').is(':checked')
-    };
-
-    data.OwnReasons = {
-      prefixes: $('#prefixes').val().trim(),
-      reasons: $('#reasons').val().trim(),
-      postfixes: $('#postfixes').val().trim(),
-      declines: $('#declines').val().trim(),
-      declinesPositive: $('#declinesPositive').val().trim(),
-      declinesNegative: $('#declinesNegative').val().trim(),
-      comments: $('#comments').val().trim(),
-      declinesAppeals: $('#declinesAppeals').val().trim(),
-      commentsAppeals: $('#commentsAppeals').val().trim(),
-      acceptsAppeals: $('#acceptsAppeals').val().trim(),
-      modifyAppeals: $('#modifyAppeals').val().trim()
-    };
-
-    data.OwnDates = {
-      white: $('#white').val().trim(),
-      yellow: $('#yellow').val().trim(),
-      red: $('#red').val().trim(),
-      other: $('#other').val().trim()
-    }
-  }
-
-  var new_data = {
-    steamapi: data.steamapi,
-    OwnReasons: data.OwnReasons,
-    OwnDates: data.OwnDates,
-    settings: data.settings
-  }
-
-
-  function save_data(storage, data, with_message) {
-    storage.set(data, function () {
-      if (chrome.runtime.lastError) {
-        alert('Save settings ERROR!\n\t\n\t' + chrome.runtime.lastError.message + '\n\t\n\tFor save large data you can use "Local Storage".');
-      } else {
-        if (with_message) {
-          alert('Settings are saved! Please reload all TruckersMP tabs in order to fetch new settings.');
-          window.close();
-        };
+function inject_init() {
+  // Saves options to chrome.storage
+  function save_options(with_message = true, data = false) {
+    var steamapi_group = $('#steamapi_group');
+    steamapi_group.removeClass('has-error');
+    
+    if (!data) {
+      data = {};
+      data.steamapi = $('#steamapi').val();
+      data.settings = {
+        local_storage: $('#local_storage').is(':checked'),
+        img_previews: $('#img_previews').is(':checked'),
+        wide: $('#wide').is(':checked'),
+        separator: $('#separator').val(),
+        own_comment: $('#own_comment').val().trim(),
+        autoinsertsep: $('#autoinsertsep').is(':checked'),
+        viewreportblank: $('#viewreportblank').is(':checked')
       };
-    });
-  }
 
-  var steamapi_error = false;
-  if (data.steamapi) {
-    if (data.steamapi.length !== 32) {
-      $('#steamapi_group').addClass('has-error');
-      $('#steamapi_body').addClass('bg-danger');
-      setTimeout(function () {
-        $('#steamapi_body').removeClass('bg-danger');
-      }, 2000);
+      data.OwnReasons = {
+        prefixes: getReasons("prefixes"),
+        reasons: getReasons("reasons"),
+        postfixes: getReasons("postfixes"),
+        declines: getReasons("declines"),
+        declinesPositive: getReasons("declinesPositive"),
+        declinesNegative: getReasons("declinesNegative"),
+        comments: getReasons("comments"),
+        declinesAppeals: getReasons("declinesAppeals"),
+        commentsAppeals: getReasons("commentsAppeals"),
+        acceptsAppeals: getReasons("acceptsAppeals"),
+        modifyAppeals: getReasons("modifyAppeals")
+      };
 
-      steamapi_error = true
+      data.OwnDates = {
+        white: $('#white').val().trim(),
+        yellow: $('#yellow').val().trim(),
+        red: $('#red').val().trim(),
+        other: $('#other').val().trim()
+      }
     }
-  }
 
-  if (steamapi_error) {
-    return;
-  }
-
-  if (data.settings.local_storage || !syncAllowed) {
-    if (data.settings.local_storage && syncAllowed) {
-      save_data(chrome.storage.sync, {
-        settings: {
-          local_storage: true
-        }
-      }, false);
+    var new_data = {
+      steamapi: data.steamapi,
+      OwnReasons: data.OwnReasons,
+      OwnDates: data.OwnDates,
+      settings: data.settings
     };
-    save_data(chrome.storage.local, new_data, with_message);
-  } else {
-    save_data(chrome.storage.sync, new_data, with_message);
-  };
-}
 
-function versionCompare(left, right) {
-  if (typeof left + typeof right != 'stringstring')
-    return false;
+    var steamapi_error = false;
+    if (data.steamapi) {
+      if (data.steamapi.length !== 32) {
+        steamapi_group.addClass('has-error');
+        $('#steamapi_body').addClass('bg-danger');
+        setTimeout(function () {
+          $('#steamapi_body').removeClass('bg-danger');
+        }, 2000);
 
-  var a = left.split('.'),
-    b = right.split('.'),
-    i = 0,
-    len = Math.max(a.length, b.length);
+        steamapi_error = true
+      }
+    }
 
-  for (; i < len; i++) {
-    if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
-      return 1;
-    } else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
-      return -1;
+    if (steamapi_error) {
+      return;
+    }
+
+    if (data.settings.local_storage || !syncAllowed) {
+      if (data.settings.local_storage && syncAllowed) {
+        saveSettings(chrome.storage.sync, {
+          settings: {
+            local_storage: true
+          }
+        }, false);
+      }
+      saveSettings(chrome.storage.local, new_data, with_message);
+    } else {
+      saveSettings(chrome.storage.sync, new_data, with_message);
+    }
+    
+    function getReasons(reason) {
+      var obj = [];
+      $.each($('#'+reason).find(".option-section"), function (key, div) {
+        var arr;
+        if($(div).data("columns") == 2) {
+          arr = {}
+        } else {
+          arr = [];
+        }
+        $.each($(div).find(".sortable-div"), function (key, field) {
+          var inputs = $(field).find("textarea");
+          if (inputs.length == 2) {
+            arr[$(inputs[0]).val()] = $(inputs[1]).val();
+          } else {
+            arr.push($(inputs[0]).val());
+          }
+        });
+        obj[key] = arr;
+      });
+      return obj;
     }
   }
 
-  return 0;
-}
+  function versionCompare(left, right) {
+    if (typeof left + typeof right != 'stringstring')
+      return false;
 
-function restore_options() {
-  $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
+    var a = left.split('.'),
+      b = right.split('.'),
+      i = 0,
+      len = Math.max(a.length, b.length);
 
-  var items;
-
-  function set_options(items) {
-    $('#steamapi').val(items.steamapi);
-
-    $('#prefixes').val(items.OwnReasons.prefixes);
-    $('#reasons').val(items.OwnReasons.reasons);
-    $('#postfixes').val(items.OwnReasons.postfixes);
-
-    $('#declines').val(items.OwnReasons.declines);
-    $('#declinesPositive').val(items.OwnReasons.declinesPositive);
-    $('#declinesNegative').val(items.OwnReasons.declinesNegative);
-    $('#comments').val(items.OwnReasons.comments);
-
-    $('#declinesAppeals').val(items.OwnReasons.declinesAppeals);
-    $('#acceptsAppeals').val(items.OwnReasons.acceptsAppeals);
-    $('#modifyAppeals').val(items.OwnReasons.modifyAppeals);
-    $('#commentsAppeals').val(items.OwnReasons.commentsAppeals);
-
-    $('#white').val(items.OwnDates.white);
-    $('#yellow').val(items.OwnDates.yellow);
-    $('#red').val(items.OwnDates.red);
-    $('#other').val(items.OwnDates.other);
-
-    $('#separator').val(items.settings.separator);
-    $('#own_comment').val(items.settings.own_comment);
-
-    $('#local_storage').prop("checked", items.settings.local_storage);
-    if (!syncAllowed) {
-      $('#local_storage').prop("disabled", true);
-      $('.storage-settings').addClass('panel-default').removeClass('panel-success');
+    for (; i < len; i++) {
+      if ((a[i] && !b[i] && parseInt(a[i]) > 0) || (parseInt(a[i]) > parseInt(b[i]))) {
+        return 1;
+      } else if ((b[i] && !a[i] && parseInt(b[i]) > 0) || (parseInt(a[i]) < parseInt(b[i]))) {
+        return -1;
+      }
     }
 
-    $('#img_previews').prop("checked", items.settings.img_previews);
-    $('#wide').prop("checked", items.settings.wide);
-    $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
-    $('#viewreportblank').prop("checked", items.settings.viewreportblank);
-  };
+    return 0;
+  }
 
-  loadSettings(set_options);
-}
+  function restore_options() {
+    $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
 
-function import_data(event) {
-  if (confirm("BEWARE! All of your data will be lost after importing!\nDo you really want to do that?")) {
-    $('#importExportModal').modal('hide');
-    var files = event.target.files;
-    var reader = new FileReader();
-    reader.onload = _imp;
-    reader.readAsText(files[0]);
-  } else {
+    function set_options(items) {
+      try {
+        console.log(items);
+        $('#steamapi').val(items.steamapi);
+  
+        items.OwnReasons.prefixes.forEach(function (val) {
+          var parent = createSection($('#prefixes'), 1);
+          val.forEach(function (text) {
+            createField(parent, text);
+          });
+        });
+        items.OwnReasons.reasons.forEach(function (val) {
+          var parent = createSection($('#reasons'), 1);
+          val.forEach(function (text) {
+            createField(parent, text);
+          });
+        });
+        items.OwnReasons.postfixes.forEach(function (val) {
+          var parent = createSection($('#postfixes'), 1);
+          val.forEach(function (text) {
+            createField(parent, text);
+          });
+        });
+  
+        items.OwnReasons.declines.forEach(function (val) {
+          var parent = createSection($('#declines'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+        items.OwnReasons.declinesPositive.forEach(function (val) {
+          var parent = createSection($('#declinesPositive'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+        items.OwnReasons.declinesNegative.forEach(function (val) {
+          var parent = createSection($('#declinesNegative'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+        items.OwnReasons.comments.forEach(function (val) {
+          var parent = createSection($('#comments'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+  
+        items.OwnReasons.declinesAppeals.forEach(function (val) {
+          var parent = createSection($('#declinesAppeals'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+        items.OwnReasons.acceptsAppeals.forEach(function (val) {
+          var parent = createSection($('#acceptsAppeals'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+        items.OwnReasons.modifyAppeals.forEach(function (val) {
+          var parent = createSection($('#modifyAppeals'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+        items.OwnReasons.commentsAppeals.forEach(function (val) {
+          var parent = createSection($('#commentsAppeals'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+        });
+  
+        $('#white').val(items.OwnDates.white);
+        $('#yellow').val(items.OwnDates.yellow);
+        $('#red').val(items.OwnDates.red);
+        $('#other').val(items.OwnDates.other);
+  
+        $('#separator').val(items.settings.separator);
+        $('#own_comment').val(items.settings.own_comment);
+  
+        var local_storage = $('#local_storage');
+        local_storage.prop("checked", items.settings.local_storage);
+        if (!syncAllowed) {
+          local_storage.prop("disabled", true);
+          $('.storage-settings').addClass('panel-default').removeClass('panel-success');
+        }
+  
+        $('#img_previews').prop("checked", items.settings.img_previews);
+        $('#wide').prop("checked", items.settings.wide);
+        $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
+        $('#viewreportblank').prop("checked", items.settings.viewreportblank);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    loadSettings(set_options);
+  }
+  
+  var import_file = $('#import_file');
+  function import_data(event) {
+    if (confirm("BEWARE! All of your data will be lost after importing!\nDo you really want to do that?")) {
+      $('#importExportModal').modal('hide');
+      var files = event.target.files;
+      var reader = new FileReader();
+      reader.onload = _imp;
+      reader.readAsText(files[0]);
+    } else {
+      import_file.value = '';
+    }
+  }
+  
+  function createField(parent, input1 = "", input2 = "") {
+    var obj = "<div class='sortable-div'>";
+    
+    if (parent.parent().data("columns") == 2) {
+      obj += "<textarea style='width: 32%' id='input1'/><textarea style='width: 60%' id='input2'/>";
+    } else {
+      obj += "<textarea style='width: 93%;' id='input1'/>";
+    }
+    obj += "<button type='button' class='btn btn-danger delete-field'>X</button></div>";
+    $(obj).insertBefore(parent);
+    $("#input1").val(input1).removeAttr("id");
+    $("#input2").val(input2).removeAttr("id");
+  }
+  
+  function createSection(parent, numbercolumns) {
+    parent.append("<div class='option-section' data-columns="+numbercolumns+"><div class='section-buttons'><button class='delete-section btn btn-danger'>Delete section</button><button class='create-field btn btn-success'>Create field</button></div></div>");
+    return $(parent).find("div:last");
+  }
+  
+  function _imp() {
+    var _data = JSON.parse(this.result);
+
+    if (_data.steamapi) {
+      if (_data.steamapi.length == 32) {
+        var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
+        if (compare === 1) {
+          alert('Wait a second! JSON file version (' + _data.last_version + ') is newer that extension version (' + chrome.runtime.getManifest().version + ').\nPlease update extension before importing!');
+        } else {
+          if (compare === -1) {
+            if (!confirm('Wait a second! JSON file version (' + _data.last_version + ') is older that extension version (' + chrome.runtime.getManifest().version + ').\nData can be corrupted.\nDid you really want to import data?')) {
+              import_file.value = '';
+              return null;
+            }
+          }
+          save_options(false, _data);
+          alert("Imported and saved! Nice job!\nYou can review new settings right now.");
+          $(".option-section").remove();
+          restore_options();
+        }
+      } else {
+        alert("JSON file is invalid!\nSteam API should be 32-symbol, given " + _data.steamapi.length);
+      }
+    }
+
     import_file.value = '';
   }
-}
 
-function _imp() {
-  var _data = JSON.parse(this.result);
+  import_file.on('change', import_data);
 
-  if (_data.steamapi) {
-    if (_data.steamapi.length == 32) {
-      var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
-      if (compare === 1) {
-        alert('Wait a second! JSON file version (' + _data.last_version + ') is newer that extension version (' + chrome.runtime.getManifest().version + ').\nPlease update extension before importing!');
-      } else {
-        if (compare === -1) {
-          if (!confirm('Wait a second! JSON file version (' + _data.last_version + ') is older that extension version (' + chrome.runtime.getManifest().version + ').\nData can be corrupted.\nDid you really want to import data?')) {
-            import_file.value = '';
-            return null;
-          }
-        }
-        save_options(false, _data);
-        alert("Imported and saved! Nice job!\nYou can review new settings right now.");
-        restore_options();
-      }
-    } else {
-      alert("JSON file is invalid!\nSteam API should be 32-symbol, given " + _data.steamapi.length);
-    }
-  }
-
-  import_file.value = '';
-}
-
-document.addEventListener('DOMContentLoaded', restore_options);
-import_file.addEventListener('change', import_data, false);
-
-$(document).ready(function () {
   $('textarea').each(function () {
     this.setAttribute('style', 'overflow-y:hidden;');
   }).on('focus', function () {
@@ -247,9 +314,6 @@ $(document).ready(function () {
     }
     $(this).select();
   }).on('keydown', function () {
-    console.log($(this).val().length)
-    console.log($(this).val().length !== 32)
-
     if ($(this).val().length === 32 || $(this).val().length === 0) {
       $(this).parent().removeClass('has-error')
     } else {
@@ -271,13 +335,43 @@ $(document).ready(function () {
 
       vLink.setAttribute('href', vUrl);
       vLink.setAttribute('download', vName);
+      vLink.style.display = "none";
+
+      document.body.appendChild(vLink);
       vLink.click();
+      document.body.removeChild(vLink);
     });
   });
 
   $('#import').on('click', function (event) {
     event.preventDefault();
-
     import_file.click();
   });
-});
+  
+  var body = $("body");
+  body.on("click", ".delete-field",function () {
+    $(this).parent().remove();
+  });
+  body.on("click", ".create-field", function (event) {
+    event.preventDefault();
+    if ($(this).parent().data("columns") == 2) {
+      createField($(this).parent(),"","");
+    } else {
+      createField($(this).parent());
+    }
+  });
+  body.on("click", ".delete-section", function () {
+    if(confirm("Are you sure you want to delete the WHOLE section?")) {
+      $(this).parent().parent().remove();
+    }
+  });
+  $(".create-section").click(function (event) {
+    event.preventDefault();
+    var div = $(this).parent().parent().find("div > div:first");
+    var section = createSection(div,div.data("columns"));
+    createField(section);
+  });
+
+  
+  restore_options();
+}

@@ -1,90 +1,58 @@
-if (!chrome.extension.sendMessage) {
-  inject_init('firefox');
-} else {
-  chrome.extension.sendMessage({}, function () {
-    var readyStateCheckInterval = setInterval(function () {
-      if (document.readyState === "complete") {
-        clearInterval(readyStateCheckInterval);
-        inject_init('chrome');
-      }
-    }, 10);
-  });
-}
-
-function inject_init(browser) {
+function inject_init() {
   var steam_id = $('input[name="steam_id"]').val();
-  var now = moment.utc(); // Moment.js init
-  var version = {
-    number: chrome.runtime.getManifest().version,
-    changes: [
-      'Rewrited version'
-    ],
-    features: [
-      'Many fixes'
-    ]
-  };
-  var templates = {
-    /*
-        UndescoreJS Templates
-     */
-    header: _.template(` Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik"> <%= version.number %></span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#new_version_modal" data-toggle="modal" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading..."></i>  <i class="fa fa-exclamation-triangle" id="loading-error" style="display:none; color: #ac2925;" data-toggle="tooltip" title="Steam has an issue, try again later..."></i>`),
-  };
+  var accept_modal = $('#confirm-accept');
+  var decline_modal = $('#confirm-decline');
   var injects = {
-    header: 'body > div.wrapper > div.breadcrumbs > div > h1',
-    date_buttons: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)',
-    report_language: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)',
-    claim_report: 'div.container.content > div > div > div > table.table > tbody > tr:nth-child(10) > td:nth-child(2) > a',
-    accept_comment: '#confirm-accept > div > div > form > div.modal-body > div:nth-child(7) > textarea',
+    header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
+    date_buttons: accept_modal.find('div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)'),
+    report_language: $('div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)'),
+    claim_report: $('div.container.content > div > div > div > table.table > tbody > tr:nth-child(10) > td:nth-child(2) > a'),
+    spinner: $("#loading-spinner"),
+    accept: {
+      comment: accept_modal.find('div > div > form > div.modal-body > div:nth-child(7) > textarea'),
+      form: accept_modal.find('div > div > form'),
+      time: $('#datetimeselect'),
+      reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input')
+    },
     bans: {
-      table: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr',
-      header: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4:nth-child(4)',
+      table: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr'),
+      header: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4:nth-child(4)'),
+      ban_toggler: $('#expired_bans_toggler').find('i')
+    },
+    decline: {
+      comment: decline_modal.find('div > div > form > div.modal-body > div > textarea'),
+      form: decline_modal.find('div > div > form')
     },
     summary: {
-      first_column: 'body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr > td:nth-child(1)',
+      first_column: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr > td:nth-child(1)'),
+      perpetrator_link: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a'),
+      perpetrator_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)'),
+      previous_usernames: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)')
     }
   };
 
-  /*
-      SERVICE FUNCTIONS
-   */
   // Escape HTML due to HTML tags in Steam usernames
   function escapeHTML(s) {
     return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
-  /*
-      ECHO
-   */
-
-  function version_checker(last_version) {
-    $(injects.header).append(templates.header({
-      version: version
-    }));
-  }
-
   function accept_modal_init() {
-    var reason_buttons = construct_buttons(OwnReasons, false),
-      decline_buttons = construct_buttons(OwnReasons, true),
-      comments_buttons = construct_buttons(OwnReasons, false, true);
+    var reasonMax = 190;
+    $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
+    var reasonCount = $('#reasonCount');
 
-    $(reason_buttons).insertAfter('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input');
-    $(decline_buttons).insertAfter('#confirm-decline > div > div > form > div.modal-body > div > textarea');
+    addButtons($('input[name=reason]'),'<div class="ban-reasons">' + construct_buttons('accept') + '</div>');
+    addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons('comments'));
 
-    if (comments_buttons.length > 0) {
-      var textArea = $('div.container.content').find('textarea[name=comment]');
-      $(textArea).css('margin-bottom', '10px');
-      $(textArea).parent().append(comments_buttons);
-    }
-    templates.date_buttons = construct_dates(OwnDates);
-    $(templates.date_buttons).insertAfter(injects.date_buttons);
+    var date_buttons = construct_dates(OwnDates);
+    $(date_buttons).insertAfter(injects.date_buttons);
     $('input[id="perma.false"]').prop("checked", true);
-
-    var reason = $('input[name="reason"]')
+  
     // ===== DateTime and Reason inputs checking =====
-    $('#confirm-accept > div > div > form').on('submit', function (event) {
-      var time_check = $('#datetimeselect').val();
+    injects.accept.form.on('submit', function (event) {
+      var time_check = injects.accept.time.val();
       var perm_check = $('input[id="perma.true"]').prop("checked");
-      var reason_check = $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').val();
+      var reason_check = injects.accept.reason.val();
       var error_style = {
         'border-color': '#a94442',
         '-webkit-box-shadow': 'inset 0 1px 1px rgba(0,0,0,.075)',
@@ -95,93 +63,96 @@ function inject_init(browser) {
         '-webkit-box-shadow': '',
         'box-shadow': ''
       };
-
+    
       if (!time_check && !perm_check) {
-        $('#datetimeselect').css(error_style);
+        injects.accept.time.css(error_style);
         event.preventDefault();
       } else {
-        $('#datetimeselect').css(normal_style);
+        injects.accept.time.css(normal_style);
       }
       if (!reason_check) {
-        $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').css(error_style);
+        injects.accept.reason.css(error_style);
         event.preventDefault();
       } else {
-        $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').css(normal_style);
+        injects.accept.reason.css(normal_style);
       }
     });
     // ===== Reasons FTW =====
     $('.plusreason').on('click', function (event) {
       event.preventDefault();
-      // console.log(settings);
-
-      var reason_val = $(reason).val(),
+    
+      var reason_val = injects.accept.reason.val(),
         sp = '';
-      if (!checkDoubleSlash($(reason)[0]))
+      if (!checkDoubleSlash(injects.accept.reason[0]))
         sp = (settings.separator) ? settings.separator : ',';
-
+    
       if ($(this).data('place') == 'before') {
-        $(reason).val($(this).html() + ' ' + reason_val.trim() + ' ');
-      } else if (($(this).data('place') == 'after-wo') || (reason_val.trim() == 'Intentional')) {
-        $(reason).val(reason_val.trim() + ' ' + $(this).html() + ' ');
+        injects.accept.reason.val(decodeURI(String($(this).data("text"))) + ' ' + reason_val.trim() + ' ');
+      } else if ($(this).data('place') == 'after-wo') {
+        injects.accept.reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data("text"))) + ' ');
       } else if (reason_val.length) {
-        $(reason).val(reason_val.trim() + sp + ' ' + $(this).html() + ' ');
+        injects.accept.reason.val(reason_val.trim() + sp + ' ' + decodeURI(String($(this).data("text"))) + ' ');
       } else {
-        $(reason).val($(this).html() + ' ');
+        injects.accept.reason.val(decodeURI(String($(this).data("text"))) + ' ');
       }
-      $(reason).focus();
+      injects.accept.reason.focus();
+      checkReasonLength();
     });
     $('button#reason_clear').on('click', function (event) {
       event.preventDefault();
-      $('input[name="reason"]').val("");
+      injects.accept.reason.val("");
     });
     // ===== Timing FTW! =====
+    var unban_time = moment.utc();
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
       var number = $(this).data('number');
       switch (number) {
         case 'clear':
-          now = moment.utc();
+          unban_time = moment.utc();
           break;
         default:
           var key = $(this).data('key');
-          now.add(number, key);
+          unban_time.add(number, key);
           break;
       }
-      $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+      injects.accept.time.val(unban_time.format("YYYY/MM/DD HH:mm"));
     });
-
+  
     //Ban reason length check
-    var reasonMax = 190;
-    $("<div id='reasonHelpLink'></div><div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(reason);
-    reason.keyup(function () {
-      if (reason.val().length > reasonMax) {
-        reason.css({
+    function checkReasonLength() {
+      if (injects.accept.reason.val().length > reasonMax) {
+        injects.accept.reason.css({
           'background-color': 'rgba(255, 0, 0, 0.5)',
           'color': '#fff'
         });
-        $("#reasonCount").css({
+        reasonCount.css({
           'color': 'red',
           'font-weight': 'bold'
         });
-        $("#reasonHelpLink").html("Maybe try to use that to merge all your links into only one: <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a>");
-      } else {
-        $("#reasonHelpLink").html("");
-        $("#reasonCount").css({
+        } else {
+        reasonCount.css({
           'color': '',
           'font-weight': ''
         });
-        reason.css({
+        injects.accept.reason.css({
           'background-color': '',
           'color': ''
         });
       }
-      $("#reasonCount").html(reason.val().length + "/" + reasonMax);
+      reasonCount.html(injects.accept.reason.val().length + "/" + reasonMax);
+    }
+  
+    injects.accept.reason.keyup(function () {
+      checkReasonLength();
     });
   }
 
   function decline_modal_init() {
-    $('#confirm-decline > div > div > form').on('submit', function (event) {
-      var comment_check = $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val();
+    addButtons(injects.decline.comment, construct_buttons('decline'));
+
+    injects.decline.form.on('submit', function (event) {
+      var comment_check = injects.decline.comment.val();
       var error_style = {
         'border-color': '#a94442',
         '-webkit-box-shadow': 'inset 0 1px 1px rgba(0,0,0,.075)',
@@ -193,63 +164,43 @@ function inject_init(browser) {
         'box-shadow': ''
       };
       if (!comment_check) {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').css(error_style);
+        injects.decline.comment.css(error_style);
         event.preventDefault();
       } else {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').css(normal_style);
+        injects.decline.comment.css(normal_style);
       }
     });
     $('.plusdecline').on('click', function (event) {
       event.preventDefault();
-      var reason_val = $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val();
-      if ($(this).data('place') == 'before') {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val($(this).html() + ' ' + reason_val + ' ');
-      } else {
-        $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val(reason_val + ' ' + $(this).html());
-      }
+      setReason(injects.decline.comment, decodeURI(String($(this).data("text"))));
 
       switch ($(this).data('action')) {
         case "negative":
-          document.getElementById('decline.rating.negative').checked = true;
+          $("input[id='decline.rating.negative']").prop("checked",true);
           break;
 
         case "positive":
-          document.getElementById('decline.rating.positive').checked = true;
+          $("input[id='decline.rating.positive']").prop("checked", true);
           break;
       }
-      $('#confirm-decline > div > div > form > div.modal-body > div > textarea').focus();
+      injects.decline.comment.focus();
     });
-
-    function setReason(reason, reason_val) {
-      if ($(reason).val() == "") {
-        $(reason).val(reason_val);
-      } else {
-        $(reason).val($(reason).val() + ' ' + reason_val);
-      }
-      $(reason).focus();
-    }
-    $('.pluscomment').on('click', function (event) {
-      event.preventDefault();
-      setReason($('form').find('textarea[name=comment]'), $(this).html());
-    });
+    
     $('button#decline_clear').on('click', function (event) {
       event.preventDefault();
-      $('#confirm-decline > div > div > form > div.modal-body > div > textarea').val("");
-    });
-    $('button#comments_clear').on('click', function (event) {
-      event.preventDefault();
-      $('form').find('textarea[name=comment]').val("");
+      injects.decline.comment.val("");
     });
   }
-
-  String.prototype.contains = function (needle) {
-    for (var i = needle.length - 1; i >= 0; i--) {
-      if (this.includes(needle[i])) {
-        return true;
-      }
+  
+  function setReason(reason, reason_val) {
+    if ($(reason).val() == "") {
+      $(reason).val(reason_val + ' ');
+    } else {
+      $(reason).val($(reason).val().trim() + ' ' + reason_val + ' ');
     }
-  };
-
+    $(reason).focus();
+  }
+  
   function getYouTubeIdFromUrl(youtubeUrl) {
     var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
     var match = youtubeUrl.match(regExp);
@@ -290,13 +241,11 @@ function inject_init(browser) {
     var params = parseURLParams(url);
     if (params) {
       if (params.t) {
-        console.log('t');
-        start = params.t[0];
-        console.log(start);
+        var start = params.t[0];
         if (start.includes('s')) {
           var hrs, min, sec;
 
-          spl = start.split('h');
+          var spl = start.split('h');
           if (spl.length == 2) {
             hrs = Number(spl[0]);
             spl = spl[1];
@@ -319,11 +268,9 @@ function inject_init(browser) {
           min = min * 60;
           start = hrs + min + sec;
         }
-      } else if (params.time_continue) {
-        console.log('time_continue');
-        start = params.time_continue[0];
+      } else if (params['time_continue']) {
+        start = params['time_continue'][0];
       } else {
-        console.log('out');
         start = params[0];
       }
       if (start) {
@@ -349,13 +296,11 @@ function inject_init(browser) {
       if (sub.length > 60) {
         $(this).text(sub.substring(0, 40) + '...');
       }
-
     });
 
     if (settings.img_previews !== false) {
       $('div.comment .autolink > a').each(function () {
         var sub = $(this).attr('href');
-        // console.log(sub);
         if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
           $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
         }
@@ -364,13 +309,10 @@ function inject_init(browser) {
 
     $('a.jmdev_ca').on('click', function (event) {
       event.preventDefault();
-      $("#loading-spinner").show();
+      $(injects.spinner).show();
       var link = $(this).data("link");
       var length = ($(this).data("link")).length;
 
-      if (link.includes('youtube.com')) {
-        link = 'https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link);
-      }
       if (length < 30) {
         copyToClipboard($(this).data("link"));
         chrome.runtime.sendMessage({
@@ -378,20 +320,28 @@ function inject_init(browser) {
         });
         $("#loading-spinner").hide();
       } else {
-        urlShorter(link);
+        if (link.includes('youtube.com') || link.includes('youtu.be')) {
+          copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
+          chrome.runtime.sendMessage({
+            msg: "URL just being shorted! Check your clipboard!"
+          });
+        } else {
+          urlShorter(link);
+        }
       }
     });
   }
 
   function urlShorter(link, paste = false) {
+    var msg;
     $.ajax({
       url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
       type: 'GET',
       success: function (val) {
-        if (val.result.url_short === undefined || val.result.url_short === null) {
+        if (val.result['url_short'] === undefined || val.result['url_short'] === null) {
           alert('Looks like we have a problem with URL shortener... Try again!');
         } else {
-          copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
+          copyToClipboard('https://jmdev.ca/url/?l=' + val.result['url_short']);
 
           if (paste) {
             msg = "Steam info just saved! Check your clipboard for the link!"
@@ -421,7 +371,7 @@ function inject_init(browser) {
   function copyToClipboard(text) {
     const input = document.createElement('input');
     input.style.position = 'fixed';
-    input.style.opacity = 0;
+    input.style.opacity = "0";
     input.value = text;
     document.body.appendChild(input);
     input.select();
@@ -430,7 +380,7 @@ function inject_init(browser) {
   }
 
   function comment_language() {
-    var report_language = $(injects.report_language).text().trim();
+    var report_language = injects.report_language.text().trim();
     var comment;
 
     if (!settings.own_comment) {
@@ -465,91 +415,108 @@ function inject_init(browser) {
     } else {
       comment = settings.own_comment;
     }
-    $(injects.accept_comment).val(comment);
+    injects.accept.comment.val(comment);
   }
 
   function bans_count_fetch() {
-    // console.log('Current locale is ' + $('body > div.wrapper > div.header > div.container > div > ul > li.hoverSelector > ul > li.active > a').attr('hreflang'));
-    if ($('body > div.wrapper > div.header > div.container > div > ul > li.hoverSelector > ul > li.active > a').attr('hreflang').indexOf("en_US") == 0) {
-      var bans_count = 0;
-      var expired_bans_count = 0;
-      $(injects.bans.table).each(function (index) {
-        // console.log($(this).children('td:nth-child(1)').text());
-        var banned_time_td = $(this).children('td:nth-child(1)').text();
-        var banned_reason_td = $(this).children('td:nth-child(3)').text();
-        var banned_time;
-        if (banned_time_td.indexOf("Today") !== -1) {
-          banned_time = now;
-        } else if (banned_time_td.indexOf("Tomorrow") !== -1) {
-          banned_time = now.add(1, 'd');
-        } else if (banned_time_td.indexOf("Yesterday") !== -1) {
-          banned_time = now.add(1, 'd');
+    
+    function getUnbanTime(unban_time_td, banned_reason_td) {
+      var unban_time;
+      now = moment.utc();
+      if (unban_time_td.indexOf("Today") !== -1) {
+        unban_time = now;
+      } else if (unban_time_td.indexOf("Tomorrow") !== -1) {
+        unban_time = now.add(1, 'd');
+      } else if (unban_time_td.indexOf("Yesterday") !== -1) {
+        unban_time = now.add(1, 'd');
+      } else {
+        nb_parts = unban_time_td.split(" ").length;
+        if (nb_parts = 3) {
+          unban_time = moment(unban_time_td, "DD MMM HH:mm");
+        } else if (nb_parts == 4) {
+          unban_time = moment(unban_time_td, "DD MMM YYYY HH:mm");
         } else {
-          banned_time = moment(banned_time_td);
+          unban_time = moment(unban_time_td);
+          console.log([
+            unban_time_td,
+            nb_parts,
+            unban_time
+          ]);
         }
-        if (banned_time.year() == '2001') {
-          banned_time.year(now.year());
+      }
+      if (unban_time.year() == '2001') {
+        unban_time.year(now.year());
+      }
+      if (banned_reason_td == '@BANBYMISTAKE') {
+        unban_time.year('1998');
+      }
+      
+      return unban_time;
+    }
+    
+    var bans_count = 0;
+    var expired_bans_count = 0;
+    var nb_parts;
+    injects.bans.table.each(function () {
+      var ban_time_td = $(this).find('td:nth-child(1)').text();
+      var unban_time_td = $(this).find('td:nth-child(2)').text();
+      var banned_reason_td = $(this).find('td:nth-child(3)').text();
+      var unban_time;
+      if (unban_time_td == "Never") {
+        unban_time = getUnbanTime(ban_time_td, banned_reason_td).add(1, 'y');
+      } else {
+        unban_time = getUnbanTime(unban_time_td, banned_reason_td);
+      }
+      if (unban_time.isValid()) {
+        if (Math.abs(unban_time.diff(now, 'd')) >= 365) {
+          $(this).hide();
+          $(this).addClass('expired_bans');
+          $(this).find('td').css('color', '#555');
+          expired_bans_count++;
+        } else {
+          bans_count++;
         }
-        if (banned_reason_td == '@BANBYMISTAKE') {
-          banned_time.year('1998');
-        }
-        if (banned_time.isValid()) {
-          if (Math.abs(banned_time.diff(now, 'd')) >= 365) {
-            $(this).hide();
-            $(this).addClass('expired_bans');
-            $(this).find('td').css('color', '#555');
-            expired_bans_count++;
-          } else {
-            bans_count++;
-          }
+      }
+    });
+
+    injects.bans.header.html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small>');
+    if (bans_count >= 3) {
+      injects.bans.header.css('color', '#d43f3a');
+    }
+    if (expired_bans_count > 0) {
+      injects.bans.header.html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small> <a href="#" id="expired_bans_toggler"><i class="fa fa-toggle-off" data-toggle="tooltip" title="Show/hide bans further than 12 months and @BANBYMISTAKE"></i></a>');
+      $('#expired_bans_toggler').on('click', function (event) {
+        event.preventDefault();
+        $('.expired_bans').fadeToggle('slow');
+        if (injects.bans.ban_toggler.hasClass('fa-toggle-off')) {
+          injects.bans.ban_toggler.removeClass('fa-toggle-off');
+          injects.bans.ban_toggler.addClass('fa-toggle-on');
+        } else {
+          injects.bans.ban_toggler.removeClass('fa-toggle-on');
+          injects.bans.ban_toggler.addClass('fa-toggle-off');
         }
       });
-
-      $(injects.bans.header).html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small>');
-      if (bans_count >= 3) {
-        $(injects.bans.header).css('color', '#d43f3a');
-      }
-      if (expired_bans_count > 0) {
-        $(injects.bans.header).html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small> <a href="#" id="expired_bans_toggler"><i class="fa fa-toggle-off" data-toggle="tooltip" title="Show/hide bans further than 12 months and @BANBYMISTAKE"></i></a>');
-        $('#expired_bans_toggler').on('click', function (event) {
-          event.preventDefault();
-          $('.expired_bans').fadeToggle('slow');
-          if ($('#expired_bans_toggler > i').hasClass('fa-toggle-off')) {
-            $('#expired_bans_toggler > i').removeClass('fa-toggle-off');
-            $('#expired_bans_toggler > i').addClass('fa-toggle-on');
-          } else {
-            $('#expired_bans_toggler > i').removeClass('fa-toggle-on');
-            $('#expired_bans_toggler > i').addClass('fa-toggle-off');
-          }
-        });
-      }
-
-      if ($('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2) > td:nth-child(5) > i').hasClass('fa-check')) {
-        $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2)').children('td').css({
-          'color': '#d43f3a'
-        });
-      }
-    } else {
-      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4')
-        .html('Ban history <small>Sorry, but bans count checking works only on <a rel="alternate" hreflang="en_US" href="/user/locale/en_US"><img src="/assets/images/flags/en_US.png">&nbsp;English</a> locale :(</small>');
     }
 
-    $(injects.bans.header).before('<hr class="small"/>')
+    if ($('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2) > td:nth-child(5) > i').hasClass('fa-check')) {
+      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr:nth-child(2)').find('td').css({
+        'color': '#d43f3a'
+      });
+    }
+    injects.bans.header.before('<hr class="small"/>');
   }
 
-  function table_impoving() {
+  function table_improving() {
     $('table').addClass('table-condensed table-hover');
     $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > div:nth-child(1)').after('<hr class="small"/>');
 
-    var perpetrator_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').attr('href').replace('/user/', '');
-    var perpetrator_nickname = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').text();
+    var perpetrator_id = injects.summary.perpetrator_link.attr('href').replace('/user/', '');
+    var perpetrator_nickname = injects.summary.perpetrator_link.text();
     var reporter_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a').attr('href').replace('/user/', '');
 
     $(document).prop('title', perpetrator_nickname + ' - ' + perpetrator_id + ' | TruckersMP');
 
     if (steamapi === "none") {
-      // console.log(":O");
-      $("body > div.wrapper > div.breadcrumbs > div > h1").append("<kbd>#blame" + $('body > div.wrapper > div.header > div.container > div > ul > li:nth-child(1) > a').html() + "</kbd>");
       $("#loading-spinner").hide();
       $(function () {
         $('[data-toggle="tooltip"]').tooltip();
@@ -559,16 +526,13 @@ function inject_init(browser) {
         url: "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + steamapi + "&format=json&steamids=" + steam_id,
         type: 'GET',
         success: function (steam_data) {
-          // console.log(steam_data);
           if (steam_data === undefined) {
-            console.error('No Response by Steam');
             $("#loading-error").show();
             $("#loading-spinner").hide();
-            blink('#loading-error');
             return;
           }
 
-          var steam_name = escapeHTML(steam_data.response.players[0].personaname);
+          var steam_name = escapeHTML(steam_data.response['players'][0]['personaname']);
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
 
           $.ajax({
@@ -576,19 +540,16 @@ function inject_init(browser) {
             type: "GET",
             success: function (tmp_data) {
               if (tmp_data !== true) {
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').after(' <img src="' + tmp_data.response.avatar + '" class="img-rounded" style="width: 32px; height: 32px;">');
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a').wrap('<kbd>');
+                injects.summary.perpetrator_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
+                injects.summary.perpetrator_link.wrap('<kbd>');
 
-                var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
+                var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
                 $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
 
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').css('text-align', 'right');
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)').css('text-align', 'right');
+                injects.summary.perpetrator_label.css('text-align', 'right');
+                injects.summary.previous_usernames.css('text-align', 'right');
 
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').css('text-align', 'right');
-                $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)').css('text-align', 'right');
-
-                $(injects.summary.first_column).each(function (index) {
+                injects.summary.first_column.each(function () {
                   $(this).css('font-weight', 'bold');
                 });
                 $('[data-toggle="tooltip"]').tooltip();
@@ -596,10 +557,11 @@ function inject_init(browser) {
               }
             }
           })
-
         }
       });
     }
+
+    var low_id;
     if (perpetrator_id <= 3500) {
       low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check names & aliases">Low ID! <strong>' + perpetrator_id + '</strong></span>';
     } else if (perpetrator_id == reporter_id) {
@@ -611,11 +573,11 @@ function inject_init(browser) {
     $('input[type=radio][name=perma]').change(function () {
       if (this.id == 'perma.true') {
         $('#ownreasons_buttons').slideUp('fast');
-        $('#datetimeselect').slideUp('fast');
+        $(injects.accept.time).slideUp('fast');
         $('label[for=\'perma.true\']').addClass('text-danger').addClass('lead').addClass('text-uppercase');
       } else if (this.id == 'perma.false') {
         $('#ownreasons_buttons').slideDown('fast');
-        $('#datetimeselect').slideDown('fast');
+        $(injects.accept.time).slideDown('fast');
         $('label[for=\'perma.true\']').removeClass('text-danger').removeClass('lead').removeClass('text-uppercase');
       }
     });
@@ -663,93 +625,30 @@ function inject_init(browser) {
     if (settings.viewreportblank)
       $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
   }
-
-  function final_init() {
-    $(document).ready(function () {
-      $('#go_to_options').on('click', function (event) {
-        event.preventDefault();
-        if (chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-        }
-      });
-      $('#version_detected').on('click', function (event) {
-        event.preventDefault();
-        window.open(chrome.runtime.getURL('src/options/new_version.html'), "_blank");
-      });
-
-      if (settings.wide !== false) {
-        $('div.container.content').css('width', '85%');
-      }
-      $(".youtube").YouTubeModal({
-        autoplay: 0,
-        width: 640,
-        height: 480
-      });
-    });
-  }
-
-  function construct_dates(OwnDates) {
-    var html = '<br><div id="ownreasons_buttons">';
-
-    html += each_type('default', OwnDates.white.split(';'));
-    html += each_type('warning', OwnDates.yellow.split(';'));
-    html += each_type('danger', OwnDates.red.split(';'));
-    html += each_type('other', OwnDates.other.split(';'));
-
-    html += '</div>';
-    return html;
-
-    function each_type(type, buttons) {
-      snippet = '<div class="btn-group" role="group">';
-      buttons.forEach(function (item) {
-        item = item.split(',');
-        var number = item[0].trim();
-        var key = (item[1]) ? item[1].trim() : undefined;
-        var title = (item[2]) ? item[2].trim() : ('+' + number);
-
-        if (type == 'other') {
-          if (number == 'current_utc') {
-            snippet += '<button type="button" class="btn btn-link plusdate" data-number="clear">Current UTC time</button>'
-          }
-        } else {
-          snippet += '<button type="button" class="btn btn-' + type + ' plusdate" data-number="' + number + '" data-key="' + key + '">' + title + '</button>';
-        }
-      });
-      snippet += '</div>   ';
-      return snippet;
-    }
-  }
-
-  function construct_buttons(OwnReasons, if_decline, isComments) {
+  
+  function construct_buttons(type) {
     var html = '';
-    if (!isComments) {
-      html = '<br>';
-      if (if_decline) {
-        var declines = OwnReasons.declines.split(';');
-        var declinesPositive = OwnReasons.declinesPositive.split(';');
-        var declinesNegative = OwnReasons.declinesNegative.split(';');
-        html += each_type_new('Declines', declines);
-        html += each_type_new('Declines (Positive)', declinesPositive);
-        html += each_type_new('Declines (Negative)', declinesNegative);
-        html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
-      } else {
-        var prefixes = OwnReasons.prefixes.split(';');
-        var reasons = OwnReasons.reasons.split(';');
-        var postfixes = OwnReasons.postfixes.split(';');
-        html += each_type_new('Reasons', reasons);
-        html += each_type_new('Prefixes', prefixes);
-        html += each_type_new('Postfixes', postfixes);
-        html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
-      }
-    } else {
-      if (typeof OwnReasons.comments !== 'undefined') {
-        var comments = OwnReasons.comments.split(';');
-        html += each_type_new('Comments', comments);
+    switch (type) {
+      case "comments":
+        html += each_type_new('Comments', OwnReasons.comments);
         html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
-      }
+        break;
+  
+      case "accept":
+        html += each_type_new('Reasons', OwnReasons.reasons);
+        html += each_type_new('Prefixes', OwnReasons.prefixes);
+        html += each_type_new('Postfixes', OwnReasons.postfixes);
+        html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
+        break;
+  
+      case "decline":
+        html += each_type_new('Declines', OwnReasons.declines);
+        html += each_type_new('Declines (Positive)', OwnReasons.declinesPositive);
+        html += each_type_new('Declines (Negative)', OwnReasons.declinesNegative);
+        html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
+        break;
     }
+    
     return html;
 
     function each_type_new(type, buttons) {
@@ -805,42 +704,35 @@ function inject_init(browser) {
           break;
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-      var count = 0;
-      var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-      buttons.forEach(function (item) {
-        if (count === 0) {
-          snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
-        }
-        if (item.trim() == '|') {
-          snippet += '</ul></div>';
-          count = 0;
+      var md = 12 / (Math.max(buttons.length,1));
+      $.each(buttons, function (key,val) {
+        snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
+        if (Array.isArray(val)) {
+          val.forEach(function (item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="'+encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+          });
         } else {
-          snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '">' + item.trim() + '</a></li>';
-          ++count;
+          $.each(val, function (title, item) {
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+          });
         }
+        snippet += '</ul></div>';
       });
       snippet += '</div></div></div></li></ul></div>     ';
       return snippet;
     }
   }
-
+  
   function supportInit() {
-    if ($(injects.claim_report).length == 0) {
+    if (injects.claim_report.length == 0) {
       var select = $('select[name=visibility]');
       $(select).find('option:selected').removeProp('selected');
       $(select).find('option[value=Private]').prop('selected', 'selected');
     }
   }
 
-  function val_init() {
-    var steamapi, OwnReasons, OwnDates, last_version;
-    return new Promise(function (resolve) {
-      loadSettings(resolve);
-    });
-  }
-
   function evidencePasteInit() {
-    $('#confirm-accept > div > div > form > div.modal-body > div:nth-child(6) > input').bind('paste', function (e) {
+    injects.accept.reason.bind('paste', function (e) {
       var self = this,
         data = e.originalEvent.clipboardData.getData('Text').trim(),
         dataLower = data.toLowerCase();
@@ -852,22 +744,28 @@ function inject_init(browser) {
   }
 
   function fixModals() {
-    var path = "div > div.modal-content > form > div.modal-body > div.form-group:last-child";
-    var rateAccept = $("#confirm-accept").find(path);
+    var path = "div.modal-body > div.form-group:last-child";
+    
+    var rateAccept = injects.accept.form.find(path);
     rateAccept.find("input[id='rating.positive']").attr("id", "accept.rating.positive");
     rateAccept.find("input[id='rating.negative']").attr("id", "accept.rating.negative");
-
     rateAccept.find("label[for='rating.positive']").attr("for", "accept.rating.positive");
     rateAccept.find("label[for='rating.negative']").attr("for", "accept.rating.negative");
 
     rateAccept.find("input[id='accept.rating.positive']").prop("checked", true);
 
-    var rateDecline = $("#confirm-decline").find(path);
+    var rateDecline = injects.decline.form.find(path);
     rateDecline.find("input[id='rating.positive']").attr("id", "decline.rating.positive");
     rateDecline.find("input[id='rating.negative']").attr("id", "decline.rating.negative");
-
     rateDecline.find("label[for='rating.positive']").attr("for", "decline.rating.positive");
     rateDecline.find("label[for='rating.negative']").attr("for", "decline.rating.negative");
+  }
+
+  function addButtons(textArea, html) {
+    if (typeof textArea !== 'undefined' && html.length > 0) {
+      $(textArea).css('margin-bottom', '10px');
+      $(html).insertAfter(textArea);
+    }
   }
 
   /*
@@ -875,40 +773,42 @@ function inject_init(browser) {
    */
 
   function init() {
-    val_init().then(function (v) {
-      if (v.OwnReasons == null || v.OwnDates == null) {
-        alert("Hello! Looks like this is your first try in Reports Improved (or just new version)! I'll open the settings for you...");
-        if (chrome.runtime.openOptionsPage) {
-          chrome.runtime.openOptionsPage();
-        } else {
-          window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
-        }
-      } else {
-        // console.log(v);
-        OwnReasons = v.OwnReasons;
-        OwnDates = v.OwnDates;
-        last_version = v.last_version;
-        steamapi = v.steamapi;
-        settings = v.settings;
-        version_checker(last_version);
-        content_links();
-        comment_language();
-        bans_count_fetch();
-        table_impoving();
-        comments_nice_look();
-        accept_modal_init();
-        decline_modal_init();
-        dropdown_enchancements();
-        supportInit();
-        bannedInit();
-        viewReportBlankInit();
-        evidencePasteInit();
-        fixModals();
-        final_init();
-      }
-    }).catch(function (v) {
-      console.error(v);
-    });
+    content_links();
+    comment_language();
+    bans_count_fetch();
+    table_improving();
+    comments_nice_look();
+    accept_modal_init();
+    decline_modal_init();
+    dropdown_enchancements();
+    supportInit();
+    bannedInit();
+    viewReportBlankInit();
+    evidencePasteInit();
+    fixModals();
   }
+  var now = moment.utc(); // Moment.js init
+  $(document).ready(function () {
+      if (settings.wide !== false) {
+          $('div.container.content').css('width', '85%');
+      }
+      $(".youtube").YouTubeModal({
+          autoplay: 0,
+          width: 640,
+          height: 480
+      });
+  });
   init();
+  
+  $('.pluscomment').on('click', function (event) {
+    event.preventDefault();
+    setReason($('form').find('textarea').not($('.modal-body').find('textarea')), decodeURI(String($(this).data("text"))));
+  });
+  
+  $('button#comments_clear').on('click', function (event) {
+    event.preventDefault();
+    $('form').find('textarea[name=comment]').val("");
+  });
+  
+  
 }
