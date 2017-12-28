@@ -127,10 +127,11 @@ function inject_init() {
   var datatable = table.DataTable({
     paging: false,
     stateSave: true,
-    fixedHeader: true,
-    order: [
-      [7, "asc"]
-    ],
+    fixedHeader: {
+      header: true,
+      footer: true
+    },
+    order: [],
     columnDefs: [{
       "targets": 'no-sort',
       "orderable": false,

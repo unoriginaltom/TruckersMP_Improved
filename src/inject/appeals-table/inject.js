@@ -66,9 +66,10 @@ function inject_init() {
     paging: false,
     stateSave: true,
     fixedHeader: true,
-    order: [
-      [3, "desc"]
-    ],
+    fixedHeader: {
+      header: true,
+      footer: true
+    },
     columnDefs: [{
       "targets": 'no-sort',
       "orderable": false,
