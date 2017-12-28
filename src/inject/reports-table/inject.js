@@ -34,7 +34,7 @@ function inject_init() {
   });
 
   if ($.inArray(admin_name, admins) > -1) {
-    $.each($('table.table > tbody > tr'), function (index, row) {
+    $.each(table.find('tbody > tr'), function (index, row) {
       if ($(row).find("td:nth-child(10)").html() == "") {
         var view_link = $(row).find("td:nth-child(9) > a")[0];
         var report_id = $(view_link).attr("href").split("/")[3];
@@ -102,10 +102,11 @@ function inject_init() {
     $(this).addClass('input-sm');
     $(this).css('width', 'auto').css('max-width', '140px')
   });
-  $('body > div.wrapper > div.container.content > div > form > button').addClass('btn-sm');
-
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr').each(function () {
-    if ($(this).find('td:nth-child(7)').text() == 'Waiting for player') {
+  $('form > button').addClass('btn-sm');
+  
+  table.find('tbody > tr').each(function () {
+    var status = $(this).find('td:nth-child(7)').text();
+    if (status != 'Waiting for admin' && status != 'New') {
       $(this).find('td').css('color', '#555');
     }
   });

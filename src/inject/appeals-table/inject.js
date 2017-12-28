@@ -42,14 +42,15 @@ function inject_init() {
   });
   $('form > button').addClass('btn-sm');
 
-  $('table.table tr').each(function () {
-    if ($(this).find('td:nth-child(3)').text() == 'Waiting for player') {
+  colsHeadTr.each(function () {
+    var status = $(this).find('td:nth-child(3)').text();
+    if (status != 'Waiting for admin' && status != 'New') {
       $(this).find('td').css('color', '#555');
     }
   });
 
   var columns_html = '<br/><div><label style="margin-right: 5px;">Column visibility</label><div class="btn-group btn-group-xs" id="toggle_column">';
-  $('table.table th').each(function (index, el) {
+  colsHead.each(function (index, el) {
     var text = $.trim($(el).text());
     if (text) {
       columns_html += '<button type="button" class="btn btn-primary toggle-vis" data-column="' + index + '">' + text + '</button>'

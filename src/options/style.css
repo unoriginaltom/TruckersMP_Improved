@@ -19,10 +19,8 @@ textarea {
 .sortable-div textarea {
   margin: 0.5%;
   height: 35px;
-}
-
-.sortable-div textarea {
   margin-bottom: -5.5px;
+  resize: vertical;
 }
 
 .sortable-div button {

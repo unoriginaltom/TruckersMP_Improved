@@ -29,8 +29,8 @@ function inject_init() {
 
       case "reasons":
         html += each_type_new('Reasons', OwnReasons.reasons);
-        html += each_type_new('Prefixes', OwnReasons.prefixes);
-        html += each_type_new('Postfixes', OwnReasons.postfixes);
+        html += " "+each_type_new('Prefixes', OwnReasons.prefixes);
+        html += " "+each_type_new('Postfixes', OwnReasons.postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
         break;
 
@@ -181,88 +181,6 @@ function inject_init() {
     injects.spinner.remove();
   }
 
-  String.prototype.contains = function (needle) {
-    for (var i = needle.length - 1; i >= 0; i--) {
-      if (this.includes(needle[i])) {
-        return true;
-      }
-    }
-  };
-
-  function content_links() {
-    $('.autolink > a').each(function () {
-      var sub = $(this).attr('href');
-      var copy_link = '   <a href="#" class="jmdev_ca" data-link="' + sub + '"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a> ';
-
-      $(this).after(copy_link);
-
-      if (sub.contains(["youtube.com", "youtu.be"])) {
-        $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-      }
-
-      if (sub.length > 60) {
-        $(this).text(sub.substring(0, 40) + '...');
-      }
-    });
-
-    if (settings.img_previews !== false) {
-      $('div.comment .autolink > a').each(function () {
-        var sub = $(this).attr('href');
-        if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
-          $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
-        }
-      });
-    }
-
-    $('a.jmdev_ca').on('click', function (event) {
-      event.preventDefault();
-      injects.spinner.show();
-      var link = encodeURIComponent($(this).data("link"));
-      var length = ($(this).data("link")).length;
-      if (length < 30) {
-        copyToClipboard($(this).data("link"));
-        chrome.runtime.sendMessage({
-          msg: "This URL is short enough. Check your clipboard!"
-        });
-        injects.spinner.hide();
-      } else {
-
-        $.ajax({
-          url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + link,
-          type: 'GET',
-          success: function (val) {
-            if (val.result.url_short == "undefined") {
-              alert('Looks like we have a problem with URL shortener... Try again!');
-            } else {
-              copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
-
-              chrome.runtime.sendMessage({
-                msg: "URL just being shorted! Check your clipboard!"
-              });
-            }
-          },
-          error: function () {
-            alert('Looks like we have a problem with URL shortener... Try again!');
-          },
-          complete: function () {
-            injects.spinner.hide();
-          }
-        });
-      }
-    });
-  }
-
-  function copyToClipboard(text) {
-    const input = document.createElement('input');
-    input.style.position = 'fixed';
-    input.style.opacity = 0;
-    input.value = text;
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand('Copy');
-    document.body.removeChild(input);
-  }
-
   function permcheck() {
     if ($("input[id='perma.true']").prop("checked")) {
       $('#ownreasons_buttons').slideUp('fast');
@@ -374,7 +292,22 @@ function inject_init() {
       event.preventDefault();
       setReason(injects.decline.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
-
+    
+    $('.plusdate').on("click", function (event) {
+      event.preventDefault();
+      var number = $(this).data('number');
+      switch (number) {
+        case 'clear':
+          unban_time = moment.utc();
+          break;
+        default:
+          var key = $(this).data('key');
+          unban_time.add(number, key);
+          break;
+      }
+      $("#datetimeselect").val(unban_time.format("YYYY/MM/DD HH:mm"));
+    });
+    
     $('button#comments_clear').on('click', function (event) {
       event.preventDefault();
       $('form').find('textarea[name=comment]').val("");
