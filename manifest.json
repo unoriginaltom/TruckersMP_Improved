@@ -88,6 +88,7 @@
         "js/bootstrap.min.js",
         "js/dataTables.min.js",
         "js/moment-with-locales.min.js",
+        "js/datetime-moment.js",
         "src/main.js",
         "src/inject/reports-table/inject.js"
       ]
@@ -132,13 +133,15 @@
         "https://truckersmp.com/appeals/adminindex*"
       ],
       "css": [
-        "css/datatables.min.css"
+        "css/datatables.min.css",
+        "src/inject/appeals-table/inject.css"
       ],
       "js": [
         "js/jquery.min.js",
         "js/bootstrap.min.js",
         "js/dataTables.min.js",
         "js/moment-with-locales.min.js",
+        "js/datetime-moment.js",
         "src/main.js",
         "src/inject/appeals-table/inject.js"
       ]

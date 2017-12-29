@@ -124,6 +124,15 @@ function inject_init() {
   table.css('width', '100%');
 
   // ===== Manipulation =====
+  $('table.table > tbody > tr > td:nth-child(8)').each(function () {
+    var text = $(this).text();
+    if (text.split(" ").length != 4) {
+      text = text.replace("Today,", moment().format("DD MMM"));
+      text = moment(text, "DD MMM HH:mm").format("DD MMM YYYY HH:mm");
+      $(this).text(text);
+    }
+  });
+  $.fn.dataTable.moment("DD MMM YYYY HH:mm");
   var datatable = table.DataTable({
     paging: false,
     stateSave: true,
