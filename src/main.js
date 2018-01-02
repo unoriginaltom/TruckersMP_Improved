@@ -305,7 +305,7 @@ function content_links() {
   
     if (sub.contains(["youtube.com", "youtu.be"])) {
       $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-    } else if (sub.contains(["clips.twitch.tv","plays.tv","dailymotion.com"])) {
+    } else if (sub.contains(["clips.twitch.tv","plays.tv","dailymotion.com","vimeo.com","twitch.tv/videos"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
@@ -316,6 +316,14 @@ function content_links() {
       } else if (sub.contains(["dailymotion.com"])) {
         clipid = sub.match(/^.*dailymotion\.com\/video\/(.*)/)[1];
         embedlink = "https://www.dailymotion.com/embed/video/"+clipid;
+      } else if (sub.contains(["vimeo.com"])) {
+        clipid = sub.match(/^.*vimeo\.com\/(.*)/)[1];
+        embedlink = "https://player.vimeo.com/video/"+clipid;
+      } else if (sub.contains(["twitch.tv/videos"])) {
+        var result = sub.match(/^.*twitch.tv\/videos\/(.*)/)[1];
+        var vidinfos = result.split("?t=");
+        embedlink = "https://player.twitch.tv/?autoplay=false&video="+vidinfos[0];
+        if(vidinfos.length == 2) { embedlink += "&t="+vidinfos[1] }
       }
       $('<a href="' + embedlink + '" class="video">  <i class="fa fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
     }

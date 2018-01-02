@@ -136,10 +136,13 @@ function inject_init() {
   var datatable = table.DataTable({
     paging: false,
     stateSave: true,
+    //TEMP BUGFIX
+    /*
     fixedHeader: {
       header: true,
       footer: true
     },
+    */
     order: [],
     columnDefs: [{
       "targets": 'no-sort',

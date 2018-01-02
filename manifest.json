@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "icons": {
@@ -116,7 +116,8 @@
         "https://truckersmp.com/appeals/view/*"
       ],
       "css": [
-        "src/inject/profile/inject.css"
+        "src/inject/profile/inject.css",
+        "src/inject/appeals/inject.css"
       ],
       "js": [
         "js/jquery.min.js",

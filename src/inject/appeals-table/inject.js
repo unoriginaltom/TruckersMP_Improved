@@ -42,8 +42,7 @@ function inject_init() {
       $(this).css('width', 'auto').css('max-width', '140px')
     });
     $('form > button').addClass('btn-sm');
-  
-    console.log(colsHeadTr);
+    
     colsHeadTr.each(function () {
       var status = $(this).find('td:nth-child(3)').text();
       if (status != 'Waiting for admin' && status != 'New') {
@@ -76,10 +75,13 @@ function inject_init() {
     var datatable = table.DataTable({
       paging: false,
       stateSave: true,
+      //TEMP BUGFIX
+      /*
       fixedHeader: {
         header: true,
         footer: true
       },
+      */
       order: [],
       columnDefs: [{
         "targets": 'no-sort',

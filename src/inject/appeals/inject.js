@@ -6,7 +6,8 @@ function inject_init() {
     spinner: $("#loading-spinner"),
     accept: $('#confirm-accept'),
     decline: $('#confirm-decline'),
-    modify: $('#confirm-modify')
+    modify: $('#confirm-modify'),
+    reason: $('input[name="reason"]')
   };
 
   function construct_buttons(type) {
@@ -266,6 +267,36 @@ function inject_init() {
         $(html).insertAfter(textArea);
       }
     }
+  
+    function checkReasonLength() {
+      if (injects.reason.val().length > reasonMax) {
+        injects.reason.css({
+          'background-color': 'rgba(255, 0, 0, 0.5)',
+          'color': '#fff'
+        });
+        reasonCount.css({
+          'color': 'red',
+          'font-weight': 'bold'
+        });
+      } else {
+        reasonCount.css({
+          'color': '',
+          'font-weight': ''
+        });
+        injects.reason.css({
+          'background-color': '',
+          'color': ''
+        });
+      }
+      reasonCount.html(injects.reason.val().length + "/" + reasonMax);
+    }
+  
+    var reasonMax = 190;
+    $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.reason);
+    var reasonCount = $('#reasonCount');
+    injects.reason.keyup(function () {
+      checkReasonLength();
+    });
 
     addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons("accepts"));
     addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('reasons') + '</div>');
@@ -273,8 +304,6 @@ function inject_init() {
     addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons("modify"));
     addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons("declines"));
     addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons("comments"));
-
-
 
     $('.pluscomment').on('click', function (event) {
       event.preventDefault();
@@ -293,6 +322,7 @@ function inject_init() {
       setReason(injects.decline.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
     
+    var unban_time = moment.utc();
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
       var number = $(this).data('number');
@@ -330,6 +360,28 @@ function inject_init() {
       $(select).find('option:selected').removeProp('selected');
       $(select).find('option[value=Private]').prop('selected', 'selected');
     }
+    
+    $('.plusreason').on('click', function (event) {
+      event.preventDefault();
+      
+      var reason_val = injects.reason.val(),
+        sp = '';
+      if (!checkDoubleSlash(injects.reason[0]))
+        sp = (settings.separator) ? settings.separator : ',';
+
+      if ($(this).data('place') == 'before') {
+        injects.reason.val(decodeURI(String($(this).data("text"))) + ' ' + reason_val.trim() + ' ');
+      } else if ($(this).data('place') == 'after-wo') {
+        injects.reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data("text"))) + ' ');
+      } else if (reason_val.length) {
+        injects.reason.val(reason_val.trim() + sp + ' ' + decodeURI(String($(this).data("text"))) + ' ');
+      } else {
+        injects.reason.val(decodeURI(String($(this).data("text"))) + ' ');
+      }
+      injects.reason.focus();
+      checkReasonLength();
+    });
+    
     dropdown_enchancements();
     permcheck();
   }

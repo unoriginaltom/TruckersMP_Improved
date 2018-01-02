@@ -266,7 +266,7 @@ function inject_init() {
         unban_time = now.add(1, 'd');
       } else {
         nb_parts = unban_time_td.split(" ").length;
-        if (nb_parts = 3) {
+        if (nb_parts == 3) {
           unban_time = moment(unban_time_td, "DD MMM HH:mm");
         } else if (nb_parts == 4) {
           unban_time = moment(unban_time_td, "DD MMM YYYY HH:mm");
@@ -587,7 +587,7 @@ function inject_init() {
     rateAccept.find("label[for='rating.positive']").attr("for", "accept.rating.positive");
     rateAccept.find("label[for='rating.negative']").attr("for", "accept.rating.negative");
 
-    rateAccept.find("input[id='accept.rating.positive']").prop("checked", true);
+    /* rateAccept.find("input[id='accept.rating.positive']").prop("checked", true); */
 
     var rateDecline = injects.decline.form.find(path);
     rateDecline.find("input[id='rating.positive']").attr("id", "decline.rating.positive");
