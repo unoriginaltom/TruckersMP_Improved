@@ -34,7 +34,7 @@ function inject_init() {
   });
 
   if ($.inArray(admin_name, admins) > -1) {
-    $.each($('table.table > tbody > tr'), function (index, row) {
+    $.each(table.find('tbody > tr'), function (index, row) {
       if ($(row).find("td:nth-child(10)").html() == "") {
         var view_link = $(row).find("td:nth-child(9) > a")[0];
         var report_id = $(view_link).attr("href").split("/")[3];
@@ -102,10 +102,11 @@ function inject_init() {
     $(this).addClass('input-sm');
     $(this).css('width', 'auto').css('max-width', '140px')
   });
-  $('body > div.wrapper > div.container.content > div > form > button').addClass('btn-sm');
-
-  $('body > div.wrapper > div.container.content > div > table > tbody > tr').each(function () {
-    if ($(this).find('td:nth-child(7)').text() == 'Waiting for player') {
+  $('form > button').addClass('btn-sm');
+  
+  table.find('tbody > tr').each(function () {
+    var status = $(this).find('td:nth-child(7)').text();
+    if (status != 'Waiting for admin' && status != 'New') {
       $(this).find('td').css('color', '#555');
     }
   });
@@ -123,13 +124,25 @@ function inject_init() {
   table.css('width', '100%');
 
   // ===== Manipulation =====
+  $('table.table > tbody > tr > td:nth-child(8)').each(function () {
+    var text = $(this).text();
+    if (text.split(" ").length != 4) {
+      text = text.replace("Today,", moment().format("DD MMM"));
+      text = moment(text, "DD MMM HH:mm").format("DD MMM YYYY HH:mm");
+      $(this).text(text);
+    }
+  });
+  $.fn.dataTable.moment("DD MMM YYYY HH:mm");
   var datatable = table.DataTable({
     paging: false,
     stateSave: true,
+    //TEMP BUGFIX
+    /*
     fixedHeader: {
       header: true,
       footer: true
     },
+    */
     order: [],
     columnDefs: [{
       "targets": 'no-sort',

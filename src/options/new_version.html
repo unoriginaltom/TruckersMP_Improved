@@ -57,16 +57,12 @@
       <div class="col">
         <h3 class="text-center">Changelog</h3>
         <ul class="disc changelog">
-          <li>Multi-browser compatibility: Works <strong>FINALLY</strong> in Firefox</li>
-          <li>Moved out some functions to a common file (So only one file to edit now)</li>
-          <li>Auto-update storage now when opening the changelog page: Solves that bug of having to go to options and click on "Save" when the extension gets updated</li>
-          <li>Optimized code as much as possible (Removed commented parts, stored some JQuery searches in vars rather than always redoing them)</li>
-          <li>New option storage system, options storage has been reworked to be easier to handle. Things have been done to auto-convert your old preferences into the new format</li>
-          <li>Popup has been a bit visually reworked (It may be more improved in the future)</li>
-          <li>Reports table has been improved on some points + Ban appeals list now also have these improvements</li>
-          <li>Third parties JS & CSS files have been minified to improve loading times</li>
-          <li>Ban history now also display on Add/Edit ban page</li>
-          <li>Fixed pagination on appeals page</li>
+          <li>Generic video modals: Now video from Dailymotion, Plays.tv, Twitch (Replay & Clips) and Vimeo are now embedded like Youtube has always been</li>
+          <li>First steps into moving extension icons to Font Awesome 5</li>
+          <li>Better date sorting on the appeals and report tables + removed the default autosorting</li>
+          <li>Solved some bugs on the banlist on reports</li>
+          <li>Fixed modify modal on appeals</li>
+          <li>Following a request from the upper-staff the function of setting an accepted report as "Positive" by default has been removed :(</li>
         </ul>
       </div>
     </div>
@@ -82,6 +78,9 @@
           <div class="col-lg-2">
             <ul class="nav nav-pills nav-stacked text-right" role="tablist">
               <li class="active">
+                <a href="#v170" data-toggle="tab">1.7</a>
+              </li>
+              <li>
                 <a href="#v160" data-toggle="tab">1.6</a>
               </li>
               <li>
@@ -107,7 +106,21 @@
 
           <div class="col-lg-10">
             <div class="tab-content">
-              <div class="tab-pane active in fade" id="v160">
+              <div class="tab-pane active in fade" id="v170">
+                <ul>
+                  <li>Multi-browser compatibility: Works <strong>FINALLY</strong> in Firefox</li>
+                  <li>Moved out some functions to a common file (So only one file to edit now)</li>
+                  <li>Auto-update storage now when opening the changelog page: Solves that bug of having to go to options and click on "Save" when the extension gets updated</li>
+                  <li>Optimized code as much as possible (Removed commented parts, stored some JQuery searches in vars rather than always redoing them)</li>
+                  <li>New option storage system, options storage has been reworked to be easier to handle. Things have been done to auto-convert your old preferences into the new format</li>
+                  <li>Popup has been a bit visually reworked (It may be more improved in the future)</li>
+                  <li>Reports table has been improved on some points + Ban appeals list now also have these improvements</li>
+                  <li>Third parties JS & CSS files have been minified to improve loading times</li>
+                  <li>Ban history now also display on Add/Edit ban page</li>
+                  <li>Fixed pagination on appeals page</li>
+                </ul>
+              </div>
+              <div class="tab-pane fade" id="v160">
                 <ul>
                   <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything was fine,
                     but the settings were not saved)</li>

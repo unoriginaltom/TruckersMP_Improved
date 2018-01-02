@@ -47,9 +47,8 @@ function inject_init() {
     };
 
     var steamapi_error = false;
-    if (data.steamapi === 'none') data.steamapi = ''
+    if (data.steamapi === 'none') data.steamapi = '';
     if (data.steamapi) {
-      alert(data.steamapi)
       if (data.steamapi.length !== 32) {
         steamapi_group.addClass('has-error');
         $('#steamapi_body').addClass('bg-danger');
@@ -374,7 +373,7 @@ function inject_init() {
       if (!confirm('Are you sure you want to delete a non-empty field?')) return;
     }
 
-    var $target = $(this).parent()
+    var $target = $(this).parent();
     $target.slideUp('fast', function () {
       $target.remove();
     })

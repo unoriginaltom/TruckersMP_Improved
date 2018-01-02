@@ -1,6 +1,6 @@
 {
   "name": "TruckersMP Improved",
-  "version": "1.7.2",
+  "version": "1.7.3",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "icons": {
@@ -88,6 +88,7 @@
         "js/bootstrap.min.js",
         "js/dataTables.min.js",
         "js/moment-with-locales.min.js",
+        "js/datetime-moment.js",
         "src/main.js",
         "src/inject/reports-table/inject.js"
       ]
@@ -115,7 +116,8 @@
         "https://truckersmp.com/appeals/view/*"
       ],
       "css": [
-        "src/inject/profile/inject.css"
+        "src/inject/profile/inject.css",
+        "src/inject/appeals/inject.css"
       ],
       "js": [
         "js/jquery.min.js",
@@ -132,13 +134,15 @@
         "https://truckersmp.com/appeals/adminindex*"
       ],
       "css": [
-        "css/datatables.min.css"
+        "css/datatables.min.css",
+        "src/inject/appeals-table/inject.css"
       ],
       "js": [
         "js/jquery.min.js",
         "js/bootstrap.min.js",
         "js/dataTables.min.js",
         "js/moment-with-locales.min.js",
+        "js/datetime-moment.js",
         "src/main.js",
         "src/inject/appeals-table/inject.js"
       ]

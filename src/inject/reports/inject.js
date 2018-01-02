@@ -200,173 +200,8 @@ function inject_init() {
     }
     $(reason).focus();
   }
-  
-  function getYouTubeIdFromUrl(youtubeUrl) {
-    var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-    var match = youtubeUrl.match(regExp);
-    if (match && match[2].length == 11) {
-      return match[2];
-    } else {
-      return false;
-    }
-  }
 
-  function parseURLParams(url) {
-    var queryStart = url.indexOf("?") + 1,
-      queryEnd = url.indexOf("#") + 1 || url.length + 1,
-      query = url.slice(queryStart, queryEnd - 1),
-      pairs = query.replace(/\+/g, " ").split("&"),
-      parms = {},
-      i, n, v, nv;
-
-    if (query === url || query === "") {
-      return;
-    }
-
-    for (i = 0; i < pairs.length; i++) {
-      nv = pairs[i].split("=");
-      n = decodeURIComponent(nv[0]);
-      v = decodeURIComponent(nv[1]);
-
-      if (!parms.hasOwnProperty(n)) {
-        parms[n] = [];
-      }
-
-      parms[n].push(nv.length === 2 ? v : null);
-    }
-    return parms;
-  }
-
-  function checkTimestamps(url) {
-    var params = parseURLParams(url);
-    if (params) {
-      if (params.t) {
-        var start = params.t[0];
-        if (start.includes('s')) {
-          var hrs, min, sec;
-
-          var spl = start.split('h');
-          if (spl.length == 2) {
-            hrs = Number(spl[0]);
-            spl = spl[1];
-          } else {
-            hrs = 0;
-            spl = spl[0];
-          }
-          spl = spl.split('m');
-          if (spl.length == 2) {
-            min = Number(spl[0]);
-            spl = spl[1];
-          } else {
-            min = 0;
-            spl = spl[0];
-          }
-          spl = spl.split('s');
-          sec = Number(spl[0]);
-
-          hrs = hrs * 3600;
-          min = min * 60;
-          start = hrs + min + sec;
-        }
-      } else if (params['time_continue']) {
-        start = params['time_continue'][0];
-      } else {
-        start = params[0];
-      }
-      if (start) {
-        return '?t=' + start + 's';
-      } else {
-        return '';
-      }
-    } else {
-      return '';
-    }
-  }
-
-  function content_links() {
-    $('.autolink > a').each(function () {
-      var sub = $(this).attr('href');
-      var copy_link = '   <a href="#" class="jmdev_ca" data-link="' + sub + '"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a> ';
-
-      $(this).after(copy_link);
-
-      if (sub.contains(["youtube.com", "youtu.be"])) {
-        $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-      }
-      if (sub.length > 60) {
-        $(this).text(sub.substring(0, 40) + '...');
-      }
-    });
-
-    if (settings.img_previews !== false) {
-      $('div.comment .autolink > a').each(function () {
-        var sub = $(this).attr('href');
-        if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
-          $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
-        }
-      });
-    }
-
-    $('a.jmdev_ca').on('click', function (event) {
-      event.preventDefault();
-      $(injects.spinner).show();
-      var link = $(this).data("link");
-      var length = ($(this).data("link")).length;
-
-      if (length < 30) {
-        copyToClipboard($(this).data("link"));
-        chrome.runtime.sendMessage({
-          msg: "This URL is short enough. Check your clipboard!"
-        });
-        $("#loading-spinner").hide();
-      } else {
-        if (link.includes('youtube.com') || link.includes('youtu.be')) {
-          copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
-          chrome.runtime.sendMessage({
-            msg: "URL just being shorted! Check your clipboard!"
-          });
-        } else {
-          urlShorter(link);
-        }
-      }
-    });
-  }
-
-  function urlShorter(link, paste = false) {
-    var msg;
-    $.ajax({
-      url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
-      type: 'GET',
-      success: function (val) {
-        if (val.result['url_short'] === undefined || val.result['url_short'] === null) {
-          alert('Looks like we have a problem with URL shortener... Try again!');
-        } else {
-          copyToClipboard('https://jmdev.ca/url/?l=' + val.result['url_short']);
-
-          if (paste) {
-            msg = "Steam info just saved! Check your clipboard for the link!"
-          } else {
-            msg = "URL just being shorted! Check your clipboard!";
-          }
-        }
-      },
-      error: function () {
-        if (paste) {
-          copyToClipboard(link);
-          alert('Steam info just saved! Check your clipboard for the link!');
-        } else {
-          alert('Looks like we have a problem with URL shortener... Try again!');
-        }
-      },
-      complete: function () {
-        $("#loading-spinner").hide();
-
-        chrome.runtime.sendMessage({
-          msg: msg
-        });
-      }
-    });
-  }
+  $("body").append("<div class='modal fade ets2mp-modal' id='videoModal' tabindex='-1' role='dialog' aria-labelledby='videoModalLabel' aria-hidden='true'><div class='modal-dialog modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title' id='videoModalLabel'>Video preview</h4></div><div class='modal-body' style='padding:0;'></div></div></div></div>");
 
   function copyToClipboard(text) {
     const input = document.createElement('input');
@@ -431,7 +266,7 @@ function inject_init() {
         unban_time = now.add(1, 'd');
       } else {
         nb_parts = unban_time_td.split(" ").length;
-        if (nb_parts = 3) {
+        if (nb_parts == 3) {
           unban_time = moment(unban_time_td, "DD MMM HH:mm");
         } else if (nb_parts == 4) {
           unban_time = moment(unban_time_td, "DD MMM YYYY HH:mm");
@@ -636,15 +471,15 @@ function inject_init() {
   
       case "accept":
         html += each_type_new('Reasons', OwnReasons.reasons);
-        html += each_type_new('Prefixes', OwnReasons.prefixes);
-        html += each_type_new('Postfixes', OwnReasons.postfixes);
+        html += " "+each_type_new('Prefixes', OwnReasons.prefixes);
+        html += " "+each_type_new('Postfixes', OwnReasons.postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
         break;
   
       case "decline":
         html += each_type_new('Declines', OwnReasons.declines);
-        html += each_type_new('Declines (Positive)', OwnReasons.declinesPositive);
-        html += each_type_new('Declines (Negative)', OwnReasons.declinesNegative);
+        html += " "+each_type_new('Declines (Positive)', OwnReasons.declinesPositive);
+        html += " "+each_type_new('Declines (Negative)', OwnReasons.declinesNegative);
         html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
         break;
     }
@@ -752,7 +587,7 @@ function inject_init() {
     rateAccept.find("label[for='rating.positive']").attr("for", "accept.rating.positive");
     rateAccept.find("label[for='rating.negative']").attr("for", "accept.rating.negative");
 
-    rateAccept.find("input[id='accept.rating.positive']").prop("checked", true);
+    /* rateAccept.find("input[id='accept.rating.positive']").prop("checked", true); */
 
     var rateDecline = injects.decline.form.find(path);
     rateDecline.find("input[id='rating.positive']").attr("id", "decline.rating.positive");
@@ -796,6 +631,16 @@ function inject_init() {
           autoplay: 0,
           width: 640,
           height: 480
+      });
+      var videoBtns = $(".video");
+      var videoModal = $("#videoModal");
+      videoBtns.click(function (e) {
+        e.preventDefault();
+        videoModal.find(".modal-body").html("<div class='embed-responsive-16by9 embed-responsive'><iframe src='" + $(this).attr('href') + "' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen='true' style='padding:0; box-sizing:border-box; border:0; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:0.5%; width: 99%; height: 98.5%;'></iframe></div>");
+        videoModal.modal('show');
+      });
+      videoModal.on("hidden.bs.modal", function () {
+        videoModal.find(".modal-body").html("");
       });
   });
   init();

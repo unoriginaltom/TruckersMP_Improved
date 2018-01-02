@@ -6,7 +6,8 @@ function inject_init() {
     spinner: $("#loading-spinner"),
     accept: $('#confirm-accept'),
     decline: $('#confirm-decline'),
-    modify: $('#confirm-modify')
+    modify: $('#confirm-modify'),
+    reason: $('input[name="reason"]')
   };
 
   function construct_buttons(type) {
@@ -29,8 +30,8 @@ function inject_init() {
 
       case "reasons":
         html += each_type_new('Reasons', OwnReasons.reasons);
-        html += each_type_new('Prefixes', OwnReasons.prefixes);
-        html += each_type_new('Postfixes', OwnReasons.postfixes);
+        html += " "+each_type_new('Prefixes', OwnReasons.prefixes);
+        html += " "+each_type_new('Postfixes', OwnReasons.postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
         break;
 
@@ -181,88 +182,6 @@ function inject_init() {
     injects.spinner.remove();
   }
 
-  String.prototype.contains = function (needle) {
-    for (var i = needle.length - 1; i >= 0; i--) {
-      if (this.includes(needle[i])) {
-        return true;
-      }
-    }
-  };
-
-  function content_links() {
-    $('.autolink > a').each(function () {
-      var sub = $(this).attr('href');
-      var copy_link = '   <a href="#" class="jmdev_ca" data-link="' + sub + '"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a> ';
-
-      $(this).after(copy_link);
-
-      if (sub.contains(["youtube.com", "youtu.be"])) {
-        $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-      }
-
-      if (sub.length > 60) {
-        $(this).text(sub.substring(0, 40) + '...');
-      }
-    });
-
-    if (settings.img_previews !== false) {
-      $('div.comment .autolink > a').each(function () {
-        var sub = $(this).attr('href');
-        if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
-          $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
-        }
-      });
-    }
-
-    $('a.jmdev_ca').on('click', function (event) {
-      event.preventDefault();
-      injects.spinner.show();
-      var link = encodeURIComponent($(this).data("link"));
-      var length = ($(this).data("link")).length;
-      if (length < 30) {
-        copyToClipboard($(this).data("link"));
-        chrome.runtime.sendMessage({
-          msg: "This URL is short enough. Check your clipboard!"
-        });
-        injects.spinner.hide();
-      } else {
-
-        $.ajax({
-          url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + link,
-          type: 'GET',
-          success: function (val) {
-            if (val.result.url_short == "undefined") {
-              alert('Looks like we have a problem with URL shortener... Try again!');
-            } else {
-              copyToClipboard('https://jmdev.ca/url/?l=' + val.result.url_short);
-
-              chrome.runtime.sendMessage({
-                msg: "URL just being shorted! Check your clipboard!"
-              });
-            }
-          },
-          error: function () {
-            alert('Looks like we have a problem with URL shortener... Try again!');
-          },
-          complete: function () {
-            injects.spinner.hide();
-          }
-        });
-      }
-    });
-  }
-
-  function copyToClipboard(text) {
-    const input = document.createElement('input');
-    input.style.position = 'fixed';
-    input.style.opacity = 0;
-    input.value = text;
-    document.body.appendChild(input);
-    input.select();
-    document.execCommand('Copy');
-    document.body.removeChild(input);
-  }
-
   function permcheck() {
     if ($("input[id='perma.true']").prop("checked")) {
       $('#ownreasons_buttons').slideUp('fast');
@@ -348,6 +267,36 @@ function inject_init() {
         $(html).insertAfter(textArea);
       }
     }
+  
+    function checkReasonLength() {
+      if (injects.reason.val().length > reasonMax) {
+        injects.reason.css({
+          'background-color': 'rgba(255, 0, 0, 0.5)',
+          'color': '#fff'
+        });
+        reasonCount.css({
+          'color': 'red',
+          'font-weight': 'bold'
+        });
+      } else {
+        reasonCount.css({
+          'color': '',
+          'font-weight': ''
+        });
+        injects.reason.css({
+          'background-color': '',
+          'color': ''
+        });
+      }
+      reasonCount.html(injects.reason.val().length + "/" + reasonMax);
+    }
+  
+    var reasonMax = 190;
+    $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.reason);
+    var reasonCount = $('#reasonCount');
+    injects.reason.keyup(function () {
+      checkReasonLength();
+    });
 
     addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons("accepts"));
     addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('reasons') + '</div>');
@@ -355,8 +304,6 @@ function inject_init() {
     addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons("modify"));
     addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons("declines"));
     addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons("comments"));
-
-
 
     $('.pluscomment').on('click', function (event) {
       event.preventDefault();
@@ -374,7 +321,23 @@ function inject_init() {
       event.preventDefault();
       setReason(injects.decline.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
-
+    
+    var unban_time = moment.utc();
+    $('.plusdate').on("click", function (event) {
+      event.preventDefault();
+      var number = $(this).data('number');
+      switch (number) {
+        case 'clear':
+          unban_time = moment.utc();
+          break;
+        default:
+          var key = $(this).data('key');
+          unban_time.add(number, key);
+          break;
+      }
+      $("#datetimeselect").val(unban_time.format("YYYY/MM/DD HH:mm"));
+    });
+    
     $('button#comments_clear').on('click', function (event) {
       event.preventDefault();
       $('form').find('textarea[name=comment]').val("");
@@ -397,6 +360,28 @@ function inject_init() {
       $(select).find('option:selected').removeProp('selected');
       $(select).find('option[value=Private]').prop('selected', 'selected');
     }
+    
+    $('.plusreason').on('click', function (event) {
+      event.preventDefault();
+      
+      var reason_val = injects.reason.val(),
+        sp = '';
+      if (!checkDoubleSlash(injects.reason[0]))
+        sp = (settings.separator) ? settings.separator : ',';
+
+      if ($(this).data('place') == 'before') {
+        injects.reason.val(decodeURI(String($(this).data("text"))) + ' ' + reason_val.trim() + ' ');
+      } else if ($(this).data('place') == 'after-wo') {
+        injects.reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data("text"))) + ' ');
+      } else if (reason_val.length) {
+        injects.reason.val(reason_val.trim() + sp + ' ' + decodeURI(String($(this).data("text"))) + ' ');
+      } else {
+        injects.reason.val(decodeURI(String($(this).data("text"))) + ' ');
+      }
+      injects.reason.focus();
+      checkReasonLength();
+    });
+    
     dropdown_enchancements();
     permcheck();
   }
