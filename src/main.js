@@ -305,12 +305,12 @@ function content_links() {
   
     if (sub.contains(["youtube.com", "youtu.be"])) {
       $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
-    } else if (sub.contains(["clips.twitch.tv","plays.tv","dailymotion.com","vimeo.com","twitch.tv/videos"])) {
+    } else if (sub.contains(["clips.twitch.tv","plays.tv/video","dailymotion.com","vimeo.com","twitch.tv/videos"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
         embedlink = "https://clips.twitch.tv/embed?clip=" + clipid + "&autoplay=false";
-      } else if (sub.contains(["plays.tv"])) {
+      } else if (sub.contains(["plays.tv/video"])) {
         clipid = sub.match(/^.*plays\.tv\/video\/(.*)\//)[1];
         embedlink = "https://plays.tv/embeds/"+clipid;
       } else if (sub.contains(["dailymotion.com"])) {
