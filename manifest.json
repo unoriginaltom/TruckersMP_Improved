@@ -116,7 +116,6 @@
         "https://truckersmp.com/appeals/view/*"
       ],
       "css": [
-        "src/inject/profile/inject.css",
         "src/inject/appeals/inject.css"
       ],
       "js": [
@@ -157,11 +156,14 @@
         "https://truckersmp.com/user/edit/*",
         "https://truckersmp.com/user/appeals/*"
       ],
+      "css": [
+        "src/inject/user/inject.css"
+      ],
       "js": [
         "js/jquery.min.js",
         "js/bootstrap.min.js",
         "src/main.js",
-        "src/inject/profile/inject.js"
+        "src/inject/user/inject.js"
       ]
     }
   ]
