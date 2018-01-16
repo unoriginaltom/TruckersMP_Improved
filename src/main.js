@@ -331,7 +331,7 @@ function content_links() {
 
         $(this).after(copy_link);
 
-        if (sub.contains(["youtube.com", "youtu.be"])) {
+        if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
             $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
         } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos"])) {
             var clipid, embedlink;
