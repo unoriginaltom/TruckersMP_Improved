@@ -15,16 +15,8 @@ chrome.runtime.onMessage.addListener(
 
 chrome.runtime.onInstalled.addListener(function () {
   val_init().then(function (v) {
-    if (!v.steamapi) {
-      if (chrome.runtime.openOptionsPage) {
-        chrome.runtime.openOptionsPage()
-      } else {
-        window.open(chrome.runtime.getURL('src/options/index.html'))
-      }
-    } else {
-      if (v.last_version != chrome.runtime.getManifest().version) {
-        window.open(chrome.runtime.getURL('src/options/new_version.html'))
-      }
+    if (v.last_version != chrome.runtime.getManifest().version) {
+      window.open(chrome.runtime.getURL('src/options/new_version.html'))
     }
   }).catch(function (v) {
     alert('Oops... -> ' + v)

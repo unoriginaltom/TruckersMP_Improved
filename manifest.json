@@ -1,6 +1,6 @@
-{
+﻿{
   "name": "TruckersMP Improved",
-  "version": "1.7.3.2",
+  "version": "1.8.0",
   "manifest_version": 2,
   "description": "Useful functions for TMP Staff",
   "icons": {
@@ -30,6 +30,8 @@
     "clipboardRead",
     "clipboardWrite"
   ],
+
+  "content_security_policy": "script-src 'self' https://www.gstatic.com https://*.firebaseio.com https://*.firebase.com https://apis.google.com https://www.googleapis.com https://cdnjs.cloudflare.com; object-src 'self'; style-src 'self' 'unsafe-inline' https://www.gstatic.com https://*.googleapis.com https://cdnjs.cloudflare.com https://*.firebase.com",
 
   "background": {
     "page": "src/bg/background.html"

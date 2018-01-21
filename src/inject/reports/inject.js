@@ -41,13 +41,13 @@ function inject_init() {
     $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.accept.reason);
     var reasonCount = $('#reasonCount');
 
-    addButtons($('input[name=reason]'),'<div class="ban-reasons">' + construct_buttons('accept') + '</div>');
+    addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('accept') + '</div>');
     addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons('comments'));
 
     var date_buttons = construct_dates(OwnDates);
     $(date_buttons).insertAfter(injects.date_buttons);
     $('input[id="perma.false"]').prop("checked", true);
-  
+
     // ===== DateTime and Reason inputs checking =====
     injects.accept.form.on('submit', function (event) {
       var time_check = injects.accept.time.val();
@@ -63,7 +63,7 @@ function inject_init() {
         '-webkit-box-shadow': '',
         'box-shadow': ''
       };
-    
+
       if (!time_check && !perm_check) {
         injects.accept.time.css(error_style);
         event.preventDefault();
@@ -80,12 +80,12 @@ function inject_init() {
     // ===== Reasons FTW =====
     $('.plusreason').on('click', function (event) {
       event.preventDefault();
-    
+
       var reason_val = injects.accept.reason.val(),
         sp = '';
       if (!checkDoubleSlash(injects.accept.reason[0]))
         sp = (settings.separator) ? settings.separator : ',';
-    
+
       if ($(this).data('place') == 'before') {
         injects.accept.reason.val(decodeURI(String($(this).data("text"))) + ' ' + reason_val.trim() + ' ');
       } else if ($(this).data('place') == 'after-wo') {
@@ -118,7 +118,7 @@ function inject_init() {
       }
       injects.accept.time.val(unban_time.format("YYYY/MM/DD HH:mm"));
     });
-  
+
     //Ban reason length check
     function checkReasonLength() {
       if (injects.accept.reason.val().length > reasonMax) {
@@ -130,7 +130,7 @@ function inject_init() {
           'color': 'red',
           'font-weight': 'bold'
         });
-        } else {
+      } else {
         reasonCount.css({
           'color': '',
           'font-weight': ''
@@ -142,7 +142,7 @@ function inject_init() {
       }
       reasonCount.html(injects.accept.reason.val().length + "/" + reasonMax);
     }
-  
+
     injects.accept.reason.keyup(function () {
       checkReasonLength();
     });
@@ -176,7 +176,7 @@ function inject_init() {
 
       switch ($(this).data('action')) {
         case "negative":
-          $("input[id='decline.rating.negative']").prop("checked",true);
+          $("input[id='decline.rating.negative']").prop("checked", true);
           break;
 
         case "positive":
@@ -185,13 +185,13 @@ function inject_init() {
       }
       injects.decline.comment.focus();
     });
-    
+
     $('button#decline_clear').on('click', function (event) {
       event.preventDefault();
       injects.decline.comment.val("");
     });
   }
-  
+
   function setReason(reason, reason_val) {
     if ($(reason).val() == "") {
       $(reason).val(reason_val + ' ');
@@ -254,7 +254,7 @@ function inject_init() {
   }
 
   function bans_count_fetch() {
-    
+
     function getUnbanTime(unban_time_td, banned_reason_td) {
       var unban_time;
       now = moment.utc();
@@ -285,10 +285,10 @@ function inject_init() {
       if (banned_reason_td == '@BANBYMISTAKE') {
         unban_time.year('1998');
       }
-      
+
       return unban_time;
     }
-    
+
     var bans_count = 0;
     var expired_bans_count = 0;
     var nb_parts;
@@ -369,32 +369,35 @@ function inject_init() {
 
           var steam_name = escapeHTML(steam_data.response['players'][0]['personaname']);
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
-
-          $.ajax({
-            url: "https://api.truckersmp.com/v2/player/" + perpetrator_id,
-            type: "GET",
-            success: function (tmp_data) {
-              if (tmp_data !== true) {
-                injects.summary.perpetrator_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
-                injects.summary.perpetrator_link.wrap('<kbd>');
-
-                var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_name + '</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
-                $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
-
-                injects.summary.perpetrator_label.css('text-align', 'right');
-                injects.summary.previous_usernames.css('text-align', 'right');
-
-                injects.summary.first_column.each(function () {
-                  $(this).css('font-weight', 'bold');
-                });
-                $('[data-toggle="tooltip"]').tooltip();
-                $("#loading-spinner").hide();
-              }
-            }
-          })
         }
       });
     }
+
+    $.ajax({
+      url: "https://api.truckersmp.com/v2/player/" + perpetrator_id,
+      type: "GET",
+      success: function (tmp_data) {
+        if (tmp_data !== true) {
+          injects.summary.perpetrator_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
+          injects.summary.perpetrator_link.wrap('<kbd>');
+
+          var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_id + '</a></kbd></td></tr>';
+          if (typeof steam_data !== 'undefined') {
+            var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">Steam Profile</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
+          }
+          $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
+
+          injects.summary.perpetrator_label.css('text-align', 'right');
+          // injects.summary.previous_usernames.css('text-align', 'right');
+
+          injects.summary.first_column.each(function () {
+            $(this).css('font-weight', 'bold');
+          });
+          $('[data-toggle="tooltip"]').tooltip();
+          $("#loading-spinner").hide();
+        }
+      }
+    })
 
     var low_id;
     if (perpetrator_id <= 3500) {
@@ -460,7 +463,7 @@ function inject_init() {
     if (settings.viewreportblank)
       $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
   }
-  
+
   function construct_buttons(type) {
     var html = '';
     switch (type) {
@@ -468,22 +471,22 @@ function inject_init() {
         html += each_type_new('Comments', OwnReasons.comments);
         html += '<button type="button" class="btn btn-link" id="comments_clear">Clear</button>';
         break;
-  
+
       case "accept":
         html += each_type_new('Reasons', OwnReasons.reasons);
-        html += " "+each_type_new('Prefixes', OwnReasons.prefixes);
-        html += " "+each_type_new('Postfixes', OwnReasons.postfixes);
+        html += " " + each_type_new('Prefixes', OwnReasons.prefixes);
+        html += " " + each_type_new('Postfixes', OwnReasons.postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
         break;
-  
+
       case "decline":
         html += each_type_new('Declines', OwnReasons.declines);
-        html += " "+each_type_new('Declines (Positive)', OwnReasons.declinesPositive);
-        html += " "+each_type_new('Declines (Negative)', OwnReasons.declinesNegative);
+        html += " " + each_type_new('Declines (Positive)', OwnReasons.declinesPositive);
+        html += " " + each_type_new('Declines (Negative)', OwnReasons.declinesNegative);
         html += '<button type="button" class="btn btn-link" id="decline_clear">Clear</button>';
         break;
     }
-    
+
     return html;
 
     function each_type_new(type, buttons) {
@@ -539,16 +542,16 @@ function inject_init() {
           break;
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-      var md = 12 / (Math.max(buttons.length,1));
-      $.each(buttons, function (key,val) {
+      var md = 12 / (Math.max(buttons.length, 1));
+      $.each(buttons, function (key, val) {
         snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
         if (Array.isArray(val)) {
           val.forEach(function (item) {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="'+encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="' + encodeURI(item.trim()) + '">' + item.trim() + '</a></li>';
           });
         } else {
           $.each(val, function (title, item) {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-action="' + action + '" data-text="' + encodeURI(item.trim()) + '">' + title.trim() + '</a></li>';
           });
         }
         snippet += '</ul></div>';
@@ -557,7 +560,7 @@ function inject_init() {
       return snippet;
     }
   }
-  
+
   function supportInit() {
     if (injects.claim_report.length == 0) {
       var select = $('select[name=visibility]');
@@ -580,7 +583,7 @@ function inject_init() {
 
   function fixModals() {
     var path = "div.modal-body > div.form-group:last-child";
-    
+
     var rateAccept = injects.accept.form.find(path);
     rateAccept.find("input[id='rating.positive']").attr("id", "accept.rating.positive");
     rateAccept.find("input[id='rating.negative']").attr("id", "accept.rating.negative");
@@ -624,36 +627,36 @@ function inject_init() {
   }
   var now = moment.utc(); // Moment.js init
   $(document).ready(function () {
-      if (settings.wide !== false) {
-          $('div.container.content').css('width', '85%');
-      }
-      $(".youtube").YouTubeModal({
-          autoplay: 0,
-          width: 640,
-          height: 480
-      });
-      var videoBtns = $(".video");
-      var videoModal = $("#videoModal");
-      videoBtns.click(function (e) {
-        e.preventDefault();
-        videoModal.find(".modal-body").html("<div class='embed-responsive-16by9 embed-responsive'><iframe src='" + $(this).attr('href') + "' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen='true' style='padding:0; box-sizing:border-box; border:0; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:0.5%; width: 99%; height: 98.5%;'></iframe></div>");
-        videoModal.modal('show');
-      });
-      videoModal.on("hidden.bs.modal", function () {
-        videoModal.find(".modal-body").html("");
-      });
+    if (settings.wide !== false) {
+      $('div.container.content').css('width', '85%');
+    }
+    $(".youtube").YouTubeModal({
+      autoplay: 0,
+      width: 640,
+      height: 480
+    });
+    var videoBtns = $(".video");
+    var videoModal = $("#videoModal");
+    videoBtns.click(function (e) {
+      e.preventDefault();
+      videoModal.find(".modal-body").html("<div class='embed-responsive-16by9 embed-responsive'><iframe src='" + $(this).attr('href') + "' width='640' height='480' frameborder='0' scrolling='no' allowfullscreen='true' style='padding:0; box-sizing:border-box; border:0; -webkit-border-radius:5px; -moz-border-radius:5px; border-radius:5px; margin:0.5%; width: 99%; height: 98.5%;'></iframe></div>");
+      videoModal.modal('show');
+    });
+    videoModal.on("hidden.bs.modal", function () {
+      videoModal.find(".modal-body").html("");
+    });
   });
   init();
-  
+
   $('.pluscomment').on('click', function (event) {
     event.preventDefault();
     setReason($('form').find('textarea').not($('.modal-body').find('textarea')), decodeURI(String($(this).data("text"))));
   });
-  
+
   $('button#comments_clear').on('click', function (event) {
     event.preventDefault();
     $('form').find('textarea[name=comment]').val("");
   });
-  
-  
+
+
 }

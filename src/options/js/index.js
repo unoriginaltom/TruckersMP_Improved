@@ -47,35 +47,26 @@ function inject_init() {
     };
 
     var steamapi_error = false;
-    if (data.steamapi === 'none') data.steamapi = '';
-    if (data.steamapi) {
+    if (data.steamapi && data.steamapi !== 'none') {
+      alert(data.steamapi)
       if (data.steamapi.length !== 32) {
         steamapi_group.addClass('has-error');
         $('#steamapi_body').addClass('bg-danger');
         setTimeout(function () {
           $('#steamapi_body').removeClass('bg-danger');
         }, 2000);
-
+        
         steamapi_error = true
       }
+    } else {
+      new_data.steamapi = null
     }
 
     if (steamapi_error) {
       return;
     }
 
-    if (data.settings.local_storage || !syncAllowed) {
-      if (data.settings.local_storage && syncAllowed) {
-        saveSettings(chrome.storage.sync, {
-          settings: {
-            local_storage: true
-          }
-        }, false);
-      }
-      saveSettings(chrome.storage.local, new_data, with_message);
-    } else {
-      saveSettings(chrome.storage.sync, new_data, with_message);
-    }
+    saveSettings(chrome.storage.local, new_data, with_message);
 
     function getReasons(reason) {
       var obj = [];
@@ -121,7 +112,7 @@ function inject_init() {
   }
 
   function restore_options() {
-    $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
+    $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>TMP Improved</strong> ' + chrome.runtime.getManifest().version);
 
     function set_options(items) {
       try {
@@ -373,7 +364,7 @@ function inject_init() {
       if (!confirm('Are you sure you want to delete a non-empty field?')) return;
     }
 
-    var $target = $(this).parent();
+    var $target = $(this).parent()
     $target.slideUp('fast', function () {
       $target.remove();
     })
@@ -405,12 +396,11 @@ function inject_init() {
     createField(section);
   });
 
+  $('button#loadData').on('click', function (event) {
+    if (confirm('Do you really want to rewrite your settings with Online data?')) {
+      loadSettingsFromFirebase()
+    }
+  })
 
   restore_options();
 }
-
-window.onbeforeunload = function (e) {
-  var dialogText = 'Check twice before closing the tab!'
-  e.returnValue = dialogText
-  return e
-};

@@ -1,13 +1,10 @@
-function inject_init() {
-  $('#ext_name').html('<strong>' + chrome.runtime.getManifest().name + '</strong> ' + chrome.runtime.getManifest().version);
-  $('.subheader').html(chrome.runtime.getManifest().version);
+$('kbd.subheader').html(chrome.runtime.getManifest().version);
 
-  $('#close').on('click', function () {
-    window.close();
-  });
-  
-  loadSettings(function (i) {
-    saveSettings(chrome.storage.sync, parseItems(i), false);
-    saveSettings(chrome.storage.sync, i, false);
-  });
-}
+$('#go_to_options').on('click', function (event) {
+  event.preventDefault();
+  window.open(chrome.runtime.getURL('src/options/index.html'), "_blank");
+});
+
+$('#close').on('click', function () {
+  window.close();
+});

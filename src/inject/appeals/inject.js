@@ -7,7 +7,10 @@ function inject_init() {
     accept: $('#confirm-accept'),
     decline: $('#confirm-decline'),
     modify: $('#confirm-modify'),
-    reason: $('input[name="reason"]')
+    reason: $('input[name="reason"]'),
+    summary: {
+      perpetrator_link: $('#summary > table > tbody > tr:nth-child(1) > td:nth-child(2) > a'),
+    }
   };
 
   function construct_buttons(type) {
@@ -30,8 +33,8 @@ function inject_init() {
 
       case "reasons":
         html += each_type_new('Reasons', OwnReasons.reasons);
-        html += " "+each_type_new('Prefixes', OwnReasons.prefixes);
-        html += " "+each_type_new('Postfixes', OwnReasons.postfixes);
+        html += " " + each_type_new('Prefixes', OwnReasons.prefixes);
+        html += " " + each_type_new('Postfixes', OwnReasons.postfixes);
         html += '<button type="button" class="btn btn-link" id="reason_clear">Clear</button>';
         break;
 
@@ -74,15 +77,15 @@ function inject_init() {
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-      $.each(buttons, function (key,val) {
+      $.each(buttons, function (key, val) {
         snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
         if (Array.isArray(val)) {
           val.forEach(function (item) {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+ encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="' + encodeURI(item.trim()) + '">' + item.trim() + '</a></li>';
           });
         } else {
           $.each(val, function (title, item) {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="' + encodeURI(item.trim()) + '">' + title.trim() + '</a></li>';
           });
         }
         snippet += '</ul></div>';
@@ -127,7 +130,7 @@ function inject_init() {
   function table_impoving() {
     $('table').addClass('table-condensed table-hover');
 
-    if (steamapi !== null) {
+    if (steamapi !== null && steamapi !== 'none') {
       $.ajax({
         url: "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + steamapi + "&format=json&steamids=" + steam_id,
         type: 'GET',
@@ -148,6 +151,28 @@ function inject_init() {
         }
       });
     }
+
+    var perpetrator_link = $('#summary > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
+    var perpetrator_id = perpetrator_link.attr('href').replace('/user/', '');
+    $.ajax({
+      url: "https://api.truckersmp.com/v2/player/" + perpetrator_id,
+      type: "GET",
+      success: function (tmp_data) {
+        if (tmp_data !== true) {
+          perpetrator_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
+          perpetrator_link.wrap('<kbd>');
+
+          var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_id + '</a></kbd></td></tr>';
+          if (typeof steam_data !== 'undefined') {
+            var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">Steam Profile</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
+          }
+          $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
+
+          $('[data-toggle="tooltip"]').tooltip();
+          $("#loading-spinner").hide();
+        }
+      }
+    })
 
     $('input[type=radio][name=perma]').change(function () {
       permcheck()
@@ -267,7 +292,7 @@ function inject_init() {
         $(html).insertAfter(textArea);
       }
     }
-  
+
     function checkReasonLength() {
       if (injects.reason.val().length > reasonMax) {
         injects.reason.css({
@@ -290,7 +315,7 @@ function inject_init() {
       }
       reasonCount.html(injects.reason.val().length + "/" + reasonMax);
     }
-  
+
     var reasonMax = 190;
     $("<div id='reasonCount'>0/" + reasonMax + "</div>").insertAfter(injects.reason);
     var reasonCount = $('#reasonCount');
@@ -321,7 +346,7 @@ function inject_init() {
       event.preventDefault();
       setReason(injects.decline.find('textarea[name=comment]'), decodeURI($(this).data("text")));
     });
-    
+
     var unban_time = moment.utc();
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
@@ -337,7 +362,7 @@ function inject_init() {
       }
       $("#datetimeselect").val(unban_time.format("YYYY/MM/DD HH:mm"));
     });
-    
+
     $('button#comments_clear').on('click', function (event) {
       event.preventDefault();
       $('form').find('textarea[name=comment]').val("");
@@ -360,10 +385,10 @@ function inject_init() {
       $(select).find('option:selected').removeProp('selected');
       $(select).find('option[value=Private]').prop('selected', 'selected');
     }
-    
+
     $('.plusreason').on('click', function (event) {
       event.preventDefault();
-      
+
       var reason_val = injects.reason.val(),
         sp = '';
       if (!checkDoubleSlash(injects.reason[0]))
@@ -381,7 +406,7 @@ function inject_init() {
       injects.reason.focus();
       checkReasonLength();
     });
-    
+
     dropdown_enchancements();
     permcheck();
   }

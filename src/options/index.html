@@ -2,18 +2,28 @@
 
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-  <link rel="stylesheet" type="text/css" href="/css/bootstrap.paper.min.css">
-  <link rel="stylesheet" type="text/css" href="/css/font-awesome.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/paper/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
   <link id="favicon" rel="shortcut icon" type="image/png" href="/icons/icon48.png" />
   <title>TruckersMP Improved Settings</title>
 
-  <link rel="stylesheet" type="text/css" href="style.css">
+  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+  <link rel="stylesheet" type="text/css" href="css/index.css">
+
+  <script src="https://www.gstatic.com/firebasejs/ui/2.5.1/firebase-ui-auth.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+  <script src="../firebase/config.js"></script>
+  <script src="../firebase/login.js"></script>
+
+  <!-- <script src="/src/firebase/credentials.js"></script> -->
 </head>
 
 <html>
 
 <body>
-
   <div class="loadingoverlay">
   </div>
 
@@ -21,10 +31,16 @@
     <nav class="navbar navbar-default navbar-inverse navbar-fixed-top">
       <div class="container">
         <div class="navbar-header">
-          <a class="navbar-brand" href="#" id="ext_name"></a>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#" id="ext_name">Loading...</a>
         </div>
 
-        <div class="collapse navbar-collapse">
+        <div class="collapse navbar-collapse" id="navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
             <li class="">
               <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" target="_blank">Forum topic</a>
@@ -58,15 +74,59 @@
                     <h3 class="panel-title">Storage Settings</h3>
                   </div>
 
-                  <ul class="list-group" data-toggle="tooltip" data-placement="bottom" data-original-title="Use this storage for save large settings. This storage is a default if synchronization with your Google account not allowed.">
-                    <li class="list-group-item">
-                      Local Storage for Settings
-                      <div class="material-switch pull-left">
-                        <input id="local_storage" name="local_storage" type="checkbox">
-                        <label for="local_storage" class="label-primary"></label>
+                  <div class="panel-body">
+                    <div class="row" style="display: none;" id="user-details">
+                      <div class="col-sm-12 user-details">
+                        <div class="user-image">
+                          <img src="#" class="img-circle" id="account-image">
+                        </div>
+                        <div class="user-info-block">
+                          <div class="user-heading">
+                            <h3 id="account-username">Username</h3>
+                            <span class="help-block" id="account-provider">Auth provider</span>
+                            <button type="button" class="btn btn-default btn-sm hidden" data-toggle="modal" data-target="#onlineStorageModal">Debug Data</button>
+                          </div>
+                        </div>
                       </div>
-                    </li>
-                  </ul>
+                    </div>
+
+                    <div id="firebaseui-auth">
+                      <p class="text-center">
+                        You can log in your Google/Github account or even create a new account to store your settings online!
+                      </p>
+
+                      <div id="firebaseui-auth-container"></div>
+                    </div>
+                  </div>
+
+                  <div class="panel-footer" id="firebaseui-logout" style="display: none;">
+                    <div class="btn-group btn-group-justified" role="group">
+                      <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-danger" id="signOut">Sign out</button>
+                      </div>
+                      <div class="btn-group" role="group">
+                        <button type="button" class="btn btn-danger" id="loadData" data-toggle="tooltip" data-placement="bottom" title="Loads your data from Online storage and rewrites any existing.">Load data</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="modal fade" tabindex="-1" role="dialog" id="onlineStorageModal">
+                <div class="modal-dialog" role="document">
+                  <div class="modal-content">
+                    <div class="modal-header">
+                      <h4 class="modal-title">Debug Data</h4>
+                    </div>
+
+                    <div class="modal-body">
+                      <pre id="account-details"></pre>
+                    </div>
+
+                    <div class="modal-footer">
+                      <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+                    </div>
+                  </div>
                 </div>
               </div>
 
@@ -132,9 +192,6 @@
               <ul class="list-group">
                 <li class="list-group-item" data-toggle="tooltip" data-placement="bottom" title="Only in Appeals/Reports commentaries">
                   Image Previews
-                  <strong>
-                    <abbr>?</abbr>
-                  </strong>
                   <div class="material-switch pull-left">
                     <input id="img_previews" name="img_previews" type="checkbox">
                     <label for="img_previews" class="label-primary"></label>
@@ -513,6 +570,7 @@
             <h4 class="modal-title">Import or export settings</h4>
           </div>
           <div class="modal-body">
+            <p>This action will import/export your settings AND rewrite settings in Online storage (if applicable)!</p>
             <div class="btn-group btn-group-justified" role="group" aria-label="...">
               <div class="btn-group" role="group">
                 <input type="file" id="import_file" accept=".json" style="display: none;" />
@@ -532,10 +590,8 @@
 
   </div>
 
-  <script src="/js/jquery.min.js"></script>
-  <script src="/js/bootstrap.min.js"></script>
   <script src="/src/main.js"></script>
-  <script src="js/main.js"></script>
+  <script src="js/index.js"></script>
 </body>
 
 </html>
