@@ -26,17 +26,18 @@
           <a href="#" id="close" class="btn btn-danger">Close this page</a>
         </p>
         <p>
-          <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" class="btn" target="_blank">Forum topic</a>
+          <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" class="btn" target="_blank" rel="noreferrer nofollow noopener">Forum topic</a>
         </p>
 
         <p>
           Created by
-          <a href="https://github.com/cjmaxik" target="_blank">CJMAXiK</a>
-          <br> Contributors:
-          <a href="https://github.com/HumaneWolf" target="_blank">HumaneWolf</a>,
-          <a href="https://github.com/math-98" target="_blank">math-98</a>,
-          <a href="https://github.com/AlexKERNEL" target="_blank">AlexKERNEL</a>,
-          <a href="https://github.com/CaptainKostaZ" target="_blank">CaptainKostaZ</a>
+          <a href="https://github.com/cjmaxik"  target="_blank" rel="noreferrer nofollow noopener">CJMAXiK</a>
+          <br> Collaborators:
+          <a href="https://github.com/HumaneWolf"  target="_blank" rel="noreferrer nofollow noopener">HumaneWolf</a>,
+          <a href="https://github.com/math-98"  target="_blank" rel="noreferrer nofollow noopener">math-98</a>,
+          <a href="https://github.com/AlexKERNEL"  target="_blank" rel="noreferrer nofollow noopener">AlexKERNEL</a>,
+          <a href="https://github.com/CaptainKostaZ"  target="_blank" rel="noreferrer nofollow noopener">CaptainKostaZ</a> and 
+          <a href="https://github.com/jean8mathieu"  target="_blank" rel="noreferrer nofollow noopener">J-M</a>
         </p>
       </div>
     </div>
@@ -45,20 +46,10 @@
       <div class="col">
         <h3 class="text-center">Changelog</h3>
         <ul class="disc changelog">
-          <li>Multi-browser compatibility: Works
-            <strong>FINALLY</strong> in Firefox</li>
-          <li>Moved out some functions to a common file (So only one file to edit now)</li>
-          <li>Auto-update storage now when opening the changelog page: Solves that bug of having to go to options and click on
-            "Save" when the extension gets updated</li>
-          <li>Optimized code as much as possible (Removed commented parts, stored some JQuery searches in vars rather than always
-            redoing them)</li>
-          <li>New option storage system, options storage has been reworked to be easier to handle. Things have been done to auto-convert
-            your old preferences into the new format</li>
-          <li>Popup has been a bit visually reworked (It may be more improved in the future)</li>
-          <li>Reports table has been improved on some points + Ban appeals list now also have these improvements</li>
-          <li>Third parties JS & CSS files have been minified to improve loading times</li>
-          <li>Ban history now also display on Add/Edit ban page</li>
-          <li>Fixed pagination on appeals page</li>
+          <li>Online storage support (uses Github, Google or E-mail auth)</li>
+          <li>Online storage doesn't work on Firefox, sorry :(, uses local storage instead</li>
+          <li>Settings improvements</li>
+          <li>Improvements in Appeals and Reports</li>
         </ul>
       </div>
     </div>
@@ -74,6 +65,9 @@
           <div class="col-lg-2">
             <ul class="nav nav-pills nav-stacked text-right" role="tablist">
               <li class="active">
+                <a href="#v170" data-toggle="tab">1.7</a>
+              </li>
+              <li>
                 <a href="#v160" data-toggle="tab">1.6</a>
               </li>
               <li>
@@ -99,7 +93,26 @@
 
           <div class="col-lg-10">
             <div class="tab-content">
-              <div class="tab-pane active in fade" id="v160">
+              <div class="tab-pane active in fade" id="v170">
+                <ul>
+                  <li>Multi-browser compatibility: Works
+                    <strong>FINALLY</strong> in Firefox</li>
+                  <li>Moved out some functions to a common file (So only one file to edit now)</li>
+                  <li>Auto-update storage now when opening the changelog page: Solves that bug of having to go to options and
+                    click on "Save" when the extension gets updated</li>
+                  <li>Optimized code as much as possible (Removed commented parts, stored some JQuery searches in vars rather
+                    than always redoing them)
+                  </li>
+                  <li>New option storage system, options storage has been reworked to be easier to handle. Things have been done
+                    to auto-convert your old preferences into the new format</li>
+                  <li>Popup has been a bit visually reworked (It may be more improved in the future)</li>
+                  <li>Reports table has been improved on some points + Ban appeals list now also have these improvements</li>
+                  <li>Third parties JS & CSS files have been minified to improve loading times</li>
+                  <li>Ban history now also display on Add/Edit ban page</li>
+                  <li>Fixed pagination on appeals page</li>
+                </ul>
+              </div>
+              <div class="tab-pane fade" id="v160">
                 <ul>
                   <li>Added checking for errors when save settings (earlier, when errors occurred, was reported that everything
                     was fine, but the settings were not saved)</li>
@@ -117,7 +130,7 @@
                   <li>Some improvements on the ban reason length check:
                     <ul>
                       <li>Shows now a hint to use
-                        <a href='http://textuploader.com/' target='_blank'>http://textuploader.com/</a> if the ban reason is above the limit</li>
+                        <a href='http://textuploader.com/'  target="_blank" rel="noreferrer nofollow noopener" >http://textuploader.com/</a> if the ban reason is above the limit</li>
                       <li>Removed browser enforcing the 190 chars limit</li>
                       <li>Visual warning appears now at 190 chars (180 before)</li>
                       <li>Added chars count under the field</li>
