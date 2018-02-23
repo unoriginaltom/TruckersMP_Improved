@@ -20,13 +20,11 @@ var loginUIConfig = {
 
 // Initialize FirebaseUI
 var ui = new firebaseui.auth.AuthUI(firebase.auth())
-var isSignedIn = false
+var isSignedIn = (firebase.auth().displayName) ? true : false
 
 function handleSignedInUser(user) {
   console.log(user)
-}
 
-function handleSignedInUser(user) {
   $('#firebaseui-auth').slideUp('fast');
 
   $('#firebaseui-logout').slideDown('fast');
@@ -57,9 +55,16 @@ firebase.auth().onAuthStateChanged(function (user) {
     $('#account-provider').text('uses ' + providersData(user.providerData));
 
     $('#account-details').text(JSON.stringify(user, null, '  '));
+
+    $('#storageLoginState').text('uses ' + providersData(user.providerData));
+
+    $('#collapseStorage').collapse('hide');
+    $('#signOut').text('Sign out');
   } else {
     $('#sign-in-status').text('Signed out');
-    $('#account-details').html('There is no data to show... But there is a cake! <img src="https://i.imgur.com/i4YAIoU.png" class="img-rounded">');
+    $('#storageLoginState').text('Local');
+
+    $('#collapseStorage').collapse('show');
   }
 })
 
@@ -80,6 +85,11 @@ function initApp() {
       firebase.auth().signOut();
     }
   })
+
+  if (!firebase.auth().displayName) {
+    $('#collapseStorage').collapse('show');
+    $('#storageLoginState').text('Local');
+  }
 }
 
 window.addEventListener('load', initApp);

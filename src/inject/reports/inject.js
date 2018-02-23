@@ -116,7 +116,7 @@ function inject_init() {
           unban_time.add(number, key);
           break;
       }
-      injects.accept.time.val(unban_time.format("YYYY/MM/DD HH:mm"));
+      injects.accept.time.val(unban_time.format("YYYY-MM-DD HH:mm"));
     });
 
     //Ban reason length check
@@ -224,28 +224,31 @@ function inject_init() {
           comment = 'Wir bedanken uns für deinen Report :)';
           break;
         case 'Turkish':
-          comment = 'Raporun için teşekkür ederim :)';
+          comment = 'Raporunuz için teşekkürler :) Lütfen sunduğunuz kanıtın, yasağın uygulandığı ve takiben gelen bir(1) aylık süreç boyunca kullanılabilir olması gerektiğini lütfen unutmayın.';
           break;
         case 'Norwegian':
           comment = 'Takk for rapporten :)';
           break;
         case 'Spanish':
-          comment = 'Muchas gracias por tu reporte :)';
+          comment = 'Muchas gracias por tu reporte :) Recuerda que las pruebas/evidencias deben estar disponibles durante toda la vigencia de la prohibicion y más 1 mes.';
           break;
         case 'Dutch':
-          comment = 'Bedankt voor de report :)';
+          comment = 'Bedankt voor je rapport :) Onthoud alsjeblieft dat het bewijs beschikbaar moet zijn voor de volledige lengte van de ban PLUS 1 maand.';
           break;
         case 'Polish':
-          comment = 'Dziękuję za report :)';
+          comment = 'Dziękuję za report :) Proszę pamiętać o tym że dowód musi być dostępny przez cały okres bana, plus jeden miesiąc. ';
           break;
         case 'Russian':
-          comment = 'Спасибо за репорт :)';
+          comment = 'Спасибо за репорт :) Помните, что доказательства должны быть доступны весь период бана ПЛЮС 1 месяц.';
           break;
         case 'French':
-          comment = 'Merci pour le rapport :)';
+          comment = 'Merci pour votre rapport :) Notez que la preuve doit être disponible durant toute la durée du ban PLUS 1 mois.';
+          break;
+        case 'Lithuanian':
+          comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.';
           break;
         default:
-          comment = 'Thank you for the report :)';
+          comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.';
       }
     } else {
       comment = settings.own_comment;
@@ -400,7 +403,7 @@ function inject_init() {
     })
 
     var low_id;
-    if (perpetrator_id <= 3500) {
+    if (perpetrator_id <= 3700) {
       low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check names & aliases">Low ID! <strong>' + perpetrator_id + '</strong></span>';
     } else if (perpetrator_id == reporter_id) {
       low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID is the same as Reporter ID"> Same IDs! <strong>' + perpetrator_id + '</strong></span>';

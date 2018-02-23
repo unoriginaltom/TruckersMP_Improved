@@ -4,17 +4,17 @@
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/bootswatch/3.3.7/paper/bootstrap.min.css">
   <link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
 
   <link id="favicon" rel="shortcut icon" type="image/png" href="/icons/icon48.png" />
   <title>TruckersMP Improved Settings</title>
 
-  <script src="https://www.gstatic.com/firebasejs/4.9.0/firebase.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/4.9.1/firebase.js"></script>
   <link rel="stylesheet" type="text/css" href="css/index.css">
 
-  <script src="https://www.gstatic.com/firebasejs/ui/2.5.1/firebase-ui-auth.js"></script>
-  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.5.1/firebaseui.css" />
+  <script src="https://www.gstatic.com/firebasejs/ui/2.6.1/firebase-ui-auth.js"></script>
+  <link type="text/css" rel="stylesheet" href="https://cdn.firebase.com/libs/firebaseui/2.6.1/firebaseui.css" />
   <script src="../firebase/config.js"></script>
   <script src="../firebase/login.js"></script>
 
@@ -68,34 +68,42 @@
           <div class="col-md-7">
             <div class="row">
               <div class="col-md-12">
-                <div class="panel panel-success storage-settings">
+                <div class="panel panel-primary storage-settings">
 
                   <div class="panel-heading">
-                    <h3 class="panel-title">Storage Settings</h3>
+                    <h3 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseStorage">
+                        Storage
+                        <kbd id="storageLoginState">...</kbd>
+                        <i class="text-muted">click to check</i>
+                      </a>
+                    </h3>
                   </div>
 
-                  <div class="panel-body">
-                    <div class="row" style="display: none;" id="user-details">
-                      <div class="col-sm-12 user-details">
-                        <div class="user-image">
-                          <img src="#" class="img-circle" id="account-image">
-                        </div>
-                        <div class="user-info-block">
-                          <div class="user-heading">
-                            <h3 id="account-username">Username</h3>
-                            <span class="help-block" id="account-provider">Auth provider</span>
-                            <button type="button" class="btn btn-default btn-sm hidden" data-toggle="modal" data-target="#onlineStorageModal">Debug Data</button>
+                  <div id="collapseStorage" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body">
+                      <div class="row" style="display: none;" id="user-details">
+                        <div class="col-sm-12 user-details">
+                          <div class="user-image">
+                            <img src="#" class="img-circle" id="account-image">
+                          </div>
+                          <div class="user-info-block">
+                            <div class="user-heading">
+                              <h3 id="account-username">Username</h3>
+                              <span class="help-block" id="account-provider">Auth provider</span>
+                              <button type="button" class="btn btn-default btn-sm hidden" data-toggle="modal" data-target="#onlineStorageModal">Debug Data</button>
+                            </div>
                           </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div id="firebaseui-auth">
-                      <p class="text-center">
-                        You can log in your Google/Github account or even create a new account to store your settings online!
-                      </p>
+                      <div id="firebaseui-auth">
+                        <p class="text-center">
+                          You can log in your Google/Github account or even create a new account to store your settings online!
+                        </p>
 
-                      <div id="firebaseui-auth-container"></div>
+                        <div id="firebaseui-auth-container"></div>
+                      </div>
                     </div>
                   </div>
 
@@ -105,7 +113,7 @@
                         <button type="button" class="btn btn-danger" id="signOut">Sign out</button>
                       </div>
                       <div class="btn-group" role="group">
-                        <button type="button" class="btn btn-danger" id="loadData" data-toggle="tooltip" data-placement="bottom" title="Loads your data from Online storage and rewrites any existing.">Load data</button>
+                        <button type="button" class="btn btn-danger" id="loadData" data-toggle="tooltip" data-placement="bottom" title="Loads your data from Online storage and rewrites any existing.">Force loading data</button>
                       </div>
                     </div>
                   </div>
@@ -133,46 +141,52 @@
               <div class="col-md-12">
                 <div class="panel panel-default">
                   <div class="panel-heading">
-                    <h3 class="panel-title">Steam Web API Key
-                      <i class="text-muted">discontinued, will be deleted in the future</i>
+                    <h3 class="panel-title">
+                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSteamKey">
+                        Steam Web API Key
+                        <i class="text-muted">discontinued, will be deleted in the future</i>
+                      </a>
                     </h3>
-                  </div>
-                  <div class="panel-body" id="steamapi_body">
-                    <div class="form-group" id="steamapi_group">
-                      <input type="text" name="steamapi" id="steamapi" placeholder="Paste it here" class="form-control text-center" maxlength="32">
-                      <p class="help-clock">This 32-symbol key is needed for Steam integration.
-                        <a href="#" data-toggle="modal" data-target="#SteamAPIModal">How to get it?</a>
-                      </p>
-                    </div>
 
-                    <div class="modal fade" tabindex="-1" role="dialog" id="SteamAPIModal">
-                      <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                          <div class="modal-header">
-                            <h4 class="modal-title">How to get Steam Web API Key?</h4>
-                          </div>
-                          <div class="modal-body">
-                            <p>1) Go to&nbsp;
-                              <strong>
-                                <a href="http://steamcommunity.com/dev/apikey" target="_blank">http://steamcommunity.com/dev/apikey</a>
-                              </strong>
-                            </p>
-                            <p>2) Paste some random site, check
-                              <strong>I agree</strong> and click
-                              <strong>Register</strong>
-                            </p>
-                            <p>
-                              <img src="http://i.imgur.com/nOdnvh6.png" class="img-responsive img-thumbnail">
-                            </p>
-                            <p>3) Copy Steam Web API Key</p>
-                            <p>
-                              <img src="http://i.imgur.com/R1tQps5.png" class="img-responsive img-thumbnail">
-                            </p>
-                            <p>4) Paste it right there</p>
-                            <p>5) Click "Save Settings" in navigation menu and reload TruckersMP page.</p>
-                          </div>
-                          <div class="modal-footer">
-                            <button type="button" class="btn btn-primary" data-dismiss="modal">Got it!</button>
+                  </div>
+                  <div id="collapseSteamKey" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                    <div class="panel-body" id="steamapi_body">
+                      <div class="form-group" id="steamapi_group">
+                        <input type="text" name="steamapi" id="steamapi" placeholder="Paste it here" class="form-control text-center" maxlength="32">
+                        <p class="help-clock">This 32-symbol key is needed for Steam integration.
+                          <a href="#" data-toggle="modal" data-target="#SteamAPIModal">How to get it?</a>
+                        </p>
+                      </div>
+
+                      <div class="modal fade" tabindex="-1" role="dialog" id="SteamAPIModal">
+                        <div class="modal-dialog" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h4 class="modal-title">How to get Steam Web API Key?</h4>
+                            </div>
+                            <div class="modal-body">
+                              <p>1) Go to&nbsp;
+                                <strong>
+                                  <a href="http://steamcommunity.com/dev/apikey" target="_blank">http://steamcommunity.com/dev/apikey</a>
+                                </strong>
+                              </p>
+                              <p>2) Paste some random site, check
+                                <strong>I agree</strong> and click
+                                <strong>Register</strong>
+                              </p>
+                              <p>
+                                <img src="http://i.imgur.com/nOdnvh6.png" class="img-responsive img-thumbnail">
+                              </p>
+                              <p>3) Copy Steam Web API Key</p>
+                              <p>
+                                <img src="http://i.imgur.com/R1tQps5.png" class="img-responsive img-thumbnail">
+                              </p>
+                              <p>4) Paste it right there</p>
+                              <p>5) Click "Save Settings" in navigation menu and reload TruckersMP page.</p>
+                            </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn btn-primary" data-dismiss="modal">Got it!</button>
+                            </div>
                           </div>
                         </div>
                       </div>
@@ -182,6 +196,7 @@
               </div>
             </div>
           </div>
+
           <div class="col-md-5">
             <div class="panel panel-danger">
 
@@ -552,7 +567,7 @@
                       <i class="text-muted">instead of localised comment in reports</i>
                     </label>
                     <div class="col-lg-10">
-                      <input type="text" id="own_comment" class="form-control">
+                      <textarea name="own_comment" id="own_comment" rows="5" class="form-control"></textarea>
                     </div>
                   </div>
                 </fieldset>

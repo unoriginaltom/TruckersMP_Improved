@@ -13,7 +13,7 @@ function inject_init() {
   if (ban_time) {
     var now = moment(ban_time);
 
-    $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+    $('#datetimeselect').val(now.format("YYYY-MM-DD HH:mm"));
     $(date_buttons).insertAfter('#datetimeselect');
     $('<button type="button" class="btn btn-link plusdate" data-plus="back" id="current_ban_time"><b>Current Ban time</b></button>').insertAfter($("#ownreasons_buttons").find("div:last-child > button:last-child"));
 
@@ -31,7 +31,7 @@ function inject_init() {
           now.add($(this).data("number"), key);
           break;
       }
-      $('#datetimeselect').val(now.format("YYYY/MM/DD HH:mm"));
+      $('#datetimeselect').val(now.format("YYYY-MM-DD HH:mm"));
     });
     
     $("#changedReason").click(function (event) {

@@ -360,7 +360,7 @@ function inject_init() {
           unban_time.add(number, key);
           break;
       }
-      $("#datetimeselect").val(unban_time.format("YYYY/MM/DD HH:mm"));
+      $("#datetimeselect").val(unban_time.format("YYYY-MM-DD HH:mm"));
     });
 
     $('button#comments_clear').on('click', function (event) {
