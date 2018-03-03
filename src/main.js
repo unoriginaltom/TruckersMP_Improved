@@ -382,7 +382,7 @@ function content_links() {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
         embedlink = "https://clips.twitch.tv/embed?clip=" + clipid + "&autoplay=false";
       } else if (sub.contains(["plays.tv/video"])) {
-        clipid = sub.match(/^.*plays\.tv\/video\/(.*)\//)[1];
+        clipid = sub.match(/^.*plays\.tv\/video\/(.*)/)[1];
         embedlink = "https://plays.tv/embeds/" + clipid;
       } else if (sub.contains(["dailymotion.com"])) {
         clipid = sub.match(/^.*dailymotion\.com\/video\/(.*)/)[1];

@@ -348,6 +348,9 @@ function inject_init() {
     });
 
     var unban_time = moment.utc();
+    if ($('#datetimeselect').val().length) {
+      unban_time = $('#datetimeselect').val()
+    }
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
       var number = $(this).data('number');

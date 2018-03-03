@@ -102,8 +102,13 @@ function inject_init() {
       event.preventDefault();
       injects.accept.reason.val("");
     });
+
     // ===== Timing FTW! =====
     var unban_time = moment.utc();
+    if ($('#datetimeselect').val().length) {
+      unban_time = $('#datetimeselect').val()
+    }
+    console.log(unban_time);
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
       var number = $(this).data('number');
