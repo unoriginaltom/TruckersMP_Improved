@@ -43,7 +43,7 @@
         <div class="collapse navbar-collapse" id="navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
             <li class="">
-              <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" target="_blank">Forum topic</a>
+              <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" target="_blank">Forum topic/Issue tracker</a>
             </li>
             <li class="">
               <a class="version_detected" href="#" target="_blank">Changelog</a>
@@ -133,63 +133,6 @@
 
                     <div class="modal-footer">
                       <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="col-md-12">
-                <div class="panel panel-default">
-                  <div class="panel-heading">
-                    <h3 class="panel-title">
-                      <a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSteamKey">
-                        Steam Web API Key
-                        <i class="text-muted">discontinued, will be deleted in the future</i>
-                      </a>
-                    </h3>
-
-                  </div>
-                  <div id="collapseSteamKey" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                    <div class="panel-body" id="steamapi_body">
-                      <div class="form-group" id="steamapi_group">
-                        <input type="text" name="steamapi" id="steamapi" placeholder="Paste it here" class="form-control text-center" maxlength="32">
-                        <p class="help-clock">This 32-symbol key is needed for Steam integration.
-                          <a href="#" data-toggle="modal" data-target="#SteamAPIModal">How to get it?</a>
-                        </p>
-                      </div>
-
-                      <div class="modal fade" tabindex="-1" role="dialog" id="SteamAPIModal">
-                        <div class="modal-dialog" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h4 class="modal-title">How to get Steam Web API Key?</h4>
-                            </div>
-                            <div class="modal-body">
-                              <p>1) Go to&nbsp;
-                                <strong>
-                                  <a href="http://steamcommunity.com/dev/apikey" target="_blank">http://steamcommunity.com/dev/apikey</a>
-                                </strong>
-                              </p>
-                              <p>2) Paste some random site, check
-                                <strong>I agree</strong> and click
-                                <strong>Register</strong>
-                              </p>
-                              <p>
-                                <img src="http://i.imgur.com/nOdnvh6.png" class="img-responsive img-thumbnail">
-                              </p>
-                              <p>3) Copy Steam Web API Key</p>
-                              <p>
-                                <img src="http://i.imgur.com/R1tQps5.png" class="img-responsive img-thumbnail">
-                              </p>
-                              <p>4) Paste it right there</p>
-                              <p>5) Click "Save Settings" in navigation menu and reload TruckersMP page.</p>
-                            </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn btn-primary" data-dismiss="modal">Got it!</button>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                   </div>
                 </div>
@@ -568,6 +511,16 @@
                     </label>
                     <div class="col-lg-10">
                       <textarea name="own_comment" id="own_comment" rows="5" class="form-control"></textarea>
+                    </div>
+                  </div>
+
+                  <div class="form-group">
+                    <label class="col-lg-2 control-label">
+                      <strong>Steam Web API Key</strong>
+                      <i class="text-muted">discontinued</i>
+                    </label>
+                    <div class="col-lg-10">
+                      <input type="text" name="steamapi" id="steamapi" placeholder="none" class="form-control" maxlength="32" disabled>
                     </div>
                   </div>
                 </fieldset>

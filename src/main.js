@@ -359,7 +359,8 @@ function urlShorter(link, paste = false) {
     complete: function () {
       if (!error) {
         chrome.runtime.sendMessage({
-          msg: msg + "\n\n" + moment().format("YYYY-MM-DD HH:mm:ss")
+          msg: msg,
+          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
         });
       }
     }
@@ -425,14 +426,16 @@ function content_links() {
     if (length < 30) {
       copyToClipboard($(this).data("link"));
       chrome.runtime.sendMessage({
-        msg: "This URL is short enough. Check your clipboard!" + "\n\n" + moment().format("YYYY-MM-DD HH:mm:ss")
+        msg: "This URL is short enough. Check your clipboard!",
+        contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
       });
       spinner.hide();
     } else {
       if (link.includes('youtube.com') || link.includes('youtu.be')) {
         copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
         chrome.runtime.sendMessage({
-          msg: "URL just being shorted! Check your clipboard!" + "\n\n" + moment().format("YYYY-MM-DD HH:mm:ss")
+          msg: "URL just being shorted! Check your clipboard!",
+          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
         });
       } else {
         urlShorter(link);

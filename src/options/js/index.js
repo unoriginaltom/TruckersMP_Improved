@@ -55,7 +55,7 @@ function inject_init() {
         setTimeout(function () {
           $('#steamapi_body').removeClass('bg-danger');
         }, 2000);
-        
+
         steamapi_error = true
       }
     } else {
@@ -307,8 +307,6 @@ function inject_init() {
 
   $(function () {
     $('[data-toggle="tooltip"]').tooltip()
-    $('div.content-body').fadeIn('slow')
-    $('div.loadingoverlay').fadeOut('slow')
   });
 
   $('.version_detected').on('click', function (event) {
@@ -402,5 +400,14 @@ function inject_init() {
     }
   })
 
+  if (window.location.protocol === 'moz-extension:') {
+    $('.storage-settings').hide()
+  }
+
   restore_options();
 }
+
+$(document).ready(function () {
+  $('div.content-body').fadeIn('slow')
+  $('div.loadingoverlay').fadeOut('slow')
+})

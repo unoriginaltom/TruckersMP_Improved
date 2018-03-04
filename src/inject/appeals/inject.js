@@ -349,7 +349,7 @@ function inject_init() {
 
     var unban_time = moment.utc();
     if ($('#datetimeselect').val().length) {
-      unban_time = $('#datetimeselect').val()
+      unban_time = moment($('#datetimeselect').val())
     }
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
