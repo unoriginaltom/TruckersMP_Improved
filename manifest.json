@@ -1,8 +1,8 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.10",
+  "version": "1.10.1",
   "manifest_version": 2,
-  "description": "Useful functions for TMP Staff",
+  "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive.",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -54,7 +54,8 @@
     "default_popup": "src/popup/index.html"
   },
 
-  "content_scripts": [{
+  "content_scripts": [
+    {
       "matches": [
         "https://truckersmp.com/reports/view/*"
       ],

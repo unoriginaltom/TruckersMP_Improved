@@ -218,7 +218,6 @@ function inject_init() {
 
   function import_data(event) {
     if (confirm("BEWARE! All of your data will be lost after importing!\nDo you really want to do that?")) {
-      $('#importExportModal').modal('hide');
       var files = event.target.files;
       var reader = new FileReader();
       reader.onload = _imp;
@@ -226,6 +225,29 @@ function inject_init() {
     } else {
       import_file.value = '';
     }
+  }
+
+  function _imp() {
+    var _data = JSON.parse(this.result);
+
+    var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
+    if (compare === 1) {
+      alert('Wait a second! JSON file version (' + _data.last_version + ') is newer that extension version (' + chrome.runtime.getManifest().version + ').\nPlease update extension before importing!');
+    } else {
+      if (compare === -1) {
+        if (!confirm('Wait a second! JSON file version (' + _data.last_version + ') is older that extension version (' + chrome.runtime.getManifest().version + ').\nData can be corrupted.\nDid you really want to import data?')) {
+          import_file.value = '';
+          return null;
+        }
+      }
+      save_options(false, _data);
+      alert("Imported and saved! Nice job!\nYou can review new settings right now.");
+      $(".option-section").remove();
+      restore_options();
+      $('#importExportModal').modal('hide');
+    }
+
+    import_file.value = '';
   }
 
   function createField(parent, input1 = "", input2 = "") {
@@ -258,34 +280,6 @@ function inject_init() {
     parent.append($new);
     $new.slideDown('fast');
     return $(parent).find("div:last");
-  }
-
-  function _imp() {
-    var _data = JSON.parse(this.result);
-
-    if (_data.steamapi) {
-      if (_data.steamapi.length == 32) {
-        var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
-        if (compare === 1) {
-          alert('Wait a second! JSON file version (' + _data.last_version + ') is newer that extension version (' + chrome.runtime.getManifest().version + ').\nPlease update extension before importing!');
-        } else {
-          if (compare === -1) {
-            if (!confirm('Wait a second! JSON file version (' + _data.last_version + ') is older that extension version (' + chrome.runtime.getManifest().version + ').\nData can be corrupted.\nDid you really want to import data?')) {
-              import_file.value = '';
-              return null;
-            }
-          }
-          save_options(false, _data);
-          alert("Imported and saved! Nice job!\nYou can review new settings right now.");
-          $(".option-section").remove();
-          restore_options();
-        }
-      } else {
-        alert("JSON file is invalid!\nSteam API should be 32-symbol, given " + _data.steamapi.length);
-      }
-    }
-
-    import_file.value = '';
   }
 
   import_file.on('change', import_data);
@@ -410,4 +404,12 @@ function inject_init() {
 $(document).ready(function () {
   $('div.content-body').fadeIn('slow')
   $('div.loadingoverlay').fadeOut('slow')
+})
+
+$('a[data-toggle=collapse]').on('click', function(event) {
+  var scrollTop = ($(this).offset().top - 80) + 'px'
+  $('html, body').animate({
+    scrollTop: scrollTop
+  }, 'slow')
+  return this;
 })
