@@ -14,7 +14,8 @@ function inject_init() {
         separator: $('#separator').val(),
         own_comment: $('#own_comment').val().trim(),
         autoinsertsep: $('#autoinsertsep').is(':checked'),
-        viewreportblank: $('#viewreportblank').is(':checked')
+        viewreportblank: $('#viewreportblank').is(':checked'),
+		viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
       };
 
       data.OwnReasons = {
@@ -28,7 +29,8 @@ function inject_init() {
         declinesAppeals: getReasons("declinesAppeals"),
         commentsAppeals: getReasons("commentsAppeals"),
         acceptsAppeals: getReasons("acceptsAppeals"),
-        modifyAppeals: getReasons("modifyAppeals")
+        modifyAppeals: getReasons("modifyAppeals"),
+		feedbackComments: getReasons("feedbackComments")
       };
 
       data.OwnDates = {
@@ -187,6 +189,12 @@ function inject_init() {
             createField(parent, key, text);
           });
         });
+		items.OwnReasons.feedbackComments.forEach(function (val) {
+          var parent = createSection($('#feedbackComments'), 2);
+          $.each(val, function (key, text) {
+            createField(parent, key, text);
+          });
+		});
 
         $('#white').val(items.OwnDates.white);
         $('#yellow').val(items.OwnDates.yellow);
@@ -207,6 +215,7 @@ function inject_init() {
         $('#wide').prop("checked", items.settings.wide);
         $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
         $('#viewreportblank').prop("checked", items.settings.viewreportblank);
+		$('#viewfeedbackblank').prop("checked", items.settings.viewfeedbackblank);
       } catch (e) {
         console.error(e);
       }
@@ -226,7 +235,7 @@ function inject_init() {
       import_file.value = '';
     }
   }
-
+  
   function _imp() {
     var _data = JSON.parse(this.result);
 
@@ -246,8 +255,6 @@ function inject_init() {
       restore_options();
       $('#importExportModal').modal('hide');
     }
-
-    import_file.value = '';
   }
 
   function createField(parent, input1 = "", input2 = "") {

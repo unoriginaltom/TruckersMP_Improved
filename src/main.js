@@ -49,6 +49,9 @@ var default_OwnReasons = {
   modifyAppeals: [{
     "Ban decreased": "Due to the lack of violations in your history I shorten your ban period. However be careful in the future and follow the rules of MP.",
     "Ban increased": "Due to newly emerged circumstances the period of the ban increased."
+  }],
+  feedbackComments: [{
+    "Closing feedback un user's request.": "Closing feedback un user's request."
   }]
 };
 
@@ -157,7 +160,7 @@ $(function () {
 });
 
 function parseItems(object) {
-  var toObjects = ["declines", "declinesPositive", "declinesNegative", "comments", "declinesAppeals", "commentsAppeals", "acceptsAppeals", "modifyAppeals"];
+  var toObjects = ["declines", "declinesPositive", "declinesNegative", "comments", "declinesAppeals", "commentsAppeals", "acceptsAppeals", "modifyAppeals", "feedbackComments"];
   var ret = {};
   $.each(object, function (key, val) {
     if (typeof val == "string") {
@@ -201,6 +204,7 @@ function loadSettings(callBack) {
         wide: true,
         autoinsertsep: true,
         viewreportblank: true,
+		viewfeedbackblank: true,
         separator: ','
       }
     }, function (items) {
