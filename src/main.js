@@ -204,7 +204,7 @@ function loadSettings(callBack) {
         wide: true,
         autoinsertsep: true,
         viewreportblank: true,
-		viewfeedbackblank: true,
+        viewfeedbackblank: true,
         separator: ','
       }
     }, function (items) {

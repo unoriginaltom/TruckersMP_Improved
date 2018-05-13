@@ -15,7 +15,7 @@ function inject_init() {
         own_comment: $('#own_comment').val().trim(),
         autoinsertsep: $('#autoinsertsep').is(':checked'),
         viewreportblank: $('#viewreportblank').is(':checked'),
-		viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
+        viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
       };
 
       data.OwnReasons = {
@@ -30,7 +30,7 @@ function inject_init() {
         commentsAppeals: getReasons("commentsAppeals"),
         acceptsAppeals: getReasons("acceptsAppeals"),
         modifyAppeals: getReasons("modifyAppeals"),
-		feedbackComments: getReasons("feedbackComments")
+        feedbackComments: getReasons("feedbackComments")
       };
 
       data.OwnDates = {
@@ -189,12 +189,12 @@ function inject_init() {
             createField(parent, key, text);
           });
         });
-		items.OwnReasons.feedbackComments.forEach(function (val) {
+        items.OwnReasons.feedbackComments.forEach(function (val) {
           var parent = createSection($('#feedbackComments'), 2);
           $.each(val, function (key, text) {
             createField(parent, key, text);
           });
-		});
+        });
 
         $('#white').val(items.OwnDates.white);
         $('#yellow').val(items.OwnDates.yellow);
