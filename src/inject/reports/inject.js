@@ -252,6 +252,9 @@ function inject_init() {
         case 'Lithuanian':
           comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.';
           break;
+        case 'Portuguese':
+          comment = 'Obrigado por seu relatório :) Por favor, lembre-se que as provas devem estar disponíveis para a duração total da proibição MAIS 1 mês.';
+          break;
         default:
           comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.';
       }
