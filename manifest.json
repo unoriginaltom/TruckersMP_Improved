@@ -1,8 +1,8 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.10.1",
+  "version": "1.11",
   "manifest_version": 2,
-  "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive.",
+  "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive",
   "icons": {
     "16": "icons/icon16.png",
     "48": "icons/icon48.png",
@@ -11,12 +11,12 @@
 
   "minimum_chrome_version": "42",
   "applications": {
-    "gecko": {
-      "id": "{9d134ea1-d324-4dff-bed6-170bdef5e439}",
-      "strict_min_version": "48.0",
-      "update_url": "https://bigmp.ru/improved/firefox_update/updates.json"
-    }
-  },
+     "gecko": {
+       "id": "{9d134ea1-d324-4dff-bed6-170bdef5e439}",
+       "strict_min_version": "48.0",
+       "update_url": "https://bigmp.ru/improved/firefox_update/updates.json"
+     }
+   },
   "permissions": [
     "*://*.truckersmp.com/*",
     "*://*.jmdev.ca/*",
@@ -55,7 +55,7 @@
   },
 
   "content_scripts": [
-    {
+	{
       "matches": [
         "https://truckersmp.com/reports/view/*"
       ],
@@ -80,7 +80,8 @@
       ],
       "exclude_matches": [
         "https://truckersmp.com/reports/view/*",
-        "https://truckersmp.com/reports/create"
+        "https://truckersmp.com/reports/create",
+		"https://truckersmp.com/reports/editcomment/*"
       ],
       "css": [
         "css/datatables.min.css",
@@ -167,6 +168,49 @@
         "js/bootstrap.min.js",
         "src/main.js",
         "src/inject/user/inject.js"
+      ]
+    },
+	
+	{
+      "matches": [
+        "https://truckersmp.com/feedback*"
+      ],
+      "exclude_matches": [
+        "https://truckersmp.com/feedback/view/*",
+        "https://truckersmp.com/feedback/create",
+		"https://truckersmp.com/feedback/editcomment/*"
+      ],
+      "css": [
+        "css/datatables.min.css",
+        "src/inject/reports-table/inject.css"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/bootstrap.min.js",
+        "js/dataTables.min.js",
+        "js/moment-with-locales.min.js",
+        "js/datetime-moment.js",
+        "src/main.js",
+        "src/inject/feedback-table/inject.js"
+      ]
+    },
+	
+	{
+	  "matches": [
+        "https://truckersmp.com/feedback/view/*"
+      ],
+      "css": [
+        "src/inject/reports/inject.css"
+      ],
+      "js": [
+        "js/jquery.min.js",
+        "js/youtubepopup.js",
+        "js/bootstrap.min.js",
+        "js/moment-with-locales.min.js",
+        "js/clipboard.min.js",
+        "js/underscore-min.js",
+        "src/main.js",
+        "src/inject/feedback/inject.js"
       ]
     }
   ]

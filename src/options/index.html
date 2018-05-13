@@ -183,6 +183,14 @@
                   <label for="viewreportblank" class="label-primary"></label>
                 </div>
               </li>
+			  
+              <li class="list-group-item" data-toggle="tooltip" data-placement="bottom" title="Open feedbacks in new tab for Feedback Table and Other Open Feedback forms">
+                "View feedback" in new tab
+                <div class="material-switch pull-left">
+                  <input id="viewfeedbackblank" name="wide" type="checkbox">
+                  <label for="viewfeedbackblank" class="label-primary"></label>
+                </div>
+              </li>
             </ul>
           </div>
         </div>
@@ -340,6 +348,19 @@
                   </label>
                   <div class="col-lg-10">
                     <div id="commentsAppeals"></div>
+                  </div>
+                </div>
+                
+                <hr>
+                
+                <div class="form-group">
+                  <label class="col-lg-2 control-label">
+                    <strong>Feedback Comments:</strong>
+                    <br/>
+                    <button class='create-section btn btn-success'>Create section</button>
+                  </label>
+                  <div class="col-lg-10">
+                    <div id="feedbackComments"></div>
                   </div>
                 </div>
               </fieldset>
