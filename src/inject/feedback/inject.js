@@ -40,13 +40,13 @@ function inject_init() {
 		});
 		
 		// Dropdown menu
-		$('ul.dropdown-menu').css('top', '95%');
-		$(".dropdown").hover(function () {
-			$('.dropdown-menu', this).stop(true, true).fadeIn("fast");
+		$('.form-group ul.dropdown-menu').css('top', '95%');
+		$(".form-group .dropdown").hover(function () {
+			$('.form-group .dropdown-menu', this).stop(true, true).fadeIn("fast");
 			$(this).toggleClass('open');
 			$('b', this).toggleClass("caret caret-up");
 		}, function () {
-			$('.dropdown-menu', this).stop(true, true).fadeOut("fast");
+			$('.form-group .dropdown-menu', this).stop(true, true).fadeOut("fast");
 			$(this).toggleClass('open');
 			$('b', this).toggleClass("caret caret-up");
 		});
@@ -55,7 +55,7 @@ function inject_init() {
 			$(this).css("color", e.type === "mouseenter" ? "#999!important" : "");
 		});
 		// Width of the dropdown menu. There was a person who wished it. Here it is :P
-		$('.dropdown-menu .container').css("width", (parseInt($('form').find('textarea[name=comment]').width()) - 5) + 'px');
+		$('.form-group .dropdown-menu .container').css("width", (parseInt($('form').find('textarea[name=comment]').width()) - 5) + 'px');
 		
 		// Moment.js init
 		var now = moment.utc();
