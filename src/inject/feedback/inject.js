@@ -1,5 +1,10 @@
 function inject_init() {
 	$(document).ready(function() {
+		if (settings.enablefeedbackimprovement === false) {
+			$("#loading-spinner").hide();
+			return;
+		}
+		
 		// Adds links to comments
 		content_links();
 		// Video modal
@@ -81,7 +86,7 @@ function inject_init() {
 			type: "GET",
 			success: function(profileData) {
 				steamLink = $(profileData).find(".fa-steam").parent().attr('href');
-				userLink.parent().parent().append(' <kbd><a href="' + steamLink + '" target="_blank">' + steamLink.replace('https://steamcommunity.com/profiles/', '') + '</a></kbd>');
+				$('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1)').after('<tr><td>Steam</td><td><kbd><a href="' + steamLink + '" target="_blank">' + steamLink.replace('https://steamcommunity.com/profiles/', '') + '</a></kbd></td></tr>');
 				$("#loading-spinner").hide();
 			}
 		});

@@ -15,6 +15,8 @@ function inject_init() {
         own_comment: $('#own_comment').val().trim(),
         autoinsertsep: $('#autoinsertsep').is(':checked'),
         viewreportblank: $('#viewreportblank').is(':checked'),
+		enablebanlength: $('#enablebanlength').is(':checked'),
+		enablefeedbackimprovement: $('#enablefeedbackimprovement').is(':checked'),
         viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
       };
 
@@ -215,6 +217,8 @@ function inject_init() {
         $('#wide').prop("checked", items.settings.wide);
         $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
         $('#viewreportblank').prop("checked", items.settings.viewreportblank);
+		$('#enablebanlength').prop("checked", items.settings.enablebanlength);
+		$('#enablefeedbackimprovement').prop("checked", items.settings.enablefeedbackimprovement);
 		$('#viewfeedbackblank').prop("checked", items.settings.viewfeedbackblank);
       } catch (e) {
         console.error(e);

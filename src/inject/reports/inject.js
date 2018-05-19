@@ -657,7 +657,9 @@ function inject_init() {
       videoModal.find(".modal-body").html("");
     });
 	
-	$('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center">Due to many problems with the length of the next ban, we decided to add a simple alghoritm which checks it. Feel free to use it.<br /><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
+	if (settings.enablebanlength === true) {
+		$('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center">Due to many problems with the length of the next ban, we decided to add a simple alghoritm which checks it. Feel free to use it.<br /><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
+	}
 	$('#check-ban-length').click(function(e) {
 		e.preventDefault();
 		$("#loading-spinner").show();
@@ -692,7 +694,7 @@ function inject_init() {
 				};
 				
 				// Gets all bans
-				var bans = $(data).find('.profile-body > .panel-profile:last-of-type .timeline-v2 > li');
+				var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
 				var activeBans = 0, bans1m = 0, bans3m = 0;
 				var active1m = false, active3m = false;
 				// If the user is banned
@@ -704,7 +706,7 @@ function inject_init() {
 				$.each(bans, function(index, ban) {
 					// @BANBYMISTAKE is not counted
 					var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1];
-					if (reason === '@BANBYMISTAKE') {
+					if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === "rgb(255, 0, 38)") {
 						return;
 					}
 					
@@ -729,7 +731,6 @@ function inject_init() {
 							active1m = true;
 						}
 					}
-					console.log('Reason: ' + reason + '; Active bans: ' + activeBans);
 				});
 				
 				var html = '<div class="col-md-8 text-center" style="align-self: center"><kbd';

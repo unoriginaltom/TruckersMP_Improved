@@ -1,4 +1,9 @@
 function inject_init() {
+  if (settings.enablefeedbackimprovement === false) {
+    $("#loading-spinner").hide();
+    return;
+  }
+  
   var table = $('table.table');
 
   // ===== Init bootstrapping =====
