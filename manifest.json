@@ -14,7 +14,7 @@
      "gecko": {
        "id": "{9d134ea1-d324-4dff-bed6-170bdef5e439}",
        "strict_min_version": "48.0",
-       "update_url": "https://bigmp.ru/improved/firefox_update/updates.json"
+       "update_url": "https://improved.bigmp.ru/firefox_update/updates.json"
      }
    },
   "permissions": [
