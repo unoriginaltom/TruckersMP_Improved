@@ -1,6 +1,6 @@
 function inject_init() {
   var steam_id = $('input[name="steam_id"]').val();
-  var perpetrator_link = $('#summary > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
+  var perpetrator_link = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
   var perpetrator_id = 0
   if (!perpetrator_link.length) {
     perpetrator_id = 'deleted'
