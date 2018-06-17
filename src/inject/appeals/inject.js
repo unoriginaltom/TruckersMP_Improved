@@ -245,8 +245,7 @@ function inject_init() {
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
       $(this).css('font-weight', 'bold');
     });
-    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('In-game Nick');
-
+    
     $('body > div.wrapper > div.container.content > div > h2').remove();
     $('.table').wrap(table_wrap);
     $(bans_template).insertAfter('#summary');

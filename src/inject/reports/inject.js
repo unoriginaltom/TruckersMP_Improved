@@ -327,7 +327,7 @@ function inject_init() {
       }
     });
 
-    injects.bans.header.html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small>');
+    injects.bans.header.html(bans_count + ' counted bans<small> MAY BE EMPTY DUE TO WEBSITE BUG! Use the feature below!</small>');
     if (bans_count >= 3) {
       injects.bans.header.css('color', '#d43f3a');
     }
@@ -401,7 +401,11 @@ function inject_init() {
           $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
 
           injects.summary.perpetrator_label.css('text-align', 'right');
-          // injects.summary.previous_usernames.css('text-align', 'right');
+          injects.summary.previous_usernames.css('text-align', 'right');
+
+          $('td kbd').each(function () {
+            $(this).html($(this).html().trim())
+          })
 
           injects.summary.first_column.each(function () {
             $(this).css('font-weight', 'bold');
@@ -413,7 +417,7 @@ function inject_init() {
     })
 
     var low_id;
-    if (perpetrator_id <= 3700) {
+    if (perpetrator_id <= 4200) {
       low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID seems to be an In-Game ID. Double-check names & aliases">Low ID! <strong>' + perpetrator_id + '</strong></span>';
     } else if (perpetrator_id == reporter_id) {
       low_id = ' <span class="badge badge-red" data-toggle="tooltip" title="Be careful! Perpetrator ID is the same as Reporter ID"> Same IDs! <strong>' + perpetrator_id + '</strong></span>';
@@ -660,12 +664,13 @@ function inject_init() {
     });
 
     if (settings.enablebanlength === true) {
-      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center">Due to many problems with the length of the next ban, we decided to add a simple alghoritm which checks it. Feel free to use it.<br /><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
+      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
     }
     $('#check-ban-length').click(function (e) {
       e.preventDefault();
       $("#loading-spinner").show();
       $('#check-ban-length').remove();
+      $('div.loading-for-bans').show();
 
       var userProfileLink = $(injects.summary.perpetrator_link).attr('href');
       $.ajax({
@@ -738,7 +743,7 @@ function inject_init() {
             }
           });
 
-          var html = '<div class="col-md-8 text-center" style="align-self: center"><kbd';
+          var html = '<div class="col-md-6 text-center" style="align-self: center"><kbd';
           if (banned) {
             html += ' style="color: rgb(212, 63, 58)">The user is already banned! However, the length can be extended!</kbd><br />Length of the next ban: <kbd';
           }
@@ -754,17 +759,18 @@ function inject_init() {
           }
           html += '</kbd></div>';
           // Information
-          html += '<div class="col-md-4 text-center">';
+          html += '<div class="col-md-6 text-center">';
           html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />';
           html += 'Active bans: ' + activeBans + '<br />';
           html += '1 month bans: ' + bans1m + '<br />';
           html += '3 month bans: ' + bans3m + '<br />';
           html += 'Active 1 month ban: ' + active1m + '<br />';
           html += 'Active 3 month ban: ' + active3m;
-          html += '</div></div>';
+          html += '<br/><br/></div><div class="text-center"><em>Even this tool is very accurate, please check the profile to avoid mistakes.</em></div></div>';
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html);
 
           $("#loading-spinner").hide();
+          $('div.loading-for-bans').hide();
         }
       });
     });

@@ -204,8 +204,8 @@ function loadSettings(callBack) {
         wide: true,
         autoinsertsep: true,
         viewreportblank: true,
-		enablebanlength: true,
-		enablefeedbackimprovement: true,
+        enablebanlength: true,
+        enablefeedbackimprovement: true,
         viewfeedbackblank: true,
         separator: ','
       }
@@ -374,15 +374,27 @@ function urlShorter(link, paste = false) {
   spinner.hide();
 }
 
-function content_links() {
-  $('.autolink > a').each(function () {
-    var sub = $(this).attr('href');
-    var copy_link = '   <a href="#" class="jmdev_ca" data-link="' + sub + '"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a> ';
+$('.autolink').removeClass('autolink').addClass('autolinkage')
 
-    $(this).after(copy_link);
+$(".autolinkage").each(function () {
+  $(this).html($(this).html().replace(/((http|https):\/\/[\w?=&.\/-;#~%-]+(?![\w\s?&.\/;#~%"=-]*>))/g, '<a href="$1" target="_blank" rel="noopener" class="newlinks">$1</a> '));
+});
+
+
+function content_links() {
+  $('a.newlinks').each(function () {
+    var sub = $(this).text();
+
+    if (sub.length > 60) {
+      $(this).text(sub.substring(0, 40) + '...');
+    }
+
+    if (sub.contains(["prnt.sc"])) {
+
+    }
 
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
-      $('<a href="' + sub + '" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
+      $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
     } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
@@ -405,22 +417,24 @@ function content_links() {
           embedlink += "&t=" + vidinfos[1]
         }
       }
-      $('<a href="' + embedlink + '" class="video">  <i class="fa fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>').insertAfter($(this));
+      $(this).append('<a href="' + embedlink + '" class="video">  <i class="fa fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
     }
 
-    if (sub.length > 60) {
-      $(this).text(sub.substring(0, 40) + '...');
-    }
+    $(this).append(`    <a href="#" class="jmdev_ca" data-link="${sub}"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a>`);
   });
 
   if (settings.img_previews !== false) {
-    $('div.comment .autolink > a').each(function () {
+    $('div.comment .autolinkage > a').each(function () {
       var sub = $(this).attr('href');
-      if (sub.contains(['.png', '.jpg', ".gif", "images.akamai."])) {
+
+      sub = sub.replace(/prnt.sc/gi, 'prntscr.com')
+
+      if ((sub.match(/\.(jpeg|jpg|gif|png)$/) !== null || sub.contains(['images.akamai.', 'prntscr.com', 'img.youtube.com']))) {
         $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
       }
     });
   }
+
 
   $('a.jmdev_ca').on('click', function (event) {
     event.preventDefault();
