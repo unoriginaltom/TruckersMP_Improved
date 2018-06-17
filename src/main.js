@@ -389,10 +389,6 @@ function content_links() {
       $(this).text(sub.substring(0, 40) + '...');
     }
 
-    if (sub.contains(["prnt.sc"])) {
-
-    }
-
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
       $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
     } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos"])) {
