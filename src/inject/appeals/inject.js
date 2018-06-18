@@ -1,5 +1,13 @@
 function inject_init() {
   var steam_id = $('input[name="steam_id"]').val();
+  var perpetrator_link = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
+  var perpetrator_id = 0
+  if (!perpetrator_link.length) {
+    perpetrator_id = 'deleted'
+  } else {
+    perpetrator_id = perpetrator_link.attr('href').replace('/user/', '');
+  }
+
   var summary = $('#summary');
   var injects = {
     header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
@@ -237,8 +245,7 @@ function inject_init() {
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
       $(this).css('font-weight', 'bold');
     });
-    $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(2) > td:nth-child(1)').text('In-game Nick');
-
+    
     $('body > div.wrapper > div.container.content > div > h2').remove();
     $('.table').wrap(table_wrap);
     $(bans_template).insertAfter('#summary');
@@ -414,5 +421,10 @@ function inject_init() {
     permcheck();
   }
 
-  init();
+  if (perpetrator_id !== 'deleted') {
+    init();
+  } else {
+    injects.spinner.remove();
+    alert('Deleted User detected! Extension is not working!')
+  }
 }

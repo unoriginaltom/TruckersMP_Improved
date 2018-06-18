@@ -9,7 +9,7 @@ function inject_init() {
     $('table.table > tbody > thead').clone().prependTo('table.table').removeClass('TEMP');
     $('.TEMP').remove();
   
-    var colsHead = $('table.table th'),
+    var colsHead = $('table.table th'), 
       colsBody = $('table.table > tbody > tr:nth-child(1) > td');
   
     $(colsHead).each(function (idx, item) {

@@ -1,6 +1,6 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.11.1",
+  "version": "1.11.7",
   "manifest_version": 2,
   "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive",
   "icons": {
@@ -11,12 +11,12 @@
 
   "minimum_chrome_version": "42",
   "applications": {
-     "gecko": {
-       "id": "{9d134ea1-d324-4dff-bed6-170bdef5e439}",
-       "strict_min_version": "48.0",
-       "update_url": "https://bigmp.ru/improved/firefox_update/updates.json"
-     }
-   },
+    "gecko": {
+      "id": "{9d134ea1-d324-4dff-bed6-170bdef5e439}",
+      "strict_min_version": "48.0",
+      "update_url": "https://improved.bigmp.ru/firefox_update/updates.json"
+    }
+  },
   "permissions": [
     "*://*.truckersmp.com/*",
     "*://*.jmdev.ca/*",
@@ -54,11 +54,11 @@
     "default_popup": "src/popup/index.html"
   },
 
-  "content_scripts": [
-	{
+  "content_scripts": [{
       "matches": [
         "https://truckersmp.com/reports/view/*"
       ],
+      "run_at": "document_end",
       "css": [
         "src/inject/reports/inject.css"
       ],
@@ -81,7 +81,7 @@
       "exclude_matches": [
         "https://truckersmp.com/reports/view/*",
         "https://truckersmp.com/reports/create",
-		"https://truckersmp.com/reports/editcomment/*"
+        "https://truckersmp.com/reports/editcomment/*"
       ],
       "css": [
         "css/datatables.min.css",
@@ -170,15 +170,15 @@
         "src/inject/user/inject.js"
       ]
     },
-	
-	{
+
+    {
       "matches": [
         "https://truckersmp.com/feedback*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/feedback/view/*",
         "https://truckersmp.com/feedback/create",
-		"https://truckersmp.com/feedback/editcomment/*"
+        "https://truckersmp.com/feedback/editcomment/*"
       ],
       "css": [
         "css/datatables.min.css",
@@ -194,9 +194,9 @@
         "src/inject/feedback-table/inject.js"
       ]
     },
-	
-	{
-	  "matches": [
+
+    {
+      "matches": [
         "https://truckersmp.com/feedback/view/*"
       ],
       "css": [
