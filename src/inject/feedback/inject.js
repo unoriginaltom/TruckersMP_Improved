@@ -79,17 +79,6 @@ function inject_init() {
 		$('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1)').css('text-align', 'right');
 		var userLink = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a');
 		var userId = $(userLink).attr('href').replace('/user/', '');
-		// Gets user SteamID
-		var steamLink;
-		$.ajax({
-			url: "https://truckersmp.com/user/" + userId,
-			type: "GET",
-			success: function(profileData) {
-				steamLink = $(profileData).find(".fa-steam").parent().attr('href');
-				$('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1)').after('<tr><td>Steam</td><td><kbd><a href="' + steamLink + '" target="_blank">' + steamLink.replace('https://steamcommunity.com/profiles/', '') + '</a></kbd></td></tr>');
-				$("#loading-spinner").hide();
-			}
-		});
 		// Adds information about the user
 		$.ajax({
 			url: "https://api.truckersmp.com/v2/player/" + userId,
@@ -97,6 +86,7 @@ function inject_init() {
 			success: function(tmpData) {
 				userLink.after(' <img src="' + tmpData.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
 				userLink.wrap('<kbd>');
+        $("#loading-spinner").hide();
 			}
 		});
 		// Sets the title

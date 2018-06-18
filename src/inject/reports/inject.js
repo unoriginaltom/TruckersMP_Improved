@@ -33,6 +33,29 @@ function inject_init() {
     }
   };
 
+  // Fixes word dates
+  var day = 60 * 60 * 24 * 1000;
+  var fixDate = function (date) {
+    var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+    var d = new Date();
+    date = date.replace('Today,', d.getDate() + ' ' + months[d.getMonth()]);
+
+    var yesterday = new Date(d);
+    yesterday.setTime(d.getTime() - day);
+    date = date.replace('Yesterday,', yesterday.getDay() + ' ' + months[d.getMonth()]);
+
+    var tomorrow = new Date(d);
+    tomorrow.setTime(d.getTime() + day);
+    date = date.replace('Tomorrow,', tomorrow.getDay() + ' ' + months[d.getMonth()]);
+
+    if (!date.match(/20[0-9]{2}/)) {
+      date += " " + (new Date()).getFullYear();
+    }
+
+    return date;
+  };
+
   // Escape HTML due to HTML tags in Steam usernames
   function escapeHTML(s) {
     return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
@@ -220,6 +243,56 @@ function inject_init() {
     document.execCommand('Copy');
     document.body.removeChild(input);
   }
+  
+  // Hotfix of last bans
+  function hotfix_lastbans() {
+    if (injects.bans.table.parent().find('tr').length > 1) {
+      bans_count_fetch();
+      return;
+    }
+    
+    var userProfileLink = $(injects.summary.perpetrator_link).attr('href');
+    $.ajax({
+      url: "https://truckersmp.com" + userProfileLink,
+      type: "GET",
+      success: function (data) {
+        // Gets all bans
+        var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
+
+        $.each(bans, function (index, ban) {
+          var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1];
+          var moderator = $(ban).find('.cbp_tmlabel > p:first-of-type').text().split(" by\n")[1];
+          console.log($(ban).find('.cbp_tmlabel > p:first-of-type'));
+          var date = $(ban).find('.cbp_tmtime span:last-of-type').text();
+          var dateExp = $(ban).find('.cbp_tmlabel > .autolink + p').text().split(' : ')[1];
+          
+          var expires = Date.parse(fixDate(dateExp));
+          if (dateExp === 'Never') {
+            expires = Date.parse(fixDate(date));
+          }
+          var active = false;
+          if (!(reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === "rgb(255, 0, 38)") && (new Date()).getTime() - day * 365 <= expires) {
+            active = true;
+          }
+
+          injects.bans.table.parent().append('<tr><td>' + date + '</td><td>' + dateExp + '</td><td>' + reason.replace(/(http(s)?:\/\/[^\s]+)/, "<a href='$1' target='_blank'>$1</a>") +
+            '</td><td>' + moderator + '</td><td class="text-center">' + (active ? '✓' : '❌') + '</td></tr>');
+          injects.bans.table = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr');
+          if (active) {
+            if ((new Date()).getTime() <= expires) {
+              injects.bans.table.find('td:contains("' + dateExp + '")').parent().find('td').css('color', 'rgb(212, 63, 58)');
+            }
+          } else {
+            injects.bans.table.find('td:contains("' + dateExp + '")').parent().find('td').css('color', '#555');
+          }
+        });
+
+        // Reload of bans and added count of bans etc.
+        injects.bans.table = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr');
+        bans_count_fetch();
+      }
+    });
+  }
 
   function comment_language() {
     var report_language = injects.report_language.text().trim();
@@ -267,7 +340,7 @@ function inject_init() {
   }
 
   function bans_count_fetch() {
-
+    
     function getUnbanTime(unban_time_td, banned_reason_td) {
       var unban_time;
       now = moment.utc();
@@ -628,9 +701,11 @@ function inject_init() {
    */
 
   function init() {
+    // Hotfix of last bans
+    hotfix_lastbans();
     content_links();
     comment_language();
-    bans_count_fetch();
+    //bans_count_fetch();
     table_improving();
     comments_nice_look();
     accept_modal_init();
@@ -677,29 +752,6 @@ function inject_init() {
         url: "https://truckersmp.com" + userProfileLink,
         type: "GET",
         success: function (data) {
-          // Fixes word dates
-          var day = 60 * 60 * 24 * 1000;
-          var fixDate = function (date) {
-            var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-
-            var d = new Date();
-            date = date.replace('Today,', d.getDate() + ' ' + months[d.getMonth()]);
-
-            var yesterday = new Date(d);
-            yesterday.setTime(d.getTime() - day);
-            date = date.replace('Yesterday,', yesterday.getDay() + ' ' + months[d.getMonth()]);
-
-            var tomorrow = new Date(d);
-            tomorrow.setTime(d.getTime() + day);
-            date = date.replace('Tomorrow,', tomorrow.getDay() + ' ' + months[d.getMonth()]);
-
-            if (!date.match(/20[0-9]{2}/)) {
-              date += " " + (new Date()).getFullYear();
-            }
-
-            return date;
-          };
-
           // Gets all bans
           var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
           var activeBans = 0,
@@ -748,14 +800,14 @@ function inject_init() {
             html += ' style="color: rgb(212, 63, 58)">The user is already banned! However, the length can be extended!</kbd><br />Length of the next ban: <kbd';
           }
           // Length checks
-          if ((bans3m >= 2 && bans1m >= 2) || (activeBans >= 5 && active3m && active1m)) {
+          if ((bans3m >= 2) || (activeBans >= 5 && active3m && active1m)) {
             html += ' style="color: rgb(212, 63, 58)">Permanent';
           } else if (bans1m >= 2 || (activeBans >= 4 && active1m)) {
             html += ' style="color: rgb(212, 63, 58)">3 months';
           } else if (activeBans >= 3) {
             html += ' style="color: rgb(212, 63, 58)">1 month';
           } else {
-            html += '>You can choose :)';
+            html += '>You can choose';
           }
           html += '</kbd></div>';
           // Information
