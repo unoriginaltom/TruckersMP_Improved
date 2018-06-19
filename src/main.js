@@ -374,6 +374,10 @@ function urlShorter(link, paste = false) {
   spinner.hide();
 }
 
+$('.autolink a').each(function () {
+  $(this).contents().unwrap()
+})
+
 $('.autolink').removeClass('autolink').addClass('autolinkage')
 
 $(".autolinkage").each(function () {
