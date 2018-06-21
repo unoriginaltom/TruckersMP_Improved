@@ -1,11 +1,11 @@
 .ban-reasons {
-    width: 80%;
-    display: inline-block;
+  width: 80%;
+  display: inline-block;
 }
 
 #reasonCount {
-    width: 20%;
-    display: inline-block;
-    text-align: right;
-    margin-bottom: 10px;
+  width: 20%;
+  display: inline-block;
+  text-align: right;
+  margin-bottom: 10px;
 }

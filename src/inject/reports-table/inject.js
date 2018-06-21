@@ -103,7 +103,7 @@ function inject_init() {
     $(this).css('width', 'auto').css('max-width', '140px')
   });
   $('form > button').addClass('btn-sm');
-  
+
   table.find('tbody > tr').each(function () {
     var status = $(this).find('td:nth-child(7)').text();
     if (status != 'Waiting for admin' && status != 'New') {

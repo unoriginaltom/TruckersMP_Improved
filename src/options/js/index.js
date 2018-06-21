@@ -15,8 +15,8 @@ function inject_init() {
         own_comment: $('#own_comment').val().trim(),
         autoinsertsep: $('#autoinsertsep').is(':checked'),
         viewreportblank: $('#viewreportblank').is(':checked'),
-		enablebanlength: $('#enablebanlength').is(':checked'),
-		enablefeedbackimprovement: $('#enablefeedbackimprovement').is(':checked'),
+        enablebanlength: $('#enablebanlength').is(':checked'),
+        enablefeedbackimprovement: $('#enablefeedbackimprovement').is(':checked'),
         viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
       };
 
@@ -217,9 +217,9 @@ function inject_init() {
         $('#wide').prop("checked", items.settings.wide);
         $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
         $('#viewreportblank').prop("checked", items.settings.viewreportblank);
-		$('#enablebanlength').prop("checked", items.settings.enablebanlength);
-		$('#enablefeedbackimprovement').prop("checked", items.settings.enablefeedbackimprovement);
-		$('#viewfeedbackblank').prop("checked", items.settings.viewfeedbackblank);
+        $('#enablebanlength').prop("checked", items.settings.enablebanlength);
+        $('#enablefeedbackimprovement').prop("checked", items.settings.enablefeedbackimprovement);
+        $('#viewfeedbackblank').prop("checked", items.settings.viewfeedbackblank);
       } catch (e) {
         console.error(e);
       }
@@ -239,7 +239,7 @@ function inject_init() {
       import_file.value = '';
     }
   }
-  
+
   function _imp() {
     var _data = JSON.parse(this.result);
 
@@ -417,7 +417,7 @@ $(document).ready(function () {
   $('div.loadingoverlay').fadeOut('slow')
 })
 
-$('a[data-toggle=collapse]').on('click', function(event) {
+$('a[data-toggle=collapse]').on('click', function (event) {
   var scrollTop = ($(this).offset().top - 80) + 'px'
   $('html, body').animate({
     scrollTop: scrollTop

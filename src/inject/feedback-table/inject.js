@@ -3,7 +3,7 @@ function inject_init() {
     $("#loading-spinner").hide();
     return;
   }
-  
+
   var table = $('table.table');
 
   // ===== Init bootstrapping =====
@@ -47,15 +47,15 @@ function inject_init() {
         var report_status = $(row).find("td:nth-child(5)")[0];
         var report_claim = $(row).find("td:nth-child(9)")[0];
         //if ($.inArray($(report_status).text(), ["Closed", "Finished", "Under_investigation"]) == -1) {
-          switch ($(report_admin).text()) {
-            case admin_name:
-              $(report_claim).html("<a href='/feedback/claim/" + report_id + "'>Un-claim feedback</a>");
-              break;
+        switch ($(report_admin).text()) {
+          case admin_name:
+            $(report_claim).html("<a href='/feedback/claim/" + report_id + "'>Un-claim feedback</a>");
+            break;
 
-            case "Nobody":
-              $(report_claim).html("<a href='/feedback/claim/" + report_id + "'>Claim feedback</a>");
-              break;
-          }
+          case "Nobody":
+            $(report_claim).html("<a href='/feedback/claim/" + report_id + "'>Claim feedback</a>");
+            break;
+        }
         //}
       }
     })
@@ -108,11 +108,11 @@ function inject_init() {
     $(this).css('width', 'auto').css('max-width', '140px')
   });
   $('form > button').addClass('btn-sm');
-  
+
   table.find('tbody > tr').each(function () {
     var status = $(this).find('td:nth-child(5)').text();
-	var claimedBy = $(this).find('td:nth-child(3)').text();
-	var repliedBy = $(this).find('td:nth-child(7)').text();
+    var claimedBy = $(this).find('td:nth-child(3)').text();
+    var repliedBy = $(this).find('td:nth-child(7)').text();
     if (!(status == 'New' || (claimedBy == 'Nobody' && status != 'Finished') || repliedBy == 'User')) {
       $(this).find('td').css('color', '#555');
     }
