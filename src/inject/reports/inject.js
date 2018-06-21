@@ -258,6 +258,11 @@ function inject_init() {
       success: function (data) {
         // Gets all bans
         var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
+        // If the user is banned
+        var banned = false;
+        if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text() === 'Banned') {
+          banned = true;
+        }
 
         $.each(bans, function (index, ban) {
           var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1];
@@ -275,11 +280,11 @@ function inject_init() {
             active = true;
           }
 
-          injects.bans.table.parent().append('<tr><td>' + date + '</td><td>' + dateExp + '</td><td>' + reason.replace(/(http(s)?:\/\/[^\s]+)/, "<a href='$1' target='_blank'>$1</a>") +
+          injects.bans.table.parent().append('<tr><td>' + date + '</td><td>' + dateExp + '</td><td>' + reason.replace(/(http(s)?:\/\/[^\s,;)]+)/g, "<a href='$1' target='_blank'>$1</a>") +
             '</td><td>' + moderator + '</td><td class="text-center">' + (active ? '✓' : '❌') + '</td></tr>');
           injects.bans.table = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr');
           if (active) {
-            if ((new Date()).getTime() <= expires) {
+            if (index === 0 && banned === true) {
               injects.bans.table.find('td:contains("' + dateExp + '")').parent().find('td').css('color', 'rgb(212, 63, 58)');
             }
           } else {
