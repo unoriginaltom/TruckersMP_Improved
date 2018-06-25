@@ -27,7 +27,7 @@ function inject_init() {
     $('table.table > tbody > tr > td:nth-child(5) > a').each(function () {
       $(this).addClass('btn btn-default btn-block btn-sm');
       $(this).text("View");
-      if (settings.viewreportblank) {
+      if (settings.viewappealblank) {
         $(this).attr('target', '_blank');
       }
     });

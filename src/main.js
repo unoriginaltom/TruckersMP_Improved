@@ -203,6 +203,7 @@ function loadSettings(callBack) {
         img_previews: true,
         wide: true,
         autoinsertsep: true,
+        viewappealblank: true,
         viewreportblank: true,
         enablebanlength: true,
         enablefeedbackimprovement: true,
