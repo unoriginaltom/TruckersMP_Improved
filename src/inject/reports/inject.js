@@ -243,14 +243,14 @@ function inject_init() {
     document.execCommand('Copy');
     document.body.removeChild(input);
   }
-  
+
   // Hotfix of last bans
   function hotfix_lastbans() {
     if (injects.bans.table.parent().find('tr').length > 1) {
       bans_count_fetch();
       return;
     }
-    
+
     var userProfileLink = $(injects.summary.perpetrator_link).attr('href');
     $.ajax({
       url: "https://truckersmp.com" + userProfileLink,
@@ -270,7 +270,7 @@ function inject_init() {
           console.log($(ban).find('.cbp_tmlabel > p:first-of-type'));
           var date = $(ban).find('.cbp_tmtime span:last-of-type').text();
           var dateExp = $(ban).find('.cbp_tmlabel > .autolink + p').text().split(' : ')[1];
-          
+
           var expires = Date.parse(fixDate(dateExp));
           if (dateExp === 'Never') {
             expires = Date.parse(fixDate(date));
@@ -345,7 +345,7 @@ function inject_init() {
   }
 
   function bans_count_fetch() {
-    
+
     function getUnbanTime(unban_time_td, banned_reason_td) {
       var unban_time;
       now = moment.utc();
@@ -823,7 +823,7 @@ function inject_init() {
           html += '3 month bans: ' + bans3m + '<br />';
           html += 'Active 1 month ban: ' + active1m + '<br />';
           html += 'Active 3 month ban: ' + active3m;
-          html += '<br/><br/></div><div class="text-center"><em>Even this tool is very accurate, please check the profile to avoid mistakes.</em></div></div>';
+          html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>';
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html);
 
           $("#loading-spinner").hide();

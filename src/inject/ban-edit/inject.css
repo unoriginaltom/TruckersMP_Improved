@@ -6,7 +6,8 @@
   color: white;
 }
 
-#ownreasons_buttons, .ban-reasons {
+#ownreasons_buttons,
+.ban-reasons {
   margin-top: 5px;
 }
 

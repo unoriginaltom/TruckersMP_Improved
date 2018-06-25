@@ -1,28 +1,28 @@
 function inject_init() {
   try {
     var table = $('table.table');
-  
+
     // ===== Init bootstrapping =====
     table.addClass('table-condensed table-hover');
-  
+
     $('table.table > tbody > :first(tr)').wrap('<thead class="TEMP"></thead>');
     $('table.table > tbody > thead').clone().prependTo('table.table').removeClass('TEMP');
     $('.TEMP').remove();
-  
-    var colsHead = $('table.table th'), 
+
+    var colsHead = $('table.table th'),
       colsBody = $('table.table > tbody > tr:nth-child(1) > td');
-  
+
     $(colsHead).each(function (idx, item) {
       if ($(item).text().length == 0)
         $(item).addClass('no-sort');
     });
-  
+
     var colsHeadTr = $('table.table tr');
     if (colsHead.length < colsBody.length) {
       for (var i = 0; i < colsBody.length - colsHead.length; i++)
         $(colsHeadTr).append('<th class="no-sort"></th>');
     }
-  
+
     // ===== Transform links =====
     $('table.table > tbody > tr > td:nth-child(5) > a').each(function () {
       $(this).addClass('btn btn-default btn-block btn-sm');
@@ -31,25 +31,25 @@ function inject_init() {
         $(this).attr('target', '_blank');
       }
     });
-    
+
     $('table > tbody > tr > td:nth-child(5) > a').each(function () {
       $(this).addClass('btn btn-default btn-block btn-sm');
     });
-  
+
     // ==== ? =====
     $('.form-control').each(function () {
       $(this).addClass('input-sm');
       $(this).css('width', 'auto').css('max-width', '140px')
     });
     $('form > button').addClass('btn-sm');
-    
+
     colsHeadTr.each(function () {
       var status = $(this).find('td:nth-child(3)').text();
       if (status != 'Waiting for admin' && status != 'New') {
         $(this).find('td').css('color', '#555');
       }
     });
-  
+
     var columns_html = '<br/><div><label style="margin-right: 5px;">Column visibility</label><div class="btn-group btn-group-xs" id="toggle_column">';
     colsHead.each(function (index, el) {
       var text = $.trim($(el).text());
@@ -58,10 +58,10 @@ function inject_init() {
       }
     });
     columns_html += '</div></div>';
-  
+
     table.before(columns_html);
     table.css('width', '100%');
-  
+
     // ===== Manipulation =====
     $('table.table > tbody > tr > td:nth-child(4)').each(function () {
       var text = $(this).text();
@@ -106,7 +106,7 @@ function inject_init() {
     e.preventDefault();
     var column = datatable.column($(this).attr('data-column'));
     column.visible(!column.visible());
-  
+
     if (!column.visible()) {
       $(this).removeClass('btn-primary').addClass('btn-danger')
     } else {
@@ -120,14 +120,14 @@ function inject_init() {
     if (!page) {
       page = 1
     }
-  
+
     var admin_id = $("select[name='admin_id'] option:selected").val();
     var status = $("select[name='status'] option:selected").val();
     var order = $("select[name='order'] option:selected").val();
     $(".pagination a").each(function () {
-      $(this).attr('href', $(this).attr('href')+"&admin_id="+admin_id+"&status="+status+"&order="+order);
+      $(this).attr('href', $(this).attr('href') + "&admin_id=" + admin_id + "&status=" + status + "&order=" + order);
     });
-    
+
     $(document).prop('title', 'Page ' + page + ' - Appeals | TruckersMP');
     $("#loading-spinner").hide();
   });

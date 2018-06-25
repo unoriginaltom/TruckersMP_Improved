@@ -33,11 +33,11 @@ function inject_init() {
       }
       $('#datetimeselect').val(now.format("YYYY-MM-DD HH:mm"));
     });
-    
+
     $("#changedReason").click(function (event) {
       event.preventDefault();
       if (moment(ban_time).isBefore(moment().utc())) {
-        $('input[id="perma.true"]').prop("checked",true);
+        $('input[id="perma.true"]').prop("checked", true);
         $('input[name=active]').prop('checked', false);
         perma_perform(this);
       } else {
@@ -66,7 +66,7 @@ function inject_init() {
 
   $('[data-toggle="tooltip"]').tooltip();
   $("#loading-spinner").remove();
-  
+
   function construct_buttons(OwnReasons) {
     var html = '';
     html += each_type_new('Reasons', OwnReasons.reasons);
@@ -94,15 +94,15 @@ function inject_init() {
       var count = 0;
 
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
-      $.each(buttons, function (key,val) {
+      $.each(buttons, function (key, val) {
         snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
         if (Array.isArray(val)) {
           val.forEach(function (item) {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + item.trim() + '</a></li>';
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="' + encodeURI(item.trim()) + '">' + item.trim() + '</a></li>';
           });
         } else {
           $.each(val, function (title, item) {
-            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="'+encodeURI(item.trim())+'">' + title.trim() + '</a></li>';
+            snippet += '<li><a style="display: block; margin-bottom: 1px; position: relative; border-bottom: none; padding: 6px 12px; text-decoration: none" href="#" class="hovery plus' + change + '" data-place="' + place + '" data-text="' + encodeURI(item.trim()) + '">' + title.trim() + '</a></li>';
           });
         }
         snippet += '</ul></div>';
@@ -132,6 +132,7 @@ function inject_init() {
   var reasonMax = 190;
   $("<div id='reasonCount'>" + reason.val().length + "/" + reasonMax + "</div>").insertAfter(reason);
   var reasonCount = $("#reasonCount");
+
   function reasonMaxLength() {
     if (reason.val().length > reasonMax) {
       reason.css({
@@ -218,19 +219,19 @@ function inject_init() {
         </table>
       </div>
     `;
-  
+
     $('body > div.wrapper > div.container.content > div > table').addClass('table-condensed table-hover');
     $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(1)').removeAttr('style');
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
       $(this).css('font-weight', 'bold');
     });
-  
+
     $('body > div.wrapper > div.container.content > div > h2').remove();
     $(bans_template).insertAfter('.sky-form > h2');
     $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
-  
+
     var steam_id = $('input[name="steam_id"]').val();
-  
+
     $.ajax({
       url: "https://api.truckersmp.com/v2/bans/" + steam_id,
       type: 'GET',
@@ -238,11 +239,11 @@ function inject_init() {
         $('#bans-table').find('tbody:last-child').append("<tr style=\"font-weight: bold;\"><th>Banned</th><th>Expires</th><th>Reason</th><th>By</th><th>Active</th></tr>");
         $(val.response).each(function () {
           var row = '<tr>';
-        
+
           this.timeAdded = moment(this.timeAdded, "YYYY-MM-DD HH:mm:dd");
           this.timeAdded = this.timeAdded.format("DD MMM YYYY HH:mm");
           row += "<td>" + this.timeAdded + "</td>";
-        
+
           if (this.expiration === null) {
             this.expiration = "Never"
           } else {
@@ -250,17 +251,17 @@ function inject_init() {
             this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
           }
           row += "<td>" + this.expiration + "</td>";
-        
+
           row += "<td class='autolink'>" + this.reason + "</td>";
           row += "<td><a href='/user/" + this.adminID + "' target='_blank'>" + this.adminName + "</a></td>";
-        
+
           if (this.active == false) {
             this.active = 'times';
           } else if (this.active == true) {
             this.active = 'check';
           }
           row += "<td><i class='fa fa-" + this.active + "'></i></td>";
-        
+
           row += '</tr>';
           $('#bans-table').find('tbody:last-child').append(row);
         });
