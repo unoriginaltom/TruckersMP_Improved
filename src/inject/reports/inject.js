@@ -312,7 +312,7 @@ function inject_init() {
           comment = 'Raporunuz için teşekkürler :) Lütfen sunduğunuz kanıtın, yasağın uygulandığı ve takiben gelen bir(1) aylık süreç boyunca kullanılabilir olması gerektiğini lütfen unutmayın.';
           break;
         case 'Norwegian':
-          comment = 'Takk for rapporten :)';
+          comment = 'Takk for rapporten :) Vennligst husk at bevis må være tilgjengelig for hele bannlysningspreioden pluss 1 måned';
           break;
         case 'Spanish':
           comment = 'Muchas gracias por tu reporte :) Recuerda que las pruebas/evidencias deben estar disponibles durante toda la vigencia de la prohibicion y más 1 mes.';
@@ -812,7 +812,7 @@ function inject_init() {
           } else if (activeBans >= 3) {
             html += ' style="color: rgb(212, 63, 58)">1 month';
           } else {
-            html += '>You can choose';
+            html += '>You can choose :)';
           }
           html += '</kbd></div>';
           // Information

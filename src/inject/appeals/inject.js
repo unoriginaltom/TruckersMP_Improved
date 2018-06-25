@@ -177,7 +177,6 @@ function inject_init() {
           $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
 
           $('[data-toggle="tooltip"]').tooltip();
-          $("#loading-spinner").hide();
         }
       }
     })
@@ -187,6 +186,38 @@ function inject_init() {
     });
     $('input[name=reason]').attr('autocomplete', 'off');
     $('input[name=expire]').attr('autocomplete', 'off');
+    
+    // Adding links to appeals for the same ban
+    $.ajax({
+      url: "https://truckersmp.com/user/appeals/" + perpetrator_id,
+      type: "GET",
+      success: function (data) {
+        var appeals = $(data).find('div.container.content > div > table.table > tbody > tr:not(:first-of-type)');
+        var appealsData = '';
+        var reason = $('#summary > table > tbody > tr:nth-child(2) > td:nth-child(2)').text();
+        
+        $.each(appeals, function(index, appeal) {
+          var appealReason = $(appeal).find('td:first-of-type').text();
+          
+          if (appealReason.replace(/\s/g, '') === reason.replace(/\s/g, '')) {
+            var link = $(appeal).find('td:last-of-type > a').attr('href');
+            var appealId = link.replace('/appeals/view/', '');
+            // Same appeals will be skipped; based on their ID
+            if (appealId === window.location.href.replace(/[^0-9]+([0-9]+).*/, "$1") || appealReason === '@BANBYMISTAKE') {
+              return;
+            }
+            
+            appealsData += (appealsData !== '' ? '<br />' : '') + '<kbd><a href="' + link + '" target="_blank">#' + appealId + '</a></kbd>';
+          }
+        });
+        if (appealsData === '') {
+          appealsData = '<kbd>Not appealed before</kbd>';
+        }
+        $('#summary > table > tbody').append('<tr><td style="font-weight: bold"><a href="/user/appeals/' + perpetrator_id + '/" target="_blank">Previous appeals</a></td><td>' + appealsData + '</td></tr>');
+        
+        $("#loading-spinner").hide();
+      }
+    });
   }
 
   function aftermath() {
