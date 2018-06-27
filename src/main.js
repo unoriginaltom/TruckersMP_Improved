@@ -367,7 +367,8 @@ function urlShorter(link, paste = false) {
       if (!error) {
         chrome.runtime.sendMessage({
           msg: msg,
-          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
+          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss"),
+          timeout: 3000
         });
       }
     }

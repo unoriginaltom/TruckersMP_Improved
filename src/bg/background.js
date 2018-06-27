@@ -9,7 +9,14 @@ chrome.runtime.onMessage.addListener(
         contextMessage: request.contextMessage || 'Happy trucking!'
       };
 
-      chrome.notifications.create(notification)
+      var notificationID = null
+      chrome.notifications.create(notification, function (id) {
+        notificationID = id
+      })
+
+      setTimeout(() => {
+        chrome.notifications.clear(notificationID)
+      }, request.timeout);
     }
   }
 );
