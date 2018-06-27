@@ -203,6 +203,7 @@ function loadSettings(callBack) {
         img_previews: true,
         wide: true,
         autoinsertsep: true,
+        enablelinknotifications: true,
         viewappealblank: true,
         viewreportblank: true,
         enablebanlength: true,
@@ -327,6 +328,7 @@ function urlShorter(link, paste = false) {
   var msg;
   var spinner = $("#loading-spinner");
   var error = false;
+  var noNotification = false;
   spinner.show();
   $.ajax({
     url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
@@ -345,6 +347,9 @@ function urlShorter(link, paste = false) {
             msg = "Steam info just saved! Check your clipboard for the link!"
           } else {
             msg = "URL just being shorted! Check your clipboard!";
+            if (!settings.enablelinknotifications) {
+              noNotification = true;
+            }
           }
         }
       } else {
@@ -364,7 +369,7 @@ function urlShorter(link, paste = false) {
       }
     },
     complete: function () {
-      if (!error) {
+      if (!error && !noNotification) {
         chrome.runtime.sendMessage({
           msg: msg,
           contextMessage: moment().format("YYYY-MM-DD HH:mm:ss"),
@@ -447,10 +452,13 @@ function content_links() {
 
     if (length < 30) {
       copyToClipboard($(this).data("link"));
-      chrome.runtime.sendMessage({
-        msg: "This URL is short enough. Check your clipboard!",
-        contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
-      });
+      if (settings.enablelinknotifications) {
+        chrome.runtime.sendMessage({
+          msg: "This URL is short enough. Check your clipboard!",
+          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss"),
+          timeout: 3000
+        });
+      }
       spinner.hide();
     } else {
       if (link.includes('youtube.com') || link.includes('youtu.be')) {
