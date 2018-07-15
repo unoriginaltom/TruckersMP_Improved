@@ -6,7 +6,7 @@ function inject_init() {
   if (is_add_ban) {
     ban_time = moment().utc();
   } else {
-    $('<p class="help-block">Only change a Reason? Click <a href="#" id="changedReason" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a> and do not forget to post this ban in <a href="https://forum.truckersmp.com/index.php?/topic/17815-ban-by-mistake/#replyForm" style="color: #72c02c; text-decoration: underline;" target="_blank"><b>Ban by mistake</b></a> forum topic</p>').insertAfter('input[name=reason]');
+    $('<p class="help-block">Only change a Reason? Click <a href="#" id="changedReason" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a><br>Ban is by mistake? Click <a href="#" id="by_mistake" style="color: #72c02c; text-decoration: underline;"><b>--> here <--</b></a></p>').insertAfter('input[name=reason]');
     ban_time = $('#datetimeselect').val();
   }
 
