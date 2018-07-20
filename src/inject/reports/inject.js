@@ -17,8 +17,8 @@ function inject_init() {
       reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input')
     },
     bans: {
-      table: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr'),
-      header: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > h4:nth-child(4)'),
+      table: $('#bans > #ban > div:nth-child(1) > table.table.table-responsive > tbody > tr'),
+      header: $('#bans > div:nth-child(1) > h4'),
       ban_toggler: $('#expired_bans_toggler').find('i')
     },
     decline: {
@@ -246,9 +246,11 @@ function inject_init() {
 
   // Hotfix of last bans
   function hotfix_lastbans() {
-    if (injects.bans.table.parent().find('tr').length > 1) {
+    if (injects.bans.table.parent().find('tr').length > 2) {
       bans_count_fetch();
       return;
+    } else {
+      injects.bans.table.parent().find('tr:nth-child(2)').remove();
     }
 
     var userProfileLink = $(injects.summary.perpetrator_link).attr('href');
@@ -267,7 +269,6 @@ function inject_init() {
         $.each(bans, function (index, ban) {
           var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1];
           var moderator = $(ban).find('.cbp_tmlabel > p:first-of-type').text().split(" by\n")[1];
-          console.log($(ban).find('.cbp_tmlabel > p:first-of-type'));
           var date = $(ban).find('.cbp_tmtime span:last-of-type').text();
           var dateExp = $(ban).find('.cbp_tmlabel > .autolink + p').text().split(' : ')[1];
 
@@ -282,7 +283,7 @@ function inject_init() {
 
           injects.bans.table.parent().append('<tr><td>' + date + '</td><td>' + dateExp + '</td><td>' + reason.replace(/(http(s)?:\/\/[^\s,;)]+)/g, "<a href='$1' target='_blank'>$1</a>") +
             '</td><td>' + moderator + '</td><td class="text-center">' + (active ? '✓' : '❌') + '</td></tr>');
-          injects.bans.table = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr');
+          injects.bans.table = $('#bans > #ban > div:nth-child(1) > table.table.table-responsive > tbody > tr');
           if (active) {
             if (index === 0 && banned === true) {
               injects.bans.table.find('td:contains("' + dateExp + '")').parent().find('td').css('color', 'rgb(212, 63, 58)');
@@ -293,7 +294,7 @@ function inject_init() {
         });
 
         // Reload of bans and added count of bans etc.
-        injects.bans.table = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > table.table.table-responsive > tbody > tr');
+        injects.bans.table = $('#bans > #ban > div:nth-child(1) > table.table.table-responsive > tbody > tr');
         bans_count_fetch();
       }
     });
@@ -389,7 +390,7 @@ function inject_init() {
       var banned_reason_td = $(this).find('td:nth-child(3)').text();
       var unban_time;
       if (unban_time_td == "Never") {
-        unban_time = getUnbanTime(ban_time_td, banned_reason_td).add(1, 'y');
+        unban_time = getUnbanTime(ban_time_td, banned_reason_td);
       } else {
         unban_time = getUnbanTime(unban_time_td, banned_reason_td);
       }
@@ -429,12 +430,10 @@ function inject_init() {
         'color': '#d43f3a'
       });
     }
-    injects.bans.header.before('<hr class="small"/>');
   }
 
   function table_improving() {
     $('table').addClass('table-condensed table-hover');
-    $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2) > div:nth-child(1)').after('<hr class="small"/>');
 
     var perpetrator_id = injects.summary.perpetrator_link.attr('href').replace('/user/', '');
     var perpetrator_nickname = injects.summary.perpetrator_link.text();
@@ -556,7 +555,9 @@ function inject_init() {
 
   function viewReportBlankInit() {
     if (settings.viewreportblank)
-      $('body > div.wrapper > div.container.content > div > div > div.col-md-6:nth-child(2) > table').find('a:contains("View report")').prop('target', '_blank');
+      $('#reports > #report > div:nth-child(1) > table').find('a:contains("View report")').prop('target', '_blank');
+    else
+      $('#reports > #report > div:nth-child(1) > table').find('a:contains("View report")').prop('target', '');
   }
 
   function construct_buttons(type) {
