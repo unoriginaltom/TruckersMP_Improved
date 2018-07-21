@@ -244,62 +244,6 @@ function inject_init() {
     document.body.removeChild(input);
   }
 
-  // Hotfix of last bans
-  function hotfix_lastbans() {
-    if (injects.bans.table.parent().find('tr').length > 2) {
-      bans_count_fetch();
-      return;
-    } else {
-      injects.bans.table.parent().find('tr:nth-child(2)').remove();
-    }
-
-    var userProfileLink = $(injects.summary.perpetrator_link).attr('href');
-    $.ajax({
-      url: "https://truckersmp.com" + userProfileLink,
-      type: "GET",
-      success: function (data) {
-        // Gets all bans
-        var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
-        // If the user is banned
-        var banned = false;
-        if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text() === 'Banned') {
-          banned = true;
-        }
-
-        $.each(bans, function (index, ban) {
-          var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1];
-          var moderator = $(ban).find('.cbp_tmlabel > p:first-of-type').text().split(" by\n")[1];
-          var date = $(ban).find('.cbp_tmtime span:last-of-type').text();
-          var dateExp = $(ban).find('.cbp_tmlabel > .autolink + p').text().split(' : ')[1];
-
-          var expires = Date.parse(fixDate(dateExp));
-          if (dateExp === 'Never') {
-            expires = Date.parse(fixDate(date));
-          }
-          var active = false;
-          if (!(reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === "rgb(255, 0, 38)") && (new Date()).getTime() - day * 365 <= expires) {
-            active = true;
-          }
-
-          injects.bans.table.parent().append('<tr><td>' + date + '</td><td>' + dateExp + '</td><td>' + reason.replace(/(http(s)?:\/\/[^\s,;)]+)/g, "<a href='$1' target='_blank'>$1</a>") +
-            '</td><td>' + moderator + '</td><td class="text-center">' + (active ? '✓' : '❌') + '</td></tr>');
-          injects.bans.table = $('#bans > #ban > div:nth-child(1) > table.table.table-responsive > tbody > tr');
-          if (active) {
-            if (index === 0 && banned === true) {
-              injects.bans.table.find('td:contains("' + dateExp + '")').parent().find('td').css('color', 'rgb(212, 63, 58)');
-            }
-          } else {
-            injects.bans.table.find('td:contains("' + dateExp + '")').parent().find('td').css('color', '#555');
-          }
-        });
-
-        // Reload of bans and added count of bans etc.
-        injects.bans.table = $('#bans > #ban > div:nth-child(1) > table.table.table-responsive > tbody > tr');
-        bans_count_fetch();
-      }
-    });
-  }
-
   function comment_language() {
     var report_language = injects.report_language.text().trim();
     var comment;
@@ -406,7 +350,7 @@ function inject_init() {
       }
     });
 
-    injects.bans.header.html(bans_count + ' counted bans<small> MAY BE EMPTY DUE TO WEBSITE BUG! Use the feature below!</small>');
+    injects.bans.header.html(bans_count + ' counted bans<small>, including deleted. This is a website issue.</small>');
     if (bans_count >= 3) {
       injects.bans.header.css('color', '#d43f3a');
     }
@@ -707,11 +651,9 @@ function inject_init() {
    */
 
   function init() {
-    // Hotfix of last bans
-    hotfix_lastbans();
     content_links();
     comment_language();
-    //bans_count_fetch();
+    bans_count_fetch();
     table_improving();
     comments_nice_look();
     accept_modal_init();
