@@ -417,7 +417,7 @@ function inject_init() {
 
           var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_id + '</a></kbd></td></tr>';
           if (typeof steam_data !== 'undefined') {
-            var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">Steam Profile</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
+            steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">Steam Profile</a></kbd> <img src="' + steam_data.response['players'][0]['avatar'] + '" class="img-rounded"></td></tr>';
           }
           $(steam_link).insertAfter('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2)');
 
@@ -459,9 +459,66 @@ function inject_init() {
     });
     $('input[name=reason]').attr('autocomplete', 'off');
     $('input[name=expire]').attr('autocomplete', 'off');
-
   }
 
+  function ban_history_table_improving() {
+    // Make the table with other reports better
+    $("#reports > #report > div:nth-child(1) > table.table.table-responsive > tbody > tr").each(function () {
+      // Skip it when no reports have been found
+      if ($(this).find('td:nth-child(1)').text().trim() === 'No reports found') {
+        return;
+      }
+      
+      // View button
+      $(this).find('td:nth-child(6) > a').addClass('btn btn-default btn-block btn-sm').text("View");
+
+      // Claim button
+      let claimButton = $(this).find('td:nth-child(5) > a');
+      claimButton.addClass('btn btn-primary btn-block btn-sm claim');
+
+      let text = claimButton.text().replace(" Report", "").trim();
+      if (text === "Claim") {
+        claimButton.html(text + " <i class=\"fa fa-external-link\"></i>");
+        if (settings.viewreportblank) {
+          claimButton.attr('target', '_blank');
+        }
+      } else {
+        claimButton.html(text);
+      }
+
+      // Already claimed
+      if ($(this).find('td:nth-child(5)').text().trim() === "Already claimed") {
+        $(this).find('td').css('color', '#555');
+      }
+
+      // Date
+      let dateColumn = $(this).find('td:nth-child(1)');
+      text = dateColumn.text();
+      if (text.split(" ").length !== 4) {
+        text = text.replace("Today,", moment().format("DD MMM"));
+        text = moment(text, "DD MMM HH:mm").format("DD MMM YYYY HH:mm");
+        dateColumn.text(text);
+      }
+
+      // Switch claim button
+      $(this).children(":eq(5)").after($(this).children(":eq(4)"));
+    });
+
+    // Claim link click
+    $('a.claim').click(function (event) {
+      $(this).addClass('clicked');
+      $(this).text('Claimed!');
+      if (settings.viewreportblank) {
+        event.preventDefault();
+        if (event.ctrlKey) {
+          window.open($(this).attr('href'), "_top");
+        } else {
+          window.open($(this).attr('href'), "_blank");
+        }
+      }
+    });
+  }
+  
   function comments_nice_look() {
     $(".comment > p").each(function () {
       $('<hr style="margin: 10px 0 !important;">').insertAfter(this);
@@ -499,9 +556,9 @@ function inject_init() {
 
   function viewReportBlankInit() {
     if (settings.viewreportblank)
-      $('#reports > #report > div:nth-child(1) > table').find('a:contains("View report")').prop('target', '_blank');
+      $('#reports > #report > div:nth-child(1) > table').find('a:contains("View")').prop('target', '_blank');
     else
-      $('#reports > #report > div:nth-child(1) > table').find('a:contains("View report")').prop('target', '');
+      $('#reports > #report > div:nth-child(1) > table').find('a:contains("View")').prop('target', '');
   }
 
   function construct_buttons(type) {
@@ -655,6 +712,7 @@ function inject_init() {
     comment_language();
     bans_count_fetch();
     table_improving();
+    ban_history_table_improving();
     comments_nice_look();
     accept_modal_init();
     decline_modal_init();
@@ -745,7 +803,7 @@ function inject_init() {
 
           var html = '<div class="col-md-6 text-center" style="align-self: center"><kbd';
           if (banned) {
-            html += ' style="color: rgb(212, 63, 58)">The user is already banned! However, the length can be extended!</kbd><br />Length of the next ban: <kbd';
+            html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd';
           }
           // Length checks
           if ((bans3m >= 2) || (activeBans >= 5 && active3m && active1m)) {
