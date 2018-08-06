@@ -194,7 +194,7 @@ function inject_init() {
       success: function (data) {
         var appeals = $(data).find('div.container.content > div > table.table > tbody > tr:not(:first-of-type)');
         var appealsData = '';
-        var reason = $('#summary > table > tbody > tr:nth-child(2) > td:nth-child(2)').text();
+        var reason = $('#summary > table > tbody > tr:nth-child(3) > td:nth-child(2)').text();
         
         $.each(appeals, function(index, appeal) {
           var appealReason = $(appeal).find('td:first-of-type').text();
