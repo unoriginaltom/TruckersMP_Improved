@@ -29,7 +29,9 @@ function inject_init() {
       first_column: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr > td:nth-child(1)'),
       perpetrator_link: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(2) > a'),
       perpetrator_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)'),
-      previous_usernames: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)')
+      previous_usernames: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)'),
+      reporter_link: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a'),
+      reporter_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1)')
     }
   };
 
@@ -381,7 +383,7 @@ function inject_init() {
 
     var perpetrator_id = injects.summary.perpetrator_link.attr('href').replace('/user/', '');
     var perpetrator_nickname = injects.summary.perpetrator_link.text();
-    var reporter_id = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a').attr('href').replace('/user/', '');
+    var reporter_id = injects.summary.reporter_link.attr('href').replace('/user/', '');
 
     $(document).prop('title', perpetrator_nickname.replace(/(.*)Change$/, '$1') + ' - ' + perpetrator_id + ' | TruckersMP');
 
@@ -433,6 +435,21 @@ function inject_init() {
           });
           $('[data-toggle="tooltip"]').tooltip();
           $("#loading-spinner").hide();
+        }
+      }
+    })
+
+    $.ajax({
+      url: "https://api.truckersmp.com/v2/player/" + reporter_id,
+      type: "GET",
+      success: function (tmp_data) {
+        if (tmp_data !== true) {
+          injects.summary.reporter_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
+          injects.summary.reporter_link.wrap('<kbd>');
+
+          injects.summary.reporter_label.css('text-align', 'right');
+
+          injects.summary.reporter_link.parent().parent().append(' <span class="badge badge-u">ID ' + reporter_id + '</span>');
         }
       }
     })

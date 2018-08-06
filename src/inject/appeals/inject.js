@@ -281,8 +281,15 @@ function inject_init() {
     $('.table').wrap(table_wrap);
     $(bans_template).insertAfter('#summary');
     $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
+    
+    // Add user's ID to the table
+    var banned_id = perpetrator_link.attr('href').replace('/user/', '');
+    perpetrator_link.parent().append(' <span class="badge badge-u">ID ' + banned_id + '</span>');
 
+    // Get user's Steam ID
     var steam_id = injects.modify.find('div > div > form > div.modal-body > div:nth-child(3) > input').val();
+    // Add the Steam ID to the summary table
+    $("<tr><td>Steam</td><td><kbd><a href='http://steamcommunity.com/profiles/" + steam_id + "' target='_blank'>" + steam_id + "</a></kbd></td></tr>").insertAfter("#summary > table > tbody > tr:nth-child(1)");
 
     $.ajax({
       url: "https://api.truckersmp.com/v2/bans/" + steam_id,
