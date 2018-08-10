@@ -194,7 +194,7 @@ function inject_init() {
       success: function (data) {
         var appeals = $(data).find('div.container.content > div > table.table > tbody > tr:not(:first-of-type)');
         var appealsData = '';
-        var reason = $('#summary > table > tbody > tr:nth-child(3) > td:nth-child(2)').text();
+        var reason = $('#summary > table > tbody > tr > td:contains("Reason")').parent().find("td:nth-child(2)").text();
         
         $.each(appeals, function(index, appeal) {
           var appealReason = $(appeal).find('td:first-of-type').text();
@@ -288,8 +288,10 @@ function inject_init() {
 
     // Get user's Steam ID
     var steam_id = injects.modify.find('div > div > form > div.modal-body > div:nth-child(3) > input').val();
-    // Add the Steam ID to the summary table
-    $("<tr><td>Steam</td><td><kbd><a href='http://steamcommunity.com/profiles/" + steam_id + "' target='_blank'>" + steam_id + "</a></kbd></td></tr>").insertAfter("#summary > table > tbody > tr:nth-child(1)");
+    if (steam_id) {
+      // Add the Steam ID to the summary table
+      $("<tr><td>Steam</td><td><kbd><a href='http://steamcommunity.com/profiles/" + steam_id + "' target='_blank'>" + steam_id + "</a></kbd></td></tr>").insertAfter("#summary > table > tbody > tr:nth-child(1)");
+    }
 
     $.ajax({
       url: "https://api.truckersmp.com/v2/bans/" + steam_id,
@@ -367,10 +369,11 @@ function inject_init() {
     injects.reason.keyup(function () {
       checkReasonLength();
     });
+    var dateTimeSelect = $('#datetimeselect');
 
     addButtons(injects.accept.find('textarea[name=comment]'), construct_buttons("accepts"));
     addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('reasons') + '</div>');
-    addButtons($("#datetimeselect"), construct_dates(OwnDates));
+    addButtons(dateTimeSelect, construct_dates(OwnDates));
     addButtons(injects.modify.find('textarea[name=comment]'), construct_buttons("modify"));
     addButtons(injects.decline.find('textarea[name=comment]'), construct_buttons("declines"));
     addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons("comments"));
@@ -393,8 +396,10 @@ function inject_init() {
     });
 
     var unban_time = moment.utc();
-    if ($('#datetimeselect').val().length) {
-      unban_time = moment($('#datetimeselect').val())
+    if (dateTimeSelect.val()) {
+      if (dateTimeSelect.val().length) {
+        unban_time = moment(dateTimeSelect.val())
+      }
     }
     $('.plusdate').on("click", function (event) {
       event.preventDefault();
