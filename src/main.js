@@ -430,15 +430,19 @@ function content_links() {
     $(this).append(`    <a href="#" class="jmdev_ca" data-link="${sub}"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a>`);
   });
 
+  if (sub.contains(['hizliresim.com'])) {
+    if (!sub.contains(['i.hizliresim.com'])) {
+      picId = sub.match(/^.*hizliresim.com\/(.*)/)[1]
+      sub = 'https://i.hizliresim.com/' + picId + '.jpg'
+    }
+    sub = 'https://i.bigmp.ru/?url=' + sub
+  }
+
   if (settings.img_previews !== false) {
     $('div.comment .autolinkage > a').each(function () {
       var sub = $(this).attr('href');
 
       sub = sub.replace(/prnt.sc/gi, 'prntscr.com')
-      
-      if (sub.contains(['hizliresim.com'])) {
-        sub = 'https://i.bigmp.ru/?url=' + sub;
-      }
 
       if ((sub.match(/\.(jpeg|jpg|gif|png)$/) !== null || sub.contains(['images.akamai.', 'prntscr.com', 'img.youtube.com']))) {
         $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
