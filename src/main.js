@@ -435,6 +435,10 @@ function content_links() {
       var sub = $(this).attr('href');
 
       sub = sub.replace(/prnt.sc/gi, 'prntscr.com')
+      
+      if (sub.contains(['hizliresim.com'])) {
+        sub = 'https://i.bigmp.ru/?url=' + sub;
+      }
 
       if ((sub.match(/\.(jpeg|jpg|gif|png)$/) !== null || sub.contains(['images.akamai.', 'prntscr.com', 'img.youtube.com']))) {
         $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
