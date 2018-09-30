@@ -24,10 +24,10 @@ function inject_init() {
     },
     summary: {
       first_column: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr > td:nth-child(1)'),
-      perpetrator_link: $('.tmp-improved table > tbody > tr:nth-child(2) > td:nth-child(2) > kbd > a'),
+      perpetrator_link: $('table > tbody > tr:nth-child(2) > td:nth-child(2) > kbd > a'),
       perpetrator_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(2) > td:nth-child(1)'),
       previous_usernames: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(3) > td:nth-child(1)'),
-      reporter_link: $('.tmp-improved table > tbody > tr:nth-child(1) > td:nth-child(2) > kbd > a'),
+      reporter_link: $('table > tbody > tr:nth-child(1) > td:nth-child(2) > kbd > a'),
       reporter_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1)')
     }
   }
@@ -748,12 +748,8 @@ function inject_init() {
     })
 
   })
-  if (typeof perpetrator_id !== 'undefined' && $('.tmp-improved').length) {
-    init()
-  } else {
-    injects.spinner.remove()
-    console.log('TMP Improved (inject/reports)', 'OOPS!')
-  }
+
+  init()
 
   $('.pluscomment').on('click', function (event) {
     event.preventDefault()
