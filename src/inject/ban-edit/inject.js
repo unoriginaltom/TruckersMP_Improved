@@ -225,11 +225,7 @@ function inject_init() {
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
       $(this).css('font-weight', 'bold');
     });
-
-    $('body > div.wrapper > div.container.content > div > h2').remove();
-    $(bans_template).insertAfter('.sky-form > h2');
-    $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
-
+    
     var steam_id = $('input[name="steam_id"]').val();
 
     $.ajax({

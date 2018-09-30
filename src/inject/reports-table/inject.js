@@ -4,10 +4,6 @@ function inject_init() {
   // ===== Init bootstrapping =====
   table.addClass('table-condensed table-hover');
 
-  $('table.table > tbody > :first(tr)').wrap('<thead class="TEMP"></thead>');
-  $('table.table > tbody > thead').clone().prependTo('table.table').removeClass('TEMP');
-  $('.TEMP').remove();
-
   var colsHead = $('body > div.wrapper > div.container.content > div > table > thead > tr > th'),
     colsBody = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td');
 
