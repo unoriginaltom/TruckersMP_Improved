@@ -3,7 +3,7 @@ function inject_init() {
   var decline_modal = $('#confirm-decline')
   var injects = {
     header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
-    date_buttons: $('#tmp-improved_own-date-buttons'),
+    date_buttons: accept_modal.find('div > div > form > div.modal-body > div:nth-child(5) > label:nth-child(4)'),
     report_language: $('div.container.content > div > div > div > table.table > tbody > tr:nth-child(8) > td:nth-child(2)'),
     claim_report: $('div.container.content > div > div > div > table.table > tbody > tr:nth-child(10) > td:nth-child(2) > a'),
     spinner: $('#loading-spinner'),
