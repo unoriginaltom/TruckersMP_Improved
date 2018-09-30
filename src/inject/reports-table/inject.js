@@ -74,7 +74,7 @@ function inject_init() {
     var text = $(this).text().replace(" report", "").trim();
 
     if (text == "Claim") {
-      $(this).html(text + " <i class=\"fa fa-external-link\"></i>");
+      $(this).html(text + " <i class=\"fas fa-external-link-alt\"></i>");
       if (settings.viewreportblank) {
         $(this).attr('target', '_blank');
       }
@@ -105,7 +105,7 @@ function inject_init() {
   $('form > button').addClass('btn-sm');
 
   table.find('tbody > tr').each(function () {
-    var status = $(this).find('td:nth-child(7)').text();
+    var status = $(this).find('td:nth-child(7)').text().trim();
     if (status != 'Waiting for admin' && status != 'New') {
       $(this).find('td').css('color', '#555');
     }
@@ -149,7 +149,7 @@ function inject_init() {
       "orderable": false,
     }],
     language: {
-      search: "<i class='fa fa-fw fa-search'></i>"
+      search: "<i class='fas fa-fw fa-search'></i>"
     }
   });
 
@@ -185,7 +185,8 @@ function inject_init() {
     if (!page) {
       page = 1
     }
-    $(document).prop('title', 'Page ' + page + ' - Reports | TruckersMP');
+    // TODO:
+    // $(document).prop('title', 'Page ' + page + ' - Reports | TruckersMP');
     $("#loading-spinner").hide();
   });
 }

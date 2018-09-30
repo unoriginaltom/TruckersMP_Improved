@@ -44,7 +44,8 @@ function inject_init() {
     $('form > button').addClass('btn-sm');
 
     colsHeadTr.each(function () {
-      var status = $(this).find('td:nth-child(3)').text();
+      var status = $(this).find('td:nth-child(3)').text().trim();
+      console.log('TMP Improved (inject/appeals-table)', status)
       if (status != 'Waiting for admin' && status != 'New') {
         $(this).find('td').css('color', '#555');
       }
@@ -88,11 +89,11 @@ function inject_init() {
         "orderable": false,
       }],
       language: {
-        search: "<i class='fa fa-fw fa-search'></i>"
+        search: "<i class='fas fa-fw fa-search'></i>"
       }
     });
   } catch (e) {
-    console.error(e);
+    console.error('TMP Improved (inject/appeals-table)', e);
   }
 
   $('#toggle_column').find('button').each(function () {

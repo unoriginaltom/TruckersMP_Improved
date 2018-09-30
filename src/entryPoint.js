@@ -2,7 +2,7 @@ var settings, storage, steamapi, OwnReasons, OwnDates, last_version, date_button
 var version = chrome.runtime.getManifest().version;
 var syncAllowed = false;
 
-console.log()
+console.log('TMP Improved (entryPoint)', )
 if (window.location.protocol === 'chrome-extension:' && window.location.pathname !== '/src/bg/background.html') {
   var database = firebase.database();
 }
@@ -141,7 +141,7 @@ function insertAtCaret(input, text, firstSpace) {
   }
 }
 
-$('body > div.wrapper > div.breadcrumbs > div > h1').append(' Improved <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fa fa-cog" data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fa fa-question" data-toggle="tooltip" title="Changelog"></i></a>  <i class="fa fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading...">');
+$('body > div.wrapper > div.breadcrumbs > div > h1').append(' <span class="badge" data-toggle="tooltip" title="by @cjmaxik">' + version + '</span> <a href="#" id="go_to_options"><i class="fas fa-cog data-toggle="tooltip" title="Script settings"></i></a> <a href="#" id="version_detected"><i class="fas fa-question data-toggle="tooltip" title="Changelog"></i></a>  <i class="fas fa-spinner fa-spin" id="loading-spinner" data-toggle="tooltip" title="Loading...">');
 
 $(function () {
   $('#go_to_options').on('click', function (event) {
@@ -229,7 +229,7 @@ function loadSettingsFromFirebase() {
     database.ref('data/' + firebase.auth().currentUser.uid).once('value')
       .then(function (snapshot) {
         var json = JSON.parse(snapshot.val());
-        console.log(json);
+        console.log('TMP Improved (entryPoint)', json);
 
         if (json === null) {
           alert('Online storage is empty for your account :(')
@@ -337,8 +337,8 @@ function urlShorter(link, paste = false) {
       if (val.result['error'] !== true) {
         if (val.result['url_short'] === undefined || val.result['url_short'] === null) {
           alert('Looks like we have a problem with URL shortener... Try again!');
-          console.error('Received from server: ' + JSON.stringify(val));
-          console.error('Sent to server: ' + encodeURIComponent(link));
+          console.error('TMP Improved (entryPoint)', 'Received from server: ' + JSON.stringify(val));
+          console.error('TMP Improved (entryPoint)', 'Sent to server: ' + encodeURIComponent(link));
           error = true;
         } else {
           copyToClipboard('https://jmdev.ca/url/?l=' + val.result['url_short']);
@@ -354,8 +354,8 @@ function urlShorter(link, paste = false) {
         }
       } else {
         alert('Looks like we have a problem with URL shortener... Try again!');
-        console.error('Received from server: ' + JSON.stringify(val));
-        console.error('Sent to server: ' + encodeURIComponent(link));
+        console.error('TMP Improved (entryPoint)', 'Received from server: ' + JSON.stringify(val));
+        console.error('TMP Improved (entryPoint)', 'Sent to server: ' + encodeURIComponent(link));
         error = true;
       }
     },
@@ -401,7 +401,7 @@ function content_links() {
     }
 
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
-      $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fa fa-youtube-play fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
+      $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fab fa-youtube fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
     } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
@@ -424,19 +424,17 @@ function content_links() {
           embedlink += "&t=" + vidinfos[1]
         }
       }
-      $(this).append('<a href="' + embedlink + '" class="video">  <i class="fa fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
+      $(this).append('<a href="' + embedlink + '" class="video">  <i class="fas fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
     }
 
-    $(this).append(`    <a href="#" class="jmdev_ca" data-link="${sub}"><i class="fa fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a>`);
+    $(this).append(`    <a href="#" class="jmdev_ca" data-link="${sub}"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="Shorted + to clipboard"></i></a>`);
   });
 
   if (settings.img_previews !== false) {
     $('div.comment .autolinkage > a').each(function () {
       var sub = $(this).attr('href');
 
-      sub = sub.replace(/prnt.sc/gi, 'prntscr.com')
-
-      if ((sub.match(/\.(jpeg|jpg|gif|png)$/) !== null || sub.contains(['images.akamai.', 'prntscr.com', 'img.youtube.com']))) {
+      if ((sub.match(/\.(jpeg|jpg|gif|png)$/) !== null || sub.contains(['images.akamai.', 'img.youtube.com']))) {
         $('<img src="' + sub + '" class="img-responsive img-thumbnail" alt="' + sub + '"><br>').insertBefore($(this));
       }
     });
@@ -478,7 +476,7 @@ function content_links() {
 function getYouTubeIdFromUrl(youtubeUrl) {
   var regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
   var match = youtubeUrl.match(regExp);
-  console.log(youtubeUrl);
+  console.log('TMP Improved (entryPoint)', youtubeUrl);
   if (match && match[2].length == 11) {
     return match[2];
   } else {
@@ -601,5 +599,5 @@ val_init().then(function (v) {
     }
   }
 }).catch(function (v) {
-  console.error(v);
+  console.error('TMP Improved (entryPoint)', v);
 });

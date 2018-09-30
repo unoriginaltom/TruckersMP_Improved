@@ -23,7 +23,7 @@ var ui = new firebaseui.auth.AuthUI(firebase.auth())
 var isSignedIn = (firebase.auth().displayName) ? true : false
 
 function handleSignedInUser(user) {
-  console.log(user)
+  console.log('TMP Improved (firebase/login)', user)
 
   $('#firebaseui-auth').slideUp('fast');
 

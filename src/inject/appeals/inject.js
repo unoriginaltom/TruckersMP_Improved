@@ -1,6 +1,8 @@
 function inject_init() {
-  var steam_id = $('input[name="steam_id"]').val();
-  var perpetrator_link = $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
+  // var steam_id = $('input[name="steam_id"]').val();
+  var steam_id = 0;
+  var perpetrator_link = $('body > div.wrapper > div.container.content > div.row > div.row > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
+  console.log('TMP Improved (inject/appeals)', perpetrator_link)
   var perpetrator_id = 0
   if (!perpetrator_link.length) {
     perpetrator_id = 'deleted'
@@ -8,7 +10,7 @@ function inject_init() {
     perpetrator_id = perpetrator_link.attr('href').replace('/user/', '');
   }
 
-  var summary = $('#summary');
+  var summary = $('.summary');
   var injects = {
     header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
     spinner: $("#loading-spinner"),
@@ -17,7 +19,7 @@ function inject_init() {
     modify: $('#confirm-modify'),
     reason: $('input[name="reason"]'),
     summary: {
-      perpetrator_link: $('#summary > table > tbody > tr:nth-child(1) > td:nth-child(2) > a'),
+      perpetrator_link: $('.summary > table > tbody > tr:nth-child(1) > td:nth-child(2) > a'),
     }
   };
 
@@ -138,29 +140,28 @@ function inject_init() {
   function table_impoving() {
     $('table').addClass('table-condensed table-hover');
 
-    if (steamapi !== null && steamapi !== 'none') {
-      $.ajax({
-        url: "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + steamapi + "&format=json&steamids=" + steam_id,
-        type: 'GET',
-        success: function (val) {
-          if (val === undefined) {
-            $("#loading-error").show();
-            injects.spinner.hide();
-            return;
-          }
-          var player_data = val;
-          var tmpname = summary.find('table > tbody > tr:nth-child(2) > td:nth-child(2)');
-          var steam_name = escapeHTML(player_data.response.players[0].personaname);
-          summary.find('table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
-          tmpname.html('<kbd>' + tmpname.text() + '</kbd>');
+    // if (steamapi !== null && steamapi !== 'none') {
+    //   $.ajax({
+    //     url: "https://api.steampowered.com/ISteamUser/GetPlayerSummaries/v2/?key=" + steamapi + "&format=json&steamids=" + steam_id,
+    //     type: 'GET',
+    //     success: function (val) {
+    //       if (val === undefined) {
+    //         $("#loading-error").show();
+    //         injects.spinner.hide();
+    //         return;
+    //       }
+    //       var player_data = val;
+    //       var tmpname = summary.find('table > tbody > tr:nth-child(2) > td:nth-child(2)');
+    //       var steam_name = escapeHTML(player_data.response.players[0].personaname);
+    //       summary.find('table > tbody > tr:nth-child(2) > td:nth-child(1)').text('TruckersMP');
+    //       tmpname.html('<kbd>' + tmpname.text() + '</kbd>');
 
-          var steam_link = '<tr><td>Steam</td><td> <a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank"><kbd>' + steam_name + '</kbd></a> <img src="' + player_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
-          $(steam_link).insertAfter('#summary > table > tbody > tr:nth-child(2)');
-        }
-      });
-    }
+    //       var steam_link = '<tr><td>Steam</td><td> <a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank"><kbd>' + steam_name + '</kbd></a> <img src="' + player_data.response.players[0].avatar + '" class="img-rounded"></td></tr>';
+    //       $(steam_link).insertAfter('.summary > table > tbody > tr:nth-child(2)');
+    //     }
+    //   });
+    // }
 
-    var perpetrator_link = $('#summary > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
     var perpetrator_id = perpetrator_link.attr('href').replace('/user/', '');
     $.ajax({
       url: "https://api.truckersmp.com/v2/player/" + perpetrator_id,
@@ -186,7 +187,7 @@ function inject_init() {
     });
     $('input[name=reason]').attr('autocomplete', 'off');
     $('input[name=expire]').attr('autocomplete', 'off');
-    
+
     // Adding links to appeals for the same ban
     $.ajax({
       url: "https://truckersmp.com/user/appeals/" + perpetrator_id,
@@ -194,11 +195,11 @@ function inject_init() {
       success: function (data) {
         var appeals = $(data).find('div.container.content > div > table.table > tbody > tr:not(:first-of-type)');
         var appealsData = '';
-        var reason = $('#summary > table > tbody > tr > td:contains("Reason")').parent().find("td:nth-child(2)").text();
-        
-        $.each(appeals, function(index, appeal) {
+        var reason = $('.summary > table > tbody > tr > td:contains("Reason")').parent().find("td:nth-child(2)").text();
+
+        $.each(appeals, function (index, appeal) {
           var appealReason = $(appeal).find('td:first-of-type').text();
-          
+
           if (appealReason.replace(/\s/g, '') === reason.replace(/\s/g, '')) {
             var link = $(appeal).find('td:last-of-type > a').attr('href');
             var appealId = link.replace('/appeals/view/', '');
@@ -206,22 +207,22 @@ function inject_init() {
             if (appealId === window.location.href.replace(/[^0-9]+([0-9]+).*/, "$1") || appealReason === '@BANBYMISTAKE') {
               return;
             }
-            
+
             appealsData += (appealsData !== '' ? '<br />' : '') + '<kbd><a href="' + link + '" target="_blank">#' + appealId + '</a></kbd>';
           }
         });
         if (appealsData === '') {
           appealsData = '<kbd>Not appealed before</kbd>';
         }
-        $('#summary > table > tbody').append('<tr><td style="font-weight: bold"><a href="/user/appeals/' + perpetrator_id + '/" target="_blank">Previous appeals</a></td><td>' + appealsData + '</td></tr>');
-        
+        $('.summary > table > tbody').append('<tr><td style="font-weight: bold"><a href="/user/appeals/' + perpetrator_id + '/" target="_blank">Previous appeals</a></td><td>' + appealsData + '</td></tr>');
+
         $("#loading-spinner").hide();
       }
     });
   }
 
   function aftermath() {
-    $(document).prop('title', $('table.table > tbody > tr:nth-child(1) > td:nth-child(2) > a').text() + '\'s Ban Appeal - TruckersMP');
+    // $(document).prop('title', $('table.table > tbody > tr:nth-child(1) > td:nth-child(2) > a').text() + '\'s Ban Appeal - TruckersMP');
 
     $(".comment > p").each(function () {
       $('<hr style="margin: 10px 0 !important;">').insertAfter(this);
@@ -259,18 +260,6 @@ function inject_init() {
   }
 
   function init() {
-    var bans_template = `<div class="col-md-6 col-xs-12">
-          <h2>Latest 5 bans</h2>
-          <h1 id="loading" class="text-center">Loading...</h1>
-              <div class="table-responsive">
-                  <table class="table table-condensed table-hover" id="bans-table">
-                      <tbody>
-                      </tbody>
-                  </table>
-              </div>
-          </div>`;
-    var table_wrap = '<div id="bans" class="row"><div class="col-md-6 col-xs-12" id="summary"></div></div>';
-
     $('body > div.wrapper > div.container.content > div > table').addClass('table-condensed table-hover');
     $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(1)').removeAttr('style');
     $('body > div.wrapper > div.container.content > div > table > tbody > tr > td:nth-child(1)').each(function () {
@@ -278,60 +267,52 @@ function inject_init() {
     });
 
     $('body > div.wrapper > div.container.content > div > h2').remove();
-    $('.table').wrap(table_wrap);
-    $(bans_template).insertAfter('#summary');
+    $('body > div.wrapper > div.container.content > div.row > div.row > div:nth-child(1) > table').addClass('summary');
     $("<h2>Ban details</h2>").insertBefore('table.table[id!="bans-table"]');
-    
+
     // Add user's ID to the table
     var banned_id = perpetrator_link.attr('href').replace('/user/', '');
     perpetrator_link.parent().append(' <span class="badge badge-u">ID ' + banned_id + '</span>');
 
-    // Get user's Steam ID
-    var steam_id = injects.modify.find('div > div > form > div.modal-body > div:nth-child(3) > input').val();
-    if (steam_id) {
-      // Add the Steam ID to the summary table
-      $("<tr><td>Steam</td><td><kbd><a href='http://steamcommunity.com/profiles/" + steam_id + "' target='_blank'>" + steam_id + "</a></kbd></td></tr>").insertAfter("#summary > table > tbody > tr:nth-child(1)");
-    }
+    // $.ajax({
+    //   url: "https://api.truckersmp.com/v2/bans/" + steam_id,
+    //   type: 'GET',
+    //   success: function (val) {
+    //     $('#bans-table').find('tbody:last-child').append("<tr style=\"font-weight: bold;\"><th>Banned</th><th>Expires</th><th>Reason</th><th>By</th><th>Active</th></tr>");
+    //     $(val.response).each(function () {
+    //       var row = '<tr>';
 
-    $.ajax({
-      url: "https://api.truckersmp.com/v2/bans/" + steam_id,
-      type: 'GET',
-      success: function (val) {
-        $('#bans-table').find('tbody:last-child').append("<tr style=\"font-weight: bold;\"><th>Banned</th><th>Expires</th><th>Reason</th><th>By</th><th>Active</th></tr>");
-        $(val.response).each(function () {
-          var row = '<tr>';
+    //       this.timeAdded = moment(this.timeAdded, "YYYY-MM-DD HH:mm:dd");
+    //       this.timeAdded = this.timeAdded.format("DD MMM YYYY HH:mm");
+    //       row += "<td>" + this.timeAdded + "</td>";
 
-          this.timeAdded = moment(this.timeAdded, "YYYY-MM-DD HH:mm:dd");
-          this.timeAdded = this.timeAdded.format("DD MMM YYYY HH:mm");
-          row += "<td>" + this.timeAdded + "</td>";
+    //       if (this.expiration === null) {
+    //         this.expiration = "Never"
+    //       } else {
+    //         this.expiration = moment(this.expiration, "YYYY-MM-DD HH:mm:dd");
+    //         this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
+    //       }
+    //       row += "<td>" + this.expiration + "</td>";
 
-          if (this.expiration === null) {
-            this.expiration = "Never"
-          } else {
-            this.expiration = moment(this.expiration, "YYYY-MM-DD HH:mm:dd");
-            this.expiration = this.expiration.format("DD MMM YYYY HH:mm");
-          }
-          row += "<td>" + this.expiration + "</td>";
+    //       row += "<td class='autolink'>" + this.reason + "</td>";
+    //       row += "<td><a href='/user/" + this.adminID + "' target='_blank'>" + this.adminName + "</a></td>";
 
-          row += "<td class='autolink'>" + this.reason + "</td>";
-          row += "<td><a href='/user/" + this.adminID + "' target='_blank'>" + this.adminName + "</a></td>";
+    //       if (this.active == false) {
+    //         this.active = 'times';
+    //       } else if (this.active == true) {
+    //         this.active = 'check';
+    //       }
+    //       row += "<td><i class='fas fa-" + this.active + "'></i></td>";
 
-          if (this.active == false) {
-            this.active = 'times';
-          } else if (this.active == true) {
-            this.active = 'check';
-          }
-          row += "<td><i class='fa fa-" + this.active + "'></i></td>";
-
-          row += '</tr>';
-          $('#bans-table').find('tbody:last-child').append(row);
-        });
-        $('#loading').remove();
-        content_links();
-        table_impoving();
-        aftermath();
-      }
-    });
+    //       row += '</tr>';
+    //       $('#bans-table').find('tbody:last-child').append(row);
+    //     });
+    //     $('#loading').remove();
+    content_links();
+    table_impoving();
+    aftermath();
+    //   }
+    // });
 
     function addButtons(textArea, html) {
       if (typeof textArea !== 'undefined' && html.length > 0) {
@@ -464,10 +445,5 @@ function inject_init() {
     permcheck();
   }
 
-  if (perpetrator_id !== 'deleted') {
-    init();
-  } else {
-    injects.spinner.remove();
-    alert('Deleted User detected! Extension is not working!')
-  }
+  init();
 }

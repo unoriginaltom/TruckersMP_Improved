@@ -260,7 +260,7 @@ function inject_init() {
           } else if (this.active == true) {
             this.active = 'check';
           }
-          row += "<td><i class='fa fa-" + this.active + "'></i></td>";
+          row += "<td><i class='fas fa-" + this.active + "'></i></td>";
 
           row += '</tr>';
           $('#bans-table').find('tbody:last-child').append(row);
@@ -268,9 +268,8 @@ function inject_init() {
         $('#loading').remove();
       }
     });
-    console.log("test");
   } catch (e) {
-    console.error(e);
+    console.error('TMP Improved (inject/ban-edit)', e);
   }
   reasonMaxLength();
   dropdown_enchancements();

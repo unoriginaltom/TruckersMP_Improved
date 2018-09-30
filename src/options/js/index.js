@@ -118,11 +118,11 @@ function inject_init() {
   }
 
   function restore_options() {
-    $('#ext_name').html('<i class="fa fa-truck" aria-hidden="true"></i> <strong>TMP Improved</strong> ' + chrome.runtime.getManifest().version);
+    $('#ext_name').html('<i class="fas fa-truck" aria-hidden="true"></i> <strong>TMP Improved</strong> ' + chrome.runtime.getManifest().version);
 
     function set_options(items) {
       try {
-        console.log(items);
+        console.log('TMP Improved (options/js/index.js)', items);
         $('#steamapi').val(items.steamapi);
 
         items.OwnReasons.prefixes.forEach(function (val) {

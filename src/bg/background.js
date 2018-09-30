@@ -23,7 +23,7 @@ chrome.runtime.onMessage.addListener(
 
 var notificationID = null
 chrome.runtime.onInstalled.addListener(function (details) {
-  console.log(details)
+  console.log('TMP Improved (bg/background)', details)
   if (details.reason === 'update') {
     chrome.notifications.create({
       type: 'basic',
