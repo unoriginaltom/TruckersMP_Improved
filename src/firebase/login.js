@@ -2,7 +2,7 @@
 var loginUIConfig = {
   callbacks: {
     // Called when the user has been successfully signed in.
-    signInSuccess: function (user, credential, redirectUrl) {
+    signInSuccess: function (user) {
       handleSignedInUser(user)
       // Do not redirect.
       return false
@@ -20,7 +20,7 @@ var loginUIConfig = {
 
 // Initialize FirebaseUI
 var ui = new firebaseui.auth.AuthUI(firebase.auth())
-var isSignedIn = (firebase.auth().displayName) ? true : false
+var isSignedIn = (firebase.auth().displayName) ? true : false // eslint-disable-line no-unused-vars
 
 function handleSignedInUser(user) {
   console.log('TMP Improved (firebase/login)', user)

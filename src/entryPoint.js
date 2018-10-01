@@ -1,8 +1,8 @@
-var settings, storage, steamapi, OwnReasons, OwnDates, last_version, date_buttons;
+var settings, storage, steamapi, OwnReasons, OwnDates, last_version, date_buttons; // eslint-disable-line no-unused-vars
 var version = chrome.runtime.getManifest().version;
 var syncAllowed = false;
 
-console.log('TMP Improved (entryPoint)', )
+console.log('TMP Improved (entryPoint)');
 if (window.location.protocol === 'chrome-extension:' && window.location.pathname !== '/src/bg/background.html') {
   var database = firebase.database();
 }
@@ -62,7 +62,7 @@ var default_OwnDates = {
   other: "current_utc"
 };
 
-function checkDoubleSlash(input) {
+function checkDoubleSlash(input) { // eslint-disable-line no-unused-vars
   if (!input) {
     return;
   }
@@ -95,7 +95,7 @@ function checkDoubleSlash(input) {
   }
 }
 
-function insertAtCaret(input, text, firstSpace) {
+function insertAtCaret(input, text, firstSpace) { // eslint-disable-line no-unused-vars
   if (!input) {
     return;
   }
@@ -224,8 +224,8 @@ function loadSettings(callBack) {
   }
 }
 
-function loadSettingsFromFirebase() {
-  if (isSignedIn) {
+function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
+  if (isSignedIn) { // eslint-disable-line no-undef
     database.ref('data/' + firebase.auth().currentUser.uid).once('value')
       .then(function (snapshot) {
         var json = JSON.parse(snapshot.val());
@@ -249,7 +249,7 @@ function loadSettingsFromFirebase() {
   }
 }
 
-function saveSettings(storage, data, with_message) {
+function saveSettings(storage, data, with_message) { // eslint-disable-line no-unused-vars
   data.OwnReasons = parseItems(data.OwnReasons);
   storage.set(data, function () {
     if (chrome.runtime.lastError) {
@@ -261,7 +261,7 @@ function saveSettings(storage, data, with_message) {
     }
   });
 
-  if (isSignedIn) {
+  if (isSignedIn) { // eslint-disable-line no-undef
     database.ref('data/' + firebase.auth().currentUser.uid).set(JSON.stringify(data));
   }
 }
@@ -392,7 +392,7 @@ $(".autolinkage").each(function () {
 });
 
 
-function content_links() {
+function content_links() { // eslint-disable-line no-unused-vars
   $('a.newlinks').each(function () {
     var sub = $(this).text();
 
@@ -567,6 +567,10 @@ function copyToClipboard(text) {
   document.body.removeChild(input);
 }
 
+function escapeHTML(s) { // eslint-disable-line no-unused-vars
+  return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
+}
+
 $("#favicon").attr("href", chrome.extension.getURL("/icons/icon48.png"));
 
 val_init().then(function (v) {
@@ -590,8 +594,8 @@ val_init().then(function (v) {
           if (document.readyState === "complete") {
             clearInterval(readyStateCheckInterval);
             storage = chrome.storage.local;
-            if (typeof inject_init() === "function") {
-              inject_init();
+            if (typeof inject_init() === "function") { // eslint-disable-line no-undef
+              inject_init(); // eslint-disable-line no-undef
             }
           }
         }, 10);

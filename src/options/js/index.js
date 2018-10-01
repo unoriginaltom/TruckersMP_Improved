@@ -1,4 +1,4 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   // Saves options to chrome.storage
   function save_options(with_message = true, data = false) {
     var steamapi_group = $('#steamapi_group');
@@ -403,7 +403,7 @@ function inject_init() {
     createField(section);
   });
 
-  $('button#loadData').on('click', function (event) {
+  $('button#loadData').on('click', function () {
     if (confirm('Do you really want to rewrite your settings with Online data?')) {
       loadSettingsFromFirebase()
     }
@@ -421,7 +421,7 @@ $(document).ready(function () {
   $('div.loadingoverlay').fadeOut('slow')
 })
 
-$('a[data-toggle=collapse]').on('click', function (event) {
+$('a[data-toggle=collapse]').on('click', function () {
   var scrollTop = ($(this).offset().top - 80) + 'px'
   $('html, body').animate({
     scrollTop: scrollTop

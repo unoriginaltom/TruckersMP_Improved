@@ -1,4 +1,4 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   try {
     var table = $('table.table');
 

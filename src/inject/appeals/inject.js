@@ -1,16 +1,9 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   // var steam_id = $('input[name="steam_id"]').val();
   var steam_id = 0;
   var perpetrator_link = $('body > div.wrapper > div.container.content > div.row > div.row > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a')
   console.log('TMP Improved (inject/appeals)', perpetrator_link)
-  var perpetrator_id = 0
-  if (!perpetrator_link.length) {
-    perpetrator_id = 'deleted'
-  } else {
-    perpetrator_id = perpetrator_link.attr('href').replace('/user/', '');
-  }
 
-  var summary = $('.summary');
   var injects = {
     header: $('body > div.wrapper > div.breadcrumbs > div > h1'),
     spinner: $("#loading-spinner"),
@@ -131,10 +124,6 @@ function inject_init() {
       $(reason).val($(reason).val() + ' ' + reason_val);
     }
     $(reason).focus();
-  }
-
-  function escapeHTML(s) {
-    return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
   }
 
   function table_impoving() {

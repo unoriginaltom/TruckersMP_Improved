@@ -1,4 +1,4 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   var accept_modal = $('#confirm-accept')
   var decline_modal = $('#confirm-decline')
   var injects = {
@@ -64,7 +64,7 @@ function inject_init() {
   };
 
   // Escape HTML due to HTML tags in Steam usernames
-  function escapeHTML(s) {
+  function escapeHTML(s) { // eslint-disable-line no-unused-vars
     return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   }
 
@@ -240,7 +240,7 @@ function inject_init() {
 
   $('body').append("<div class='modal fade ets2mp-modal' id='videoModal' tabindex='-1' role='dialog''TMP Improved (inject/reports)',  aria-labelledby='videoModalLabel' aria-hidden='true'><div class='modal-dialog 'TMP Improved (inject/reports)', modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title' id='videoModalLabel'>Video preview</h4></div><div class='modal-body' style='padding:0;'></div></div></div></div>")
 
-  function copyToClipboard(text) {
+  /*function copyToClipboard(text) {
     const input = document.createElement('input')
     input.style.position = 'fixed'
     input.style.opacity = '0'
@@ -249,7 +249,7 @@ function inject_init() {
     input.select()
     document.execCommand('Copy')
     document.body.removeChild(input)
-  }
+  }*/
 
   function comment_language() {
     var report_language = injects.report_language.text().trim()
@@ -659,7 +659,7 @@ function inject_init() {
     })
 
     if (settings.enablebanlength === true) {
-      $('#tmp-improved_recommended-ban-length').html('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div><hr>')
+      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
     }
     $('#check-ban-length').click(function (e) {
       e.preventDefault()
