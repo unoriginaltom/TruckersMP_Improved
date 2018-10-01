@@ -1,4 +1,4 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   var is_add_ban = window.location.pathname.includes('/admin/ban/add/');
 
   var ban_time;
@@ -91,8 +91,6 @@ function inject_init() {
         change = 'reason';
       }
       var snippet = '<div class="btn-group dropdown mega-menu-fullwidth"><a class="btn btn-' + color + ' dropdown-toggle" data-toggle="dropdown" href="#">' + type + ' <span class="caret"></span></a><ul class="dropdown-menu"><li><div class="mega-menu-content disable-icons" style="padding: 4px 15px;"><div class="container" style="width: 800px !important;"><div class="row equal-height" style="display: flex;">';
-      var count = 0;
-
       var md = 12 / ((buttons.join().match(/\|/g) || []).length + 1);
       $.each(buttons, function (key, val) {
         snippet += '<div class="col-md-' + md + ' equal-height-in" style="border-left: 1px solid #333; padding: 5px 0;"><ul class="list-unstyled equal-height-list">';
@@ -209,7 +207,7 @@ function inject_init() {
     reason.val("");
   });
   try {
-    var bans_template = `
+    /*var bans_template = `
       <label>Latest 5 bans</label>
       <h1 id="loading" class="text-center">Loading...</h1>
       <div class="table-responsive">
@@ -218,7 +216,7 @@ function inject_init() {
           </tbody>
         </table>
       </div>
-    `;
+    `;*/
 
     $('body > div.wrapper > div.container.content > div > table').addClass('table-condensed table-hover');
     $('body > div.wrapper > div.container.content > div > table > tbody > tr:nth-child(1) > td:nth-child(1)').removeAttr('style');

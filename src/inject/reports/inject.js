@@ -1,4 +1,4 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   var accept_modal = $('#confirm-accept')
   var decline_modal = $('#confirm-decline')
   var injects = {
@@ -64,7 +64,7 @@ function inject_init() {
   };
 
   // Escape HTML due to HTML tags in Steam usernames
-  function escapeHTML(s) {
+  function escapeHTML(s) { // eslint-disable-line no-unused-vars
     return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
   }
 
@@ -240,7 +240,7 @@ function inject_init() {
 
   $('body').append("<div class='modal fade ets2mp-modal' id='videoModal' tabindex='-1' role='dialog''TMP Improved (inject/reports)',  aria-labelledby='videoModalLabel' aria-hidden='true'><div class='modal-dialog 'TMP Improved (inject/reports)', modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title' id='videoModalLabel'>Video preview</h4></div><div class='modal-body' style='padding:0;'></div></div></div></div>")
 
-  function copyToClipboard(text) {
+  /*function copyToClipboard(text) {
     const input = document.createElement('input')
     input.style.position = 'fixed'
     input.style.opacity = '0'
@@ -249,7 +249,7 @@ function inject_init() {
     input.select()
     document.execCommand('Copy')
     document.body.removeChild(input)
-  }
+  }*/
 
   function comment_language() {
     var report_language = injects.report_language.text().trim()

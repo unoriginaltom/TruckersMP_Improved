@@ -1,4 +1,4 @@
-function inject_init() {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   $(document).ready(function () {
     if (settings.enablefeedbackimprovement === false) {
       $("#loading-spinner").hide();
@@ -62,8 +62,6 @@ function inject_init() {
     // Width of the dropdown menu. There was a person who wished it. Here it is :P
     $('.form-group .dropdown-menu .container').css("width", (parseInt($('form').find('textarea[name=comment]').width()) - 5) + 'px');
 
-    // Moment.js init
-    var now = moment.utc();
     // Clear content
     $('button#comments_clear').on('click', function (event) {
       event.preventDefault();
@@ -93,12 +91,7 @@ function inject_init() {
     $(document).prop('title', userLink.text() + ' - Feedback | TruckersMP');
   });
 
-  // Escape HTML due to HTML tags in Steam usernames
-  function escapeHTML(s) {
-    return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-  }
-
-  function copyToClipboard(text) {
+  /*function copyToClipboard(text) {
     const input = document.createElement('input');
     input.style.position = 'fixed';
     input.style.opacity = "0";
@@ -107,7 +100,7 @@ function inject_init() {
     input.select();
     document.execCommand('Copy');
     document.body.removeChild(input);
-  }
+  }*/
 
   function addButtons(textArea, html) {
     if (typeof textArea !== 'undefined' && html.length > 0) {

@@ -1,4 +1,4 @@
-function inject_init () {
+let inject_init = () => { // eslint-disable-line no-unused-vars
   if (settings.enablefeedbackimprovement === false) {
     $('#loading-spinner').hide()
     return;
@@ -44,7 +44,7 @@ function inject_init () {
         var view_link = $(row).find('td:nth-child(8) > a')[0]
         var report_id = $(view_link).attr('href').split('/')[3]
         var report_admin = $(row).find('td:nth-child(3)')[0]
-        var report_status = $(row).find('td:nth-child(5)')[0]
+        //var report_status = $(row).find('td:nth-child(5)')[0]
         var report_claim = $(row).find('td:nth-child(9)')[0]
         //if ($.inArray($(report_status).text(), ["Closed", "Finished", "Under_investigation"]) == -1) {
         switch ($(report_admin).text()) {
