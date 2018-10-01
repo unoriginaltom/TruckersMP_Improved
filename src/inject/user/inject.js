@@ -47,7 +47,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
           <div class="inner"></div>
           <hr class="removeFirstBanHr" />
           <input class="form-check-input" type="checkbox" id="removeFirstBan">
-          <label class="form-check-label" for="removeFirstBan">Remove first ban</label>
+          <label class="form-check-label" for="removeFirstBan">Remove latest ban</label>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
