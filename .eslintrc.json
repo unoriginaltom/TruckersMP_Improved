@@ -26,7 +26,8 @@
     "saveSettings": true,
     "syncAllowed": true,
     "loadSettings": true,
-    "loadSettingsFromFirebase": true
+    "loadSettingsFromFirebase": true,
+    "checkBans": true
   },
   "parserOptions": {
     "ecmaFeatures": {

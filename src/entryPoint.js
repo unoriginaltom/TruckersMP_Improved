@@ -571,6 +571,97 @@ function escapeHTML(s) { // eslint-disable-line no-unused-vars
   return s.replace(/&(?!\w+;)/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;')
 }
 
+let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
+  let day = 60 * 60 * 24 * 1000;
+  let fixDate = function (date) {
+        let months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+
+        let d = new Date();
+        date = date.replace('Today,', d.getDate() + ' ' + months[d.getMonth()]);
+
+        let yesterday = new Date(d);
+        yesterday.setTime(d.getTime() - day);
+        date = date.replace('Yesterday,', yesterday.getDay() + ' ' + months[d.getMonth()]);
+
+        let tomorrow = new Date(d);
+        tomorrow.setTime(d.getTime() + day);
+        date = date.replace('Tomorrow,', tomorrow.getDay() + ' ' + months[d.getMonth()]);
+
+        if (!date.match(/20[0-9]{2}/)) {
+            date += " " + (new Date()).getFullYear();
+        }
+
+        return date;
+    };
+
+  let bans = $(document).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
+  if (removeFirstBan === true) {
+      bans = bans.slice(1);
+  }
+  
+  let banStats = {
+      activeBans: 0,
+      bans1m: 0,
+      bans3m: 0,
+      active1m: false,
+      active3m: false,
+      banned: false,
+      nextBan: ""
+  };
+
+  if ($(document).find('.profile-body .panel-profile .profile-bio .label-red').text() === 'Banned') {
+      console.log("User is banned, BTW");
+  }
+
+  if (bans.length > 0) {
+      $.each(bans, function(i, ban) {
+          let reason = $(ban).find('.cbp_tmlabel > .autolinkage').text().split(' : ')[1];
+  
+          if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === "rgb(255, 0, 38)") {
+              return;
+          }
+          let date = $(ban).find('.cbp_tmtime span:last-of-type').text();
+          let issuedOn = Date.parse(fixDate(date));
+          let dateExp = $(ban).find('.cbp_tmlabel > .autolinkage + p').text().split(' : ')[1];
+  
+          if (dateExp === 'Never') {
+              dateExp = date;
+          }
+  
+          let expires = Date.parse(fixDate(dateExp));
+  
+          if (expires - issuedOn >= day * 85) {
+              banStats.bans3m++;
+          } else if (expires - issuedOn >= day * 27) {
+              banStats.bans1m++;
+          }
+  
+          if ((new Date()).getTime() - day * 365 <= expires) {
+              banStats.activeBans++;
+              if (expires - issuedOn >= day * 85) {
+                  banStats.active3m = true;
+              } else if (expires - issuedOn >= day * 27) {
+                  banStats.active1m = true;
+              }
+          }
+  
+          if ((banStats.bans3m >= 2) || (banStats.activeBans >= 5 && banStats.active3m && banStats.active1m)) {
+              banStats.nextBan = "Permanent";
+          } else if (banStats.bans1m >= 2 || (banStats.activeBans >= 4 && banStats.active1m)) {
+              banStats.nextBan = "3 months";
+          } else if (banStats.activeBans >= 3) {
+              banStats.nextBan = "1 month";
+          } else {
+              banStats.nextBan = "your discretion";
+          }
+      });
+  } else {
+      banStats.nextBan = "Your discretion";
+  }
+
+  return banStats;
+}
+
 $("#favicon").attr("href", chrome.extension.getURL("/icons/icon48.png"));
 
 val_init().then(function (v) {

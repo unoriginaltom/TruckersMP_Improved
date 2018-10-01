@@ -1,3 +1,13 @@
 p.autolink>a {
   color: #72c02c !important;
 }
+
+.truckersmp-ban-helper.check-ban {
+  float: right !important;
+}
+
+.removeFirstBanHr {
+  width: 50%;
+  margin: auto;
+  margin-top: 10px;
+}
