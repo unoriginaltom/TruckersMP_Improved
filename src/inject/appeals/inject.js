@@ -184,7 +184,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       success: function (data) {
         var appeals = $(data).find('div.container.content > div > table.table > tbody > tr:not(:first-of-type)');
         var appealsData = '';
-        var reason = $('.summary > table > tbody > tr > td:contains("Reason")').parent().find("td:nth-child(2)").text();
+        var reason = $('table > tbody > tr > td:contains("Reason")').parent().find("td:nth-child(2)").text();
 
         $.each(appeals, function (index, appeal) {
           var appealReason = $(appeal).find('td:first-of-type').text();
@@ -203,7 +203,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         if (appealsData === '') {
           appealsData = '<kbd>Not appealed before</kbd>';
         }
-        $('.summary > table > tbody').append('<tr><td style="font-weight: bold"><a href="/user/appeals/' + perpetrator_id + '/" target="_blank">Previous appeals</a></td><td>' + appealsData + '</td></tr>');
+        $(".container > .row > .row > div:nth(0) table").append('<tr><td style="font-weight: bold"><a href="/user/appeals/' + perpetrator_id + '/" target="_blank">Previous appeals</a></td><td>' + appealsData + '</td></tr>');
 
         $("#loading-spinner").hide();
       }
