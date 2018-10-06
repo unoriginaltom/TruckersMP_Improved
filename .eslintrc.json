@@ -27,7 +27,8 @@
     "syncAllowed": true,
     "loadSettings": true,
     "loadSettingsFromFirebase": true,
-    "checkBans": true
+    "checkBans": true,
+    "getKeyValueByNameFromBanRows": true
   },
   "parserOptions": {
     "ecmaFeatures": {

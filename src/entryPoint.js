@@ -622,7 +622,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
           }
           let date = $(ban).find('.cbp_tmtime span:last-of-type').text();
           let issuedOn = Date.parse(fixDate(date));
-          let dateExp = $(ban).find('.cbp_tmlabel > .autolinkage + p').text().split(' : ')[1];
+          let dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires")[1];
   
           if (dateExp === 'Never') {
               dateExp = date;
@@ -661,6 +661,28 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
 
   return banStats;
 }
+
+// This is for if any more items are added to the specific ban items, it (shouldn't) break
+let getKeyValueByNameFromBanRows = (elements, key, delimiter) => { // eslint-disable-line no-unused-vars
+  let data = null;
+  if (!delimiter) {
+    delimiter = ' : ';
+  }
+
+  key = key.toLowerCase();
+
+  for (let i = 0; i < elements.length; i++) {
+    let li_split = $(elements[i]).text().trim().split(delimiter);
+    if (li_split.length > 1) {
+      if (li_split[0].toLowerCase() === key) {
+        data = li_split;
+        break;
+      }
+    }
+  }
+
+  return data;
+};
 
 $("#favicon").attr("href", chrome.extension.getURL("/icons/icon48.png"));
 
