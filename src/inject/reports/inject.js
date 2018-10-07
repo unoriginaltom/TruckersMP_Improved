@@ -673,7 +673,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         type: 'GET',
         success: function (data) {
           // Gets all bans
-          var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li')
+          var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 > li')
           var activeBans = 0,
             bans1m = 0,
             bans3m = 0

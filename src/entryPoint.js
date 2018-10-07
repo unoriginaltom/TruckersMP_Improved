@@ -594,7 +594,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
         return date;
     };
 
-  let bans = $(document).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 li');
+  let bans = $(document).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 > li');
   if (removeFirstBan === true) {
       bans = bans.slice(1);
   }
