@@ -61,7 +61,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   };
 
   let injectCheckBanButtonToUserPage = () => {
-    $(".panel-heading.overflow-h").last().append(`<a href="" class="btn btn-primary btn-sm truckersmp-ban-helper check-ban" onclick="event.preventDefault()" data-toggle="modal" data-target="#banStats">Next ban</a>`);
+    $(".profile-body .panel-profile:nth-child(4) .panel-heading.overflow-h").append(`<a href="" class="btn btn-primary btn-sm truckersmp-ban-helper check-ban" onclick="event.preventDefault()" data-toggle="modal" data-target="#banStats">Next ban</a>`);
     injectUserModal()
       .then(registerCheckBanEvents());
   };
