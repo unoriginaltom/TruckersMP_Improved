@@ -55,7 +55,7 @@
   "content_scripts": [{
       "matches": [
         "https://truckersmp.com/reports/view/*",
-        "http://tmp.world/reports/view/*"
+        "*://tmp.world/reports/view/*"
       ],
       "css": [
         "src/inject/reports/inject.css"
@@ -74,12 +74,16 @@
 
     {
       "matches": [
-        "https://truckersmp.com/reports*"
+        "https://truckersmp.com/reports*",
+        "*://tmp.world/reports*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/reports/view/*",
         "https://truckersmp.com/reports/create",
-        "https://truckersmp.com/reports/editcomment/*"
+        "https://truckersmp.com/reports/editcomment/*",
+        "*://tmp.world/reports/view*",
+        "*://tmp.world/reports/create",
+        "*://tmp.world/reports/editcomment/*"
       ],
       "css": [
         "vendor/css/datatables.min.css",
@@ -99,7 +103,9 @@
     {
       "matches": [
         "https://truckersmp.com/admin/ban/edit/*",
-        "https://truckersmp.com/admin/ban/add/*"
+        "https://truckersmp.com/admin/ban/add/*",
+        "*://tmp.world/admin/ban/edit/*",
+        "*://tmp.world/admin/ban/add/*"
       ],
       "css": [
         "src/inject/ban-edit/inject.css"
@@ -115,7 +121,8 @@
 
     {
       "matches": [
-        "https://truckersmp.com/appeals/view/*"
+        "https://truckersmp.com/appeals/view/*",
+        "*://tmp.world/appeals/view/*"
       ],
       "css": [
         "src/inject/appeals/inject.css"
@@ -132,7 +139,8 @@
 
     {
       "matches": [
-        "https://truckersmp.com/appeals/adminindex*"
+        "https://truckersmp.com/appeals/adminindex*",
+        "*://tmp.world/appeals/adminindex*"
       ],
       "css": [
         "vendor/css/datatables.min.css",
@@ -151,12 +159,16 @@
 
     {
       "matches": [
-        "https://truckersmp.com/user/*"
+        "https://truckersmp.com/user/*",
+        "*://tmp.world/user/*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/user/search*",
         "https://truckersmp.com/user/edit/*",
-        "https://truckersmp.com/user/appeals/*"
+        "https://truckersmp.com/user/appeals/*",
+        "*://tmp.world/user/search*",
+        "*://tmp.world/user/appeals/*",
+        "*://tmp.world/user/appeals/*"
       ],
       "css": [
         "src/inject/user/inject.css"
@@ -171,12 +183,16 @@
 
     {
       "matches": [
-        "https://truckersmp.com/feedback*"
+        "https://truckersmp.com/feedback*",
+        "*://tmp.world/feedback*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/feedback/view/*",
         "https://truckersmp.com/feedback/create",
-        "https://truckersmp.com/feedback/editcomment/*"
+        "https://truckersmp.com/feedback/editcomment/*",
+        "*://tmp.world/feedback/view/*",
+        "*://tmp.world/feedback/create",
+        "*://tmp.world/feedback/editcomment/*"
       ],
       "css": [
         "vendor/css/datatables.min.css",
@@ -195,7 +211,8 @@
 
     {
       "matches": [
-        "https://truckersmp.com/feedback/view/*"
+        "https://truckersmp.com/feedback/view/*",
+        "*://tmp.world/feedback/view/*"
       ],
       "css": [
         "src/inject/reports/inject.css"
