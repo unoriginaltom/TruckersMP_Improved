@@ -333,7 +333,10 @@ function urlShorter(link, paste = false) {
   $.ajax({
     url: "https://url.jmdev.ca/api",
     type: 'POST',
-    data: { "url": encodeURIComponent(link) },
+    data: {
+      "url": encodeURIComponent(link),
+      "private": true
+    },
     success: function (val) {
       if (val.error) {
         alert('Looks like we have a problem with URL shortener... Try again!');
