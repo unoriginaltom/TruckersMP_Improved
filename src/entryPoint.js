@@ -331,32 +331,35 @@ function urlShorter(link, paste = false) {
   var noNotification = false;
   spinner.show();
   $.ajax({
-    url: "https://www.jmdev.ca/url/algo.php?method=insert&url=" + encodeURIComponent(link),
-    type: 'GET',
+    url: "https://url.jmdev.ca/api",
+    type: 'POST',
+    data: { "url": encodeURIComponent(link) },
     success: function (val) {
-      if (val.result['error'] !== true) {
-        if (val.result['url_short'] === undefined || val.result['url_short'] === null) {
-          alert('Looks like we have a problem with URL shortener... Try again!');
-          console.error('TMP Improved (entryPoint)', 'Received from server: ' + JSON.stringify(val));
-          console.error('TMP Improved (entryPoint)', 'Sent to server: ' + encodeURIComponent(link));
-          error = true;
-        } else {
-          copyToClipboard('https://jmdev.ca/url/?l=' + val.result['url_short']);
-
-          if (paste) {
-            msg = "Steam info just saved! Check your clipboard for the link!"
-          } else {
-            msg = "URL just being shorted! Check your clipboard!";
-            if (!settings.enablelinknotifications) {
-              noNotification = true;
-            }
-          }
-        }
-      } else {
+      if (val.error) {
         alert('Looks like we have a problem with URL shortener... Try again!');
         console.error('TMP Improved (entryPoint)', 'Received from server: ' + JSON.stringify(val));
         console.error('TMP Improved (entryPoint)', 'Sent to server: ' + encodeURIComponent(link));
         error = true;
+      } else {
+        copyToClipboard(val.href);
+        
+        if (paste) {
+          msg = "Steam info just saved! Check your clipboard for the link!"
+        } else {
+          msg = "URL just being shorted! Check your clipboard!";
+          if (!settings.enablelinknotifications) {
+            noNotification = true;
+          }
+        }
+      }
+    },
+    error: function () {
+      if (paste) {
+        copyToClipboard(link);
+        alert('Steam info just saved! Check your clipboard for the link!');
+      } else {
+        error = true;
+        alert('Looks like we have a problem with URL shortener... Try again!');
       }
     },
     error: function () {
