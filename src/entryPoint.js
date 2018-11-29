@@ -408,7 +408,7 @@ function content_links() { // eslint-disable-line no-unused-vars
 
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
       $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fab fa-youtube fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
-    } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos"])) {
+    } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
@@ -422,6 +422,9 @@ function content_links() { // eslint-disable-line no-unused-vars
       } else if (sub.contains(["vimeo.com"])) {
         clipid = sub.match(/^.*vimeo\.com\/(.*)/)[1];
         embedlink = "https://player.vimeo.com/video/" + clipid;
+      } else if (sub.contains(["streamable.com"])) {
+        clipid = sub.match(/^.*streamable\.com\/(.*)/)[1];
+        embedlink = "https://streamable.com/s/" + clipid + '/truckersmp'
       } else if (sub.contains(["twitch.tv/videos"])) {
         var result = sub.match(/^.*twitch.tv\/videos\/(.*)/)[1];
         var vidinfos = result.split("?t=");

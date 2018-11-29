@@ -1,6 +1,6 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.13.15",
+  "version": "1.13.16",
   "manifest_version": 2,
   "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive",
   "icons": {
@@ -20,7 +20,7 @@
   "permissions": [
     "*://*.truckersmp.com/*",
     "*://*.tmp.world/*",
-    "*://*.jmdev.ca/*",
+    "*://url.jmdev.ca/*",
     "*://*.steampowered.com/*",
     "*://*.steamcommunity.com/*",
     "notifications",
