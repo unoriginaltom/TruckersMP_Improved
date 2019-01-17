@@ -1,6 +1,6 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.13.16",
+  "version": "1.14",
   "manifest_version": 2,
   "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive",
   "icons": {
@@ -18,11 +18,11 @@
     }
   },
   "permissions": [
-    "*://*.truckersmp.com/*",
+    "https://*.truckersmp.com/*",
     "*://*.tmp.world/*",
-    "*://url.jmdev.ca/*",
-    "*://*.steampowered.com/*",
-    "*://*.steamcommunity.com/*",
+    "https://url.jmdev.ca/*",
+    "https://*.steampowered.com/*",
+    "https://*.steamcommunity.com/*",
     "notifications",
     "storage",
     "clipboardRead",
@@ -40,7 +40,8 @@
     "open_in_tab": true
   },
   "web_accessible_resources": [
-    "src/options/*"
+    "src/options/*",
+    "icons/*"
   ],
 
   "browser_action": {
@@ -53,6 +54,44 @@
   },
 
   "content_scripts": [{
+      "matches": [
+        "https://steamcommunity.com/id/*",
+        "https://steamcommunity.com/profiles/*",
+        "https://steamcommunity.com/id/*/",
+        "https://steamcommunity.com/profiles/*/"
+      ],
+      "exclude_matches": [
+        "https://steamcommunity.com/id/*/*/*",
+        "https://steamcommunity.com/profiles/*/*/*"
+      ],
+      "css": [
+        "src/inject/steam/inject.css"
+      ],
+      "js": [
+        "vendor/js/jquery.min.js",
+        "vendor/js/dexie.min.js",
+        "src/dexie/dexie.js",
+        "src/inject/steam/inject.js"
+      ]
+    },
+
+    {
+      "matches": [
+        "https://steamcommunity.com/id/*/friends/pending",
+        "https://steamcommunity.com/profiles/*/friends/pending"
+      ],
+      "css": [
+        "src/inject/steamfriends/inject.css"
+      ],
+      "js": [
+        "vendor/js/jquery.min.js",
+        "vendor/js/dexie.min.js",
+        "src/dexie/dexie.js",
+        "src/inject/steamfriends/inject.js"
+      ]
+    },
+
+    {
       "matches": [
         "https://truckersmp.com/reports/view/*",
         "*://tmp.world/reports/view/*"

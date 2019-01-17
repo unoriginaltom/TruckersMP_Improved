@@ -24,7 +24,7 @@ chrome.runtime.onMessage.addListener(
 var notificationID = null
 chrome.runtime.onInstalled.addListener(function (details) {
   console.log('TMP Improved (bg/background)', details)
-  if (details.reason === 'update') {
+  if (details.reason === 'update' && chrome.runtime.getManifest().version !== details.previousVersion) {
     chrome.notifications.create({
       type: 'basic',
       iconUrl: chrome.extension.getURL('icons/icon128.png'),

@@ -1,0 +1,7 @@
+.banned {
+  background: linear-gradient( to right, #ff000030 5%,#ff000060 95%) !important;
+}
+
+.tmpValue {
+  font-size: 0.7em !important;
+}
