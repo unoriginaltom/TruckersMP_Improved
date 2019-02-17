@@ -1,7 +1,7 @@
 # TruckersMP Improved
 For TruckersMP Staff members only!
 
-[![ko-fi](https://www.ko-fi.com/img/donate_sm.png)](https://ko-fi.com/A0A7QLBP)
+[![ko-fi](https://www.ko-fi.com/img/donate_sm.png)](https://ko-fi.com/cjmaxik)
 
 # For Contributors
 1) Check any changes on your clients before submitting a pull request. Grab .zip of this repository, then add the extension in Chrome with enabled Developer Mode ([see how](https://developer.chrome.com/extensions/getstarted#unpacked)).
