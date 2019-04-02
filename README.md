@@ -1,3 +1,5 @@
+# [ARCHIVED] New version is in development.
+
 # TruckersMP Improved
 For TruckersMP Staff members only!
 
