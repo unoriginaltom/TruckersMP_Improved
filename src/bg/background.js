@@ -30,8 +30,6 @@ chrome.runtime.onMessage.addListener(
         chrome.notifications.clear(notificationID)
       }, request.timeout);
     }
-
-    return true;
   }
 );
 
