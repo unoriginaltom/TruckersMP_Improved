@@ -123,6 +123,14 @@
             <div class="tab-content">
               <div class="tab-pane active in fade" id="v1120">
                 <ul class="disc changelog">
+                  <h5>1.14.1</h5>
+                  <li>Re-wrote the script which shortens URL due to Chrome CORB update which broke it</li>
+                  <ul>
+                    <li>Switched from jQuery AJAX to native fetch</li>
+                    <li>Removed all alerts and used console logging instead</li>
+                    <li>If the remote shortening fails, copy the URL instead</li>
+                  </ul>
+                  <hr>
                   <li>Fixed Previous Appeals row not appearing in appeals</li>
                   <li>Fixed issues after website update (Ban check fixed, icons fixed, double avatar fixed, private
                     comment fixed)</li>
