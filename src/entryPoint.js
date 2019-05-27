@@ -324,7 +324,7 @@ String.prototype.contains = function (needle) {
   }
 };
 
-function urlShorter(link, paste = false) {
+function urlShorter(link) {
   let spinner = $("#loading-spinner");
   spinner.show();
   chrome.runtime.sendMessage({"action": "url_shortener", data: {
