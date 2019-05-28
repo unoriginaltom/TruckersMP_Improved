@@ -220,7 +220,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       });
     });
 
-    injects.spinner.remove();
+    injects.spinner.hide();
   }
 
   function permcheck() {

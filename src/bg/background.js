@@ -10,7 +10,11 @@ chrome.runtime.onMessage.addListener(
       })
         .then(response => response.json())
         .then(json => senderResponse(json))
-        .catch(error => console.error(error));
+        .catch(error => {
+          senderResponse({error: 'Unable to shorten URL'});
+          console.error(error)
+        });
+        return true;
     }
     else if (request.msg) {
       var notification = {
