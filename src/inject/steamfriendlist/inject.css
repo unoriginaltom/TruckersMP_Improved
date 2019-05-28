@@ -1,0 +1,17 @@
+.tmp_count {
+  float: initial !important;
+}
+
+.tmp_count.em_count>a {
+  color: black !important;
+}
+
+.banned_count {
+  margin-left: 5px !important;
+  color: white !important;
+  background-color: #ca2842 !important;
+}
+
+.friend_block_v2 {
+  height: auto !important;
+}

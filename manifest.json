@@ -61,8 +61,10 @@
         "https://steamcommunity.com/profiles/*/"
       ],
       "exclude_matches": [
-        "https://steamcommunity.com/id/*/*/*",
-        "https://steamcommunity.com/profiles/*/*/*"
+        "https://steamcommunity.com/id/*/friends",
+        "https://steamcommunity.com/profiles/*/friends",
+        "https://steamcommunity.com/id/*/friends/pending",
+        "https://steamcommunity.com/profiles/*/friends/pending"
       ],
       "css": [
         "src/inject/steam/inject.css"
@@ -72,6 +74,23 @@
         "vendor/js/dexie.min.js",
         "src/dexie/dexie.js",
         "src/inject/steam/inject.js"
+      ]
+    },
+
+
+    {
+      "matches": [
+        "https://steamcommunity.com/id/*/friends",
+        "https://steamcommunity.com/profiles/*/friends"
+      ],
+      "css": [
+        "src/inject/steamfriendlist/inject.css"
+      ],
+      "js": [
+        "vendor/js/jquery.min.js",
+        "vendor/js/dexie.min.js",
+        "src/dexie/dexie.js",
+        "src/inject/steamfriendlist/inject.js"
       ]
     },
 
