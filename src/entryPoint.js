@@ -331,8 +331,8 @@ function urlShorter(link) {
     "url": encodeURIComponent(link),
     "private": true
   }}, (response) => {
-    if (response.error) {
-      console.error(response.error);
+    if (!response || response.error) {
+      console.error("Unable to shorten URL - falling back instead.", response.error);
       copyToClipboard(link);
     } else {
       copyToClipboard(response.href);
