@@ -336,6 +336,7 @@ function urlShorter(link) {
       copyToClipboard(link);
     } else {
       copyToClipboard(response.href);
+      console.log(`Copied to clipboard: ${response.href}`);
     }
     spinner.hide();
   });

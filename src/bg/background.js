@@ -1,7 +1,7 @@
 chrome.runtime.onMessage.addListener(
   function (request, sender, senderResponse = null) {
     if (request.action === 'url_shortener') {
-      fetch("https://url.jmdev.cfasfafasasa/apsi", {
+      fetch("https://url.jmdev.ca/api", {
         method: 'POST',
         body: JSON.stringify(request.data),
         headers: {
