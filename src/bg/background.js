@@ -1,6 +1,18 @@
 chrome.runtime.onMessage.addListener(
-  function (request) {
-    if (request.msg) {
+  function (request, sender, senderResponse = null) {
+    if (request.action === 'url_shortener') {
+      fetch("https://url.jmdev.ca/api", {
+        method: 'POST',
+        body: JSON.stringify(request.data),
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+        .then(response => response.json())
+        .then(json => senderResponse(json))
+        .catch(error => console.error(error));
+    }
+    else if (request.msg) {
       var notification = {
         type: 'basic',
         iconUrl: chrome.extension.getURL('icons/icon128.png'),

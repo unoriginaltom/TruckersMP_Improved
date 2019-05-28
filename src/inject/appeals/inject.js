@@ -16,6 +16,24 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     }
   };
 
+  const tbody = $("body > div.wrapper > div.container.content > div.row > div.row > div:nth-child(1) > table > tbody");
+
+
+  const users = {
+   banned: tbody.find("tr:nth-child(1) > td:nth-child(2) a"),
+   admin: tbody.find("tr:nth-child(4) > td:nth-child(2) > a")
+  };
+
+  let cannedVariables = {
+   'ban.expires': tbody.find("tr:nth-child(5) > td:nth-child(2) > strong").text(),
+   'ban.reason': tbody.find('.autolinkage').text(),
+   'ban.user.username': users.banned.text(),
+   'ban.user.id': users.banned.attr('href').split('/')[2],
+   'ban.user.steam_id': tbody.find("tr:nth-child(2) > td:nth-child(2) > a").text().trim(),
+   'admin.username': users.admin.text(),
+   'admin.id': users.admin.attr('href').split('/')[2]
+  };
+
   function construct_buttons(type) {
     var html = '';
     switch (type) {
@@ -118,6 +136,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   }
 
   function setReason(reason, reason_val) {
+    reason_val = updateMessageWithCannedVariables(reason_val);
     if ($(reason).val() == "") {
       $(reason).val(reason_val);
     } else {
@@ -396,6 +415,14 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
     dropdown_enchancements();
     permcheck();
+  }
+
+  const updateMessageWithCannedVariables = original => {
+    let new_msg = original;
+    Object.keys(cannedVariables).forEach(k => {
+      new_msg = new_msg.replace(`%${k}%`, cannedVariables[k]);
+    });
+    return new_msg;
   }
 
   init();

@@ -324,67 +324,21 @@ String.prototype.contains = function (needle) {
   }
 };
 
-function urlShorter(link, paste = false) {
-  var msg;
-  var spinner = $("#loading-spinner");
-  var error = false;
-  var noNotification = false;
+function urlShorter(link) {
+  let spinner = $("#loading-spinner");
   spinner.show();
-  $.ajax({
-    url: "https://url.jmdev.ca/api",
-    type: 'POST',
-    data: {
-      "url": encodeURIComponent(link),
-      "private": true
-    },
-    success: function (val) {
-      if (val.error) {
-        alert('Looks like we have a problem with URL shortener... Try again!');
-        console.error('TMP Improved (entryPoint)', 'Received from server: ' + JSON.stringify(val));
-        console.error('TMP Improved (entryPoint)', 'Sent to server: ' + encodeURIComponent(link));
-        error = true;
-      } else {
-        copyToClipboard(val.href);
-        
-        if (paste) {
-          msg = "Steam info just saved! Check your clipboard for the link!"
-        } else {
-          msg = "URL just being shorted! Check your clipboard!";
-          if (!settings.enablelinknotifications) {
-            noNotification = true;
-          }
-        }
-      }
-    },
-    error: function () {
-      if (paste) {
-        copyToClipboard(link);
-        alert('Steam info just saved! Check your clipboard for the link!');
-      } else {
-        error = true;
-        alert('Looks like we have a problem with URL shortener... Try again!');
-      }
-    },
-    error: function () {
-      if (paste) {
-        copyToClipboard(link);
-        alert('Steam info just saved! Check your clipboard for the link!');
-      } else {
-        error = true;
-        alert('Looks like we have a problem with URL shortener... Try again!');
-      }
-    },
-    complete: function () {
-      if (!error && !noNotification) {
-        chrome.runtime.sendMessage({
-          msg: msg,
-          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss"),
-          timeout: 3000
-        });
-      }
+  chrome.runtime.sendMessage({"action": "url_shortener", data: {
+    "url": encodeURIComponent(link),
+    "private": true
+  }}, (response) => {
+    if (response.error) {
+      console.error(response.error);
+      copyToClipboard(link);
+    } else {
+      copyToClipboard(response.href);
     }
+    spinner.hide();
   });
-  spinner.hide();
 }
 
 $('.autolink a').each(function () {

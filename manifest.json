@@ -1,6 +1,6 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.14",
+  "version": "1.14.2",
   "manifest_version": 2,
   "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be productive",
   "icons": {
@@ -19,7 +19,7 @@
   },
   "permissions": [
     "https://*.truckersmp.com/*",
-    "*://*.tmp.world/*",
+    "*://*.truckersmp.network/*",
     "https://url.jmdev.ca/*",
     "https://*.steampowered.com/*",
     "https://*.steamcommunity.com/*",
@@ -94,7 +94,7 @@
     {
       "matches": [
         "https://truckersmp.com/reports/view/*",
-        "*://tmp.world/reports/view/*"
+        "*://truckersmp.network/reports/view/*"
       ],
       "css": [
         "src/inject/reports/inject.css"
@@ -114,15 +114,15 @@
     {
       "matches": [
         "https://truckersmp.com/reports*",
-        "*://tmp.world/reports*"
+        "*://truckersmp.network/reports*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/reports/view/*",
         "https://truckersmp.com/reports/create",
         "https://truckersmp.com/reports/editcomment/*",
-        "*://tmp.world/reports/view*",
-        "*://tmp.world/reports/create",
-        "*://tmp.world/reports/editcomment/*"
+        "*://truckersmp.network/reports/view*",
+        "*://truckersmp.network/reports/create",
+        "*://truckersmp.network/reports/editcomment/*"
       ],
       "css": [
         "vendor/css/datatables.min.css",
@@ -143,8 +143,8 @@
       "matches": [
         "https://truckersmp.com/admin/ban/edit/*",
         "https://truckersmp.com/admin/ban/add/*",
-        "*://tmp.world/admin/ban/edit/*",
-        "*://tmp.world/admin/ban/add/*"
+        "*://truckersmp.network/admin/ban/edit/*",
+        "*://truckersmp.network/admin/ban/add/*"
       ],
       "css": [
         "src/inject/ban-edit/inject.css"
@@ -161,7 +161,7 @@
     {
       "matches": [
         "https://truckersmp.com/appeals/view/*",
-        "*://tmp.world/appeals/view/*"
+        "*://truckersmp.network/appeals/view/*"
       ],
       "css": [
         "src/inject/appeals/inject.css"
@@ -179,7 +179,7 @@
     {
       "matches": [
         "https://truckersmp.com/appeals/adminindex*",
-        "*://tmp.world/appeals/adminindex*"
+        "*://truckersmp.network/appeals/adminindex*"
       ],
       "css": [
         "vendor/css/datatables.min.css",
@@ -199,15 +199,15 @@
     {
       "matches": [
         "https://truckersmp.com/user/*",
-        "*://tmp.world/user/*"
+        "*://truckersmp.network/user/*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/user/search*",
         "https://truckersmp.com/user/edit/*",
         "https://truckersmp.com/user/appeals/*",
-        "*://tmp.world/user/search*",
-        "*://tmp.world/user/appeals/*",
-        "*://tmp.world/user/appeals/*"
+        "*://truckersmp.network/user/search*",
+        "*://truckersmp.network/user/appeals/*",
+        "*://truckersmp.network/user/appeals/*"
       ],
       "css": [
         "src/inject/user/inject.css"
@@ -223,15 +223,15 @@
     {
       "matches": [
         "https://truckersmp.com/feedback*",
-        "*://tmp.world/feedback*"
+        "*://truckersmp.network/feedback*"
       ],
       "exclude_matches": [
         "https://truckersmp.com/feedback/view/*",
         "https://truckersmp.com/feedback/create",
         "https://truckersmp.com/feedback/editcomment/*",
-        "*://tmp.world/feedback/view/*",
-        "*://tmp.world/feedback/create",
-        "*://tmp.world/feedback/editcomment/*"
+        "*://truckersmp.network/feedback/view/*",
+        "*://truckersmp.network/feedback/create",
+        "*://truckersmp.network/feedback/editcomment/*"
       ],
       "css": [
         "vendor/css/datatables.min.css",
@@ -251,7 +251,7 @@
     {
       "matches": [
         "https://truckersmp.com/feedback/view/*",
-        "*://tmp.world/feedback/view/*"
+        "*://truckersmp.network/feedback/view/*"
       ],
       "css": [
         "src/inject/reports/inject.css"
