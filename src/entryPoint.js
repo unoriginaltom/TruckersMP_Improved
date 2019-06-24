@@ -587,7 +587,6 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
           let date = $(ban).find('.cbp_tmtime span:last-of-type').text();
           let issuedOn = Date.parse(fixDate(date));
           let dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
-          console.log(dateExp);
   
           if (dateExp === 'Never') {
               dateExp = date;
