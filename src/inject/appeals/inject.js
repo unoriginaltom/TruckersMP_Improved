@@ -21,7 +21,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   const users = {
    banned: tbody.find("tr:nth-child(1) > td:nth-child(2) a"),
-   admin: tbody.find("tr:nth-child(4) > td:nth-child(2) > a")
+   admin: tbody.find("tr:nth-child(4) > td:nth-child(2) a")
   };
 
   let cannedVariables = {
@@ -29,10 +29,16 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
    'ban.reason': tbody.find('.autolinkage').text(),
    'ban.user.username': users.banned.text(),
    'ban.user.id': users.banned.attr('href').split('/')[2],
-   'ban.user.steam_id': tbody.find("tr:nth-child(2) > td:nth-child(2) > a").text().trim(),
-   'admin.username': users.admin.text(),
-   'admin.id': users.admin.attr('href').split('/')[2]
+   'ban.user.steam_id': tbody.find("tr:nth-child(2) > td:nth-child(2) > a").text().trim()
   };
+
+  if (users.admin.length === 0) {
+    cannedVariables['admin.username'] = $("span.label.label-default").text().trim();
+    cannedVariables['admin.id'] = "";
+  } else {
+    cannedVariables['admin.username'] = users.admin.text();
+    cannedVariables['admin.id'] = users.admin.attr('href').split('/')[2];
+  }
 
   function construct_buttons(type) {
     var html = '';
