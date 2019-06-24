@@ -47,7 +47,7 @@ if (isCommunityID && !db.hasFailed()) {
       <div class="showcase_content_bg">
         <div class="workshop_showcase_item showcase_slot">
           <div class="myworkshop_showcase_header guides ${realBanned !== 'No' ? 'banned' : ''}">
-            <div class="playerAvatar"><img src="${player.avatar}">
+            <div class="playerAvatar"><img src="${player.smallAvatar}">
             </div>
             <a class="myworkshop_playerName" href="https://truckersmp.com/user/${player.id}" target="_blank">${player.name}</a>
           </div>
