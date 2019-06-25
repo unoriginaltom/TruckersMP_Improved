@@ -47,11 +47,11 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     // Dropdown menu
     $('.form-group ul.dropdown-menu').css('top', '95%');
     $(".form-group .dropdown").hover(function () {
-      $('.form-group .dropdown-menu', this).stop(true, true).fadeIn("fast");
+      $('.dropdown-menu', this).stop(true, true).fadeIn("fast");
       $(this).toggleClass('open');
       $('b', this).toggleClass("caret caret-up");
     }, function () {
-      $('.form-group .dropdown-menu', this).stop(true, true).fadeOut("fast");
+      $('.dropdown-menu', this).stop(true, true).fadeOut("fast");
       $(this).toggleClass('open');
       $('b', this).toggleClass("caret caret-up");
     });
