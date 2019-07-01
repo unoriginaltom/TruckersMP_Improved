@@ -695,7 +695,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
             var date = $(ban).find('.cbp_tmtime span:last-of-type').text()
             var issuedOn = Date.parse(fixDate(date))
             
-            var dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires")[1]
+            var dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
             if (dateExp === 'Never') {
               dateExp = date
             }

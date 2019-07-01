@@ -363,7 +363,7 @@ function content_links() { // eslint-disable-line no-unused-vars
 
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
       $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fab fa-youtube fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
-    } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com"])) {
+    } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com", "twitch.tv"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
@@ -386,6 +386,11 @@ function content_links() { // eslint-disable-line no-unused-vars
         embedlink = "https://player.twitch.tv/?autoplay=false&video=" + vidinfos[0];
         if (vidinfos.length == 2) {
           embedlink += "&t=" + vidinfos[1]
+        }
+      } else if (sub.contains(["twitch.tv"])) {
+        clipid =  sub.match(/^.*twitch.tv\/.*\/clip\/(.*)\?/);
+        if (clipid) {
+          embedlink = `https://clips.twitch.tv/embed?clip=${clipid[1]}&autoplay=false`;
         }
       }
       $(this).append('<a href="' + embedlink + '" class="video">  <i class="fas fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
