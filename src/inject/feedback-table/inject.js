@@ -113,8 +113,21 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     var status = $(this).find('td:nth-child(5)').text()
     var claimedBy = $(this).find('td:nth-child(3)').text()
     var repliedBy = $(this).find('td:nth-child(7)').text()
-    if (!(status == 'New' || (claimedBy == 'Nobody' && status != 'Finished') || repliedBy == 'User')) {
+    //  Finished/Closed (grey)
+    if (status == 'Finished' || status == 'Closed') {
       $(this).find('td').css('color', '#555')
+    }
+    //  Claimed by another admin and not finished/closed (light greyish)
+    if (claimedBy != admin_name && !(status == 'Finished' || status == 'Closed')) {
+      $(this).find('td').css('color', '#787877')
+    }
+    //  New (Green)
+    if (claimedBy == 'Nobody' &&  repliedBy == 'User') {
+      $(this).find('td').css('color', '#2AB137')
+    }
+    //  Waiting for logged in admin (orange)
+    if (claimedBy == admin_name &&  repliedBy == 'User' && status != 'Finished' && status != 'Closed') {
+      $(this).find('td').css('color', '#F77E30')
     }
   })
 
