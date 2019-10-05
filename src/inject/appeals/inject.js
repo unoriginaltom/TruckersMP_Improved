@@ -249,7 +249,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     });
     
     // Add user's ID to the table
-    var banned_id = perpetrator_link.attr('href').replace('/user/', '');
+    var banned_id = perpetrator_link.attr('href').replace('https://truckersmp.com/user/', '');
     perpetrator_link.parent().append(' <span class="badge badge-u">ID ' + banned_id + '</span>');
 
     // $.ajax({
