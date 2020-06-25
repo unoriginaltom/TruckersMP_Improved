@@ -367,7 +367,7 @@ function content_links() { // eslint-disable-line no-unused-vars
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
-        embedlink = "https://clips.twitch.tv/embed?clip=" + clipid + "&autoplay=false";
+        embedlink = "https://clips.twitch.tv/embed?clip=" + clipid + "&autoplay=false&parent=truckersmp.com";
       } else if (sub.contains(["plays.tv/video"])) {
         clipid = sub.match(/^.*plays\.tv\/video\/(.*)/)[1];
         embedlink = "https://plays.tv/embeds/" + clipid;
@@ -383,14 +383,14 @@ function content_links() { // eslint-disable-line no-unused-vars
       } else if (sub.contains(["twitch.tv/videos"])) {
         var result = sub.match(/^.*twitch.tv\/videos\/(.*)/)[1];
         var vidinfos = result.split("?t=");
-        embedlink = "https://player.twitch.tv/?autoplay=false&video=" + vidinfos[0];
+        embedlink = "https://player.twitch.tv/?autoplay=false&video=" + vidinfos[0] + "&parent=truckersmp.com";
         if (vidinfos.length == 2) {
           embedlink += "&t=" + vidinfos[1]
         }
       } else if (sub.contains(["twitch.tv"])) {
         clipid =  sub.match(/^.*twitch.tv\/.*\/clip\/(.*)\?/);
         if (clipid) {
-          embedlink = `https://clips.twitch.tv/embed?clip=${clipid[1]}&autoplay=false`;
+          embedlink = `https://clips.twitch.tv/embed?clip=${clipid[1]}&autoplay=false&parent=truckersmp.com`;
         }
       }
       $(this).append('<a href="' + embedlink + '" class="video">  <i class="fas fa-play-circle fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
