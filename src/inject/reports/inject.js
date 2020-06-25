@@ -32,11 +32,6 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     }
   }
 
-  console.log('TMP Improved (inject/reports)', injects.summary.perpetrator_link)
-  console.log('TMP Improved (inject/reports)', injects.summary.perpetrator_link.attr('href'))
-  var perpetrator_id = injects.summary.perpetrator_link.attr('href').replace('/user/', '')
-  console.log('TMP Improved (inject/reports)', perpetrator_id)
-
   // Fixes word dates
   var day = 60 * 60 * 24 * 1000
   var fixDate = function (date) {
