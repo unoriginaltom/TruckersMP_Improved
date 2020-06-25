@@ -82,14 +82,24 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       url: "https://api.truckersmp.com/v2/player/" + userId,
       type: "GET",
       success: function (tmpData) {
-        userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
+        if(tmpData.response.vtc.inVTC == true)
+        {
+          userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" /><p>VTC: <a href="https://truckersmp.com/vtc/' + tmpData.response.vtc.id +'" target="_blank">' + tmpData.response.vtc.name + '</a></p>');
+        }
+        else
+        {
+          userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
+        }
         userLink.wrap('<kbd>');
+
         $("#loading-spinner").hide();
       },
     });
     // Sets the title
     $(document).prop('title', userLink.text() + ' - Feedback | TruckersMP');
   });
+
+  
 
   /*function copyToClipboard(text) {
     const input = document.createElement('input');
