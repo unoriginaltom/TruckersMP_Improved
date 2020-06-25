@@ -363,14 +363,14 @@ function content_links() { // eslint-disable-line no-unused-vars
 
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
       $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fab fa-youtube fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
-    } else if (sub.contains(["clips.twitch.tv", "plays.tv/video", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com", "twitch.tv"])) {
+    } else if (sub.contains(["clips.twitch.tv", "medal.tv/clips", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com", "twitch.tv"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
         embedlink = "https://clips.twitch.tv/embed?clip=" + clipid + "&autoplay=false&parent=truckersmp.com";
-      } else if (sub.contains(["plays.tv/video"])) {
-        clipid = sub.match(/^.*plays\.tv\/video\/(.*)/)[1];
-        embedlink = "https://plays.tv/embeds/" + clipid;
+      } else if (sub.contains(["medal.tv/clips"])) {
+        clipid = sub.match(/^.*medal\.tv\/clips\/(.*)/)[1];
+        embedlink = "https://medal.tv/clip/" + clipid + "?autoplay=0&muted=0&loop=0";
       } else if (sub.contains(["dailymotion.com"])) {
         clipid = sub.match(/^.*dailymotion\.com\/video\/(.*)/)[1];
         embedlink = "https://www.dailymotion.com/embed/video/" + clipid;
