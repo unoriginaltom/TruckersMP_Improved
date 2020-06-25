@@ -176,13 +176,13 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     //   });
     // }
 
-    var perpetrator_id = perpetrator_link.attr('href').replace('/user/', '');
+    var perpetrator_id = perpetrator_link.attr('href').replace('https://truckersmp.com/user/', '');
     $.ajax({
       url: "https://api.truckersmp.com/v2/player/" + perpetrator_id,
       type: "GET",
       success: function (tmp_data) {
         if (tmp_data !== true) {
-          perpetrator_link.after(' <img src="' + tmp_data.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
+          perpetrator_link.after(' <img src="' + tmp_data.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px;">');
           perpetrator_link.wrap('<kbd>');
 
           var steam_link = '<tr><td>Steam</td><td> <kbd><a href="https://steamcommunity.com/profiles/' + steam_id + '" target="_blank" rel="noreferrer nofollow noopener">' + steam_id + '</a></kbd></td></tr>';

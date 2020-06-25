@@ -76,16 +76,16 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     // User information
     $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1)').css('text-align', 'right');
     var userLink = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a');
-    var userId = $(userLink).attr('href').replace('/user/', '');
+    var userId = $(userLink).attr('href').replace('https://truckersmp.com/user/', '');
     // Adds information about the user
     $.ajax({
       url: "https://api.truckersmp.com/v2/player/" + userId,
       type: "GET",
       success: function (tmpData) {
-        userLink.after(' <img src="' + tmpData.response['avatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
+        userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
         userLink.wrap('<kbd>');
         $("#loading-spinner").hide();
-      }
+      },
     });
     // Sets the title
     $(document).prop('title', userLink.text() + ' - Feedback | TruckersMP');
