@@ -363,7 +363,7 @@ function content_links() { // eslint-disable-line no-unused-vars
 
     if (sub.contains(["youtube.com", "youtu.be"]) && !sub.contains(["img.youtube.com"])) {
       $(this).append('<a data-link="' + sub + '" href="#" class="youtube">  <i class="fab fa-youtube fa-fw" data-toggle="tooltip" title="Watch this video in modal"></i></a>');
-    } else if (sub.contains(["clips.twitch.tv", "medal.tv/clips", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com", "twitch.tv"])) {
+    } else if (sub.contains(["clips.twitch.tv", "medal.tv/clips", "dailymotion.com", "vimeo.com", "twitch.tv/videos", "streamable.com", "twitch.tv", "bilibili.com"])) {
       var clipid, embedlink;
       if (sub.contains(["clips.twitch.tv"])) {
         clipid = sub.match(/^.*clips\.twitch\.tv\/(.*)/)[1];
@@ -374,6 +374,9 @@ function content_links() { // eslint-disable-line no-unused-vars
       } else if (sub.contains(["dailymotion.com"])) {
         clipid = sub.match(/^.*dailymotion\.com\/video\/(.*)/)[1];
         embedlink = "https://www.dailymotion.com/embed/video/" + clipid;
+	  } else if (sub.contains(["https://www.bilibili.com"])) {
+        clipid = sub.match(/^.*bilibili\.com\/video\/(.*)/)[1];
+        embedlink = "https://player.bilibili.com/player.html?aid=753848162&bvid=" + clipid + "&page=1";
       } else if (sub.contains(["vimeo.com"])) {
         clipid = sub.match(/^.*vimeo\.com\/(.*)/)[1];
         embedlink = "https://player.vimeo.com/video/" + clipid;
@@ -571,10 +574,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
   let banStats = {
       activeBans: 0,
       bans1m: 0,
-      bans3m: 0,
       active1m: false,
-      active3m: false,
-      banned: false,
       nextBan: ""
   };
 
@@ -599,25 +599,21 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
   
           let expires = Date.parse(fixDate(dateExp));
   
-          if (expires - issuedOn >= day * 85) {
-              banStats.bans3m++;
-          } else if (expires - issuedOn >= day * 27) {
+          if (expires - issuedOn >= day * 27) {
               banStats.bans1m++;
           }
   
           if ((new Date()).getTime() - day * 365 <= expires) {
               banStats.activeBans++;
-              if (expires - issuedOn >= day * 85) {
-                  banStats.active3m = true;
-              } else if (expires - issuedOn >= day * 27) {
+              if (expires - issuedOn >= day * 27) {
                   banStats.active1m = true;
               }
           }
   
-          if ((banStats.bans3m >= 2) || (banStats.activeBans >= 5 && banStats.active3m && banStats.active1m)) {
+          if (banStats.bans1m >= 1 || (banStats.activeBans >= 4 && banStats.active1m)) {
               banStats.nextBan = "Permanent";
-          } else if (banStats.bans1m >= 2 || (banStats.activeBans >= 4 && banStats.active1m)) {
-              banStats.nextBan = "3 months";
+          } else if (banStats.activeBans >= 3) {
+              banStats.nextBan = "1 month";
           } else if (banStats.activeBans >= 3) {
               banStats.nextBan = "1 month";
           } else {
