@@ -610,7 +610,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
               }
           }
   
-          if (banStats.bans1m >= 1 || (banStats.activeBans >= 4 && banStats.active1m)) {
+          if (banStats.activeBans >= 4 && banStats.active1m) {
               banStats.nextBan = "Permanent";
           } else if (banStats.activeBans >= 3) {
               banStats.nextBan = "1 month";
