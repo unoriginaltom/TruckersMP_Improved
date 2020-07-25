@@ -78,26 +78,109 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     var userLink = $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(2) > a');
     var userId = $(userLink).attr('href').replace('https://truckersmp.com/user/', '');
     // Adds information about the user
-    $.ajax({
-      url: "https://api.truckersmp.com/v2/player/" + userId,
-      type: "GET",
-      success: function (tmpData) {
-        if(tmpData.response.vtc.inVTC == true)
-        {
-          userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" /><p>VTC: <a href="https://truckersmp.com/vtc/' + tmpData.response.vtc.id +'" target="_blank">' + tmpData.response.vtc.name + '</a></p>');
-        }
-        else
-        {
-          userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
-        }
-        userLink.wrap('<kbd>');
 
-        $("#loading-spinner").hide();
-      },
-    });
-    // Sets the title
-    $(document).prop('title', userLink.text() + ' - Feedback | TruckersMP');
+  //   let vtcstuff = '';
+  //   let vtcnamelink = '';
+  //   $.ajax({
+  //     url: "https://api.truckersmp.com/v2/player/" + userId,
+  //     type: "GET",
+  //     success: function (tmpData) {
+  //       if(tmpData.response.vtc.inVTC == true)
+  //       {
+  //         vtcnamelink = '<p>VTC: <a href="https://truckersmp.com/vtc/' + tmpData.response.vtc.id +'" target="_blank">' + tmpData.response.vtc.name + '</a></p>';
+          
+          
+  //         let authorIsOwner = false;
+  //         let generalRequirements = 'X';
+  //         let verifiedMembers = 'X';
+  //         let validatedMembers = 'X';
+  //         $.ajax({
+  //           url: "https://api.truckersmp.com/v2/vtc/" + tmpData.response.vtc.id,
+  //           type: "GET",
+  //           success: function (vtcData) {
+  //             if(vtcData.response.owner_username == tmpData.response.name)
+  //             {
+  //               authorIsOwner = true;
+  //             }
+  //             if(vtcData.response.members_count > 49)
+  //             {
+  //               verifiedMembers = 'YES! ' + vtcData.response.members_count;
+  //             }
+  //             else if(vtcData.response.members_count > 9)
+  //             {
+  //               validatedMembers = 'YES! ' + vtcData.response.members_count;
+  //             }
+  //             if(vtcData.response.recruitment == 'Open' | )
+
+
+  //             vtcstuff = vtcnamelink + '<p>Validation: ' + validatedMembers + '</p>' + '<p>Verification: ' + verifiedMembers + '</p>';
+              
+
+  //             userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />' + vtcstuff);
+  //           }
+  //         });
+
+          
+  //       }
+  //       else 
+  //       {
+  //         userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
+  //       }
+  //       userLink.wrap('<kbd>');
+
+  //       $("#loading-spinner").hide();
+  //     },
+  //   });
+  //   // Sets the title
+  //   $(document).prop('title', userLink.text() + ' - Feedback | TruckersMP');
+  // });
+
+
+  $.ajax({
+    url: "https://api.truckersmp.com/v2/player/" + userId,
+    type: "GET",
+    success: function (tmpData) {
+      if(tmpData.response.vtc.inVTC == true)
+      {
+        let vtcnamelink = '';
+        let vtcowner = '';
+        vtcnamelink = '<p>VTC: <a href="https://truckersmp.com/vtc/' + tmpData.response.vtc.id +'" target="_blank">' + tmpData.response.vtc.name + '</a></p>';
+        
+        
+        let authorIsOwner;
+        $.ajax({
+          url: "https://api.truckersmp.com/v2/vtc/" + tmpData.response.vtc.id,
+          type: "GET",
+          success: function (vtcData) {
+            if(vtcData.response.owner_username == tmpData.response.name)
+            {
+              authorIsOwner = true;
+            }
+            else
+            {
+              authorIsOwner = false;
+              vtcowner = '<p><b>CAUTION! This person is not the owner!</b></p>';
+            }
+            
+
+            userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />' + vtcnamelink + vtcowner);
+          }
+        });
+
+        
+      }
+      else 
+      {
+        userLink.after(' <img src="' + tmpData.response['smallAvatar'] + '" class="img-rounded" style="width: 32px; height: 32px" />');
+      }
+      //userLink.wrap('<kbd>');
+
+      $("#loading-spinner").hide();
+    },
   });
+  // Sets the title
+  $(document).prop('title', userLink.text() + ' - Feedback | TruckersMP');
+});
 
   
 
