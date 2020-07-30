@@ -16,10 +16,10 @@ var default_OwnReasons = {
   reasons: [
     ["Ramming", "Blocking", "Incorrect Way", "Insulting Users", "Insulting Administration"],
     ["Change your TruckersMP name and make a ban appeal"],
-    ["Horn Spamming", "Inappropriate License/Interior Plates", "Impressionating Administration", "Racing", "Inappropriate Overtaking", "Profanity", "Chat Spamming", "Hacking", "Speedhacking", "Bug Abusing", "Inappropriate Parking", "Unsupported Mods", "Ban Evading", "Driving w/o lights", "Exiting Map Boundaries", "Inappropriate Convoy Management", "Bullying/Harrassment", "Trolling", "CB Abuse", "Car w/ trailer", "Excessive Save Editing", "Reckless Driving"]
+    ["Horn Spamming", "Inappropriate License/Interior Plates", "Impressionating Administration", "Inappropriate Overtaking", "Profanity", "Chat Spamming", "Hacking", "Speedhacking", "Bug Abusing", "Ban Evading", "Exiting Map Boundaries", "Inappropriate Convoy Management", "Bullying/Harrassment", "Trolling", "CB Abuse", "Excessive Save Editing", "Reckless Driving"]
   ],
   postfixes: [
-    ["// 1 m due to history", "// 3 m due to history"],
+    ["// 1 m due to history"],
     ["// Perma due to history"]
   ],
   declines: [{
@@ -58,7 +58,7 @@ var default_OwnReasons = {
 var default_OwnDates = {
   white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
   yellow: "1,w,+1 week",
-  red: "1,M,+1 month; 3,M",
+  red: "1,M,+1 month",
   other: "current_utc"
 };
 
