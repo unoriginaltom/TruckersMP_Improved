@@ -64,12 +64,17 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     table.css('width', '100%');
 
     // ===== Manipulation =====
+    var timezone = $('body > div.wrapper > div.header > div.container > div > ul > li:nth-child(3) > a').text().split(':')[1].trim(); //get current timezone setting from page header
+
     $('table.table > tbody > tr > td:nth-child(4)').each(function () {
       var text = $(this).text();
-      if (text.split(" ").length != 4) {
-        text = text.replace("Today,", moment().format("DD MMM"));
-        text = moment(text, "DD MMM HH:mm").format("DD MMM YYYY HH:mm");
-        $(this).text(text);
+      var content = text.split(/:\d\d/); //remove everything after time and save it for later
+      text = text.replace(content[1], "");
+
+      if (content[0].split(" ").length != 4) {
+        text = text.replace("Today,", moment.tz(timezone).format("DD MMM"));
+        text = moment.tz(text, "DD MMM HH:mm", timezone).format("DD MMM YYYY HH:mm");
+        $(this).text(text + content[1]);
       }
     });
     $.fn.dataTable.moment("DD MMM YYYY HH:mm");
