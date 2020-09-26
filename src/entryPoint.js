@@ -203,6 +203,7 @@ function loadSettings(callBack) {
         img_previews: true,
         wide: true,
         autoinsertsep: true,
+        localisedcomment: true,
         enablelinknotifications: true,
         viewappealblank: true,
         viewreportblank: true,
@@ -433,14 +434,20 @@ function content_links() { // eslint-disable-line no-unused-vars
     } else {
       if (link.includes('youtube.com') || link.includes('youtu.be')) {
         copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
-        chrome.runtime.sendMessage({
-          msg: "URL just being shorted! Check your clipboard!",
-          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
-        });
+        if (settings.enablelinknotifications) {
+          chrome.runtime.sendMessage({
+            msg: "URL just being shorted! Check your clipboard!",
+            contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
+          });
+        }
       } else {
         urlShorter(link);
       }
     }
+    $(this).children().first().removeClass("fa-copy").addClass("fa-check"); //displaying a check mark after copying shortened or not shortened link
+    setTimeout(() => {
+      $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+    },2000);
   });
 }
 

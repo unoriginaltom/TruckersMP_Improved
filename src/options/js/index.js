@@ -14,6 +14,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         separator: $('#separator').val(),
         own_comment: $('#own_comment').val().trim(),
         autoinsertsep: $('#autoinsertsep').is(':checked'),
+        localisedcomment: $('#localisedcomment').is(':checked'),
         enablelinknotifications: $('#enablelinknotifications').is(':checked'),
         viewappealblank: $('#viewappealblank').is(':checked'),
         viewreportblank: $('#viewreportblank').is(':checked'),
@@ -218,6 +219,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         $('#img_previews').prop("checked", items.settings.img_previews);
         $('#wide').prop("checked", items.settings.wide);
         $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
+        $('#localisedcomment').prop("checked", items.settings.localisedcomment);
         $('#enablelinknotifications').prop("checked", items.settings.enablelinknotifications);
         $('#viewappealblank').prop("checked", items.settings.viewappealblank);
         $('#viewreportblank').prop("checked", items.settings.viewreportblank);

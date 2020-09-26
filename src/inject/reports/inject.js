@@ -619,7 +619,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   function init() {
     content_links()
-    comment_language()
+    if (settings.localisedcomment) comment_language()
     bans_count_fetch()
     ban_history_table_improving()
     accept_modal_init()
