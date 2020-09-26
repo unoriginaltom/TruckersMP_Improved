@@ -141,12 +141,16 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     });
   }
 
+  var lastinsertpos;
+
   function setReason(reason, reason_val) {
     reason_val = updateMessageWithCannedVariables(reason_val);
     if ($(reason).val() == "") {
       $(reason).val(reason_val);
     } else {
-      $(reason).val($(reason).val() + ' ' + reason_val);
+      var pos = $(reason).prop('selectionStart');
+      $(reason)[0].setRangeText((lastinsertpos === pos ? "\n\n" : "") + reason_val, pos, pos, 'end');
+      lastinsertpos = $(reason).prop('selectionStart');
     }
     $(reason).focus();
   }

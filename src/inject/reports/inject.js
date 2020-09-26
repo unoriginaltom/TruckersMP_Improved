@@ -224,13 +224,17 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     })
   }
 
+  var lastinsertpos;
+
   function setReason(reason, reason_val) {
-    if ($(reason).val() == '') {
-      $(reason).val(reason_val + ' ')
+    if ($(reason).val() == "") {
+      $(reason).val(reason_val);
     } else {
-      $(reason).val($(reason).val().trim() + ' ' + reason_val + ' ')
+      var pos = $(reason).prop('selectionStart');
+      $(reason)[0].setRangeText((lastinsertpos === pos ? "\n\n" : "") + reason_val, pos, pos, 'end');
+      lastinsertpos = $(reason).prop('selectionStart');
     }
-    $(reason).focus()
+    $(reason).focus();
   }
 
   $('body').append("<div class='modal fade ets2mp-modal' id='videoModal' tabindex='-1' role='dialog''TMP Improved (inject/reports)',  aria-labelledby='videoModalLabel' aria-hidden='true'><div class='modal-dialog 'TMP Improved (inject/reports)', modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title' id='videoModalLabel'>Video preview</h4></div><div class='modal-body' style='padding:0;'></div></div></div></div>")
