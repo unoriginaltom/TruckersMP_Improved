@@ -377,7 +377,7 @@ function content_links() { // eslint-disable-line no-unused-vars
         embedlink = "https://www.dailymotion.com/embed/video/" + clipid;
 	  } else if (sub.contains(["https://www.bilibili.com"])) {
         clipid = sub.match(/^.*bilibili\.com\/video\/(.*)/)[1];
-        embedlink = "https://player.bilibili.com/player.html?aid=753848162&bvid=" + clipid + "&page=1";
+        embedlink = "https://player.bilibili.com/player.html?aid=753848162&bvid=" + clipid.replace("/","") + "&page=1";
       } else if (sub.contains(["vimeo.com"])) {
         clipid = sub.match(/^.*vimeo\.com\/(.*)/)[1];
         embedlink = "https://player.vimeo.com/video/" + clipid;
