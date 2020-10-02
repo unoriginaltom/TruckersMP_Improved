@@ -668,7 +668,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
       var userProfileLink = $(injects.summary.perpetrator_link).attr('href')
       $.ajax({
-        url: 'https://truckersmp.com' + userProfileLink,
+        url: /*'https://truckersmp.com' + */userProfileLink,
         type: 'GET',
         success: function (data) {
           // Gets all bans
