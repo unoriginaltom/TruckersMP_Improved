@@ -14,7 +14,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input')
     },
     bans: {
-      table: $('#ban a[href="#ban"]'),
+      table: $('#ban > div > table > tbody > tr'),
       header: $('#bans > div:nth-child(1) > h4 > a'),
       ban_toggler: $('#expired_bans_toggler').find('i')
     },
@@ -297,6 +297,8 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   function bans_count_fetch() {
     function getUnbanTime(unban_time_td, banned_reason_td) {
+      var content = unban_time_td.split(/:\d\d/)
+      unban_time_td = unban_time_td.replace(content[1], "")
       var unban_time
       now = moment.utc()
       if (unban_time_td.indexOf('Today') !== -1) {
@@ -333,6 +335,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     var bans_count = 0
     var expired_bans_count = 0
     var nb_parts
+    console.log(injects.bans.table)
     injects.bans.table.each(function () {
       var ban_time_td = $(this).find('td:nth-child(1)').text()
       var unban_time_td = $(this).find('td:nth-child(2)').text()
@@ -624,7 +627,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   function init() {
     content_links()
     if (settings.localisedcomment) comment_language()
-    bans_count_fetch()
+    //bans_count_fetch()
     ban_history_table_improving()
     accept_modal_init()
     decline_modal_init()
@@ -659,9 +662,9 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
     if (settings.enablebanlength === true) {
       $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
-    }
+    /*}
     $('#check-ban-length').click(function (e) {
-      e.preventDefault()
+      e.preventDefault()*/
       $('#loading-spinner').show()
       $('#check-ban-length').remove()
       $('div.loading-for-bans').show()
@@ -672,15 +675,17 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         type: 'GET',
         success: function (data) {
           // Gets all bans
-          var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 > li')
+          var bans = $(data).find('.profile-body .panel-profile:last-child .timeline-v2 > li')
           var activeBans = 0,
             bans1m = 0,
-            bans3m = 0
+            bans3m = 0,
+            totalBans = 0
           var active1m = false,
+            two_active_hist_bans = false,
             active3m = false
           // If the user is banned
           var banned = false
-          if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text() === 'Banned') {
+          if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text().toLowerCase().includes('banned')) {
             banned = true
           }
 
@@ -700,6 +705,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
             }
             var expires = Date.parse(fixDate(dateExp))
 
+            totalBans++;
             if (expires - issuedOn >= day * 85) {
               bans3m++
             } else if (expires - issuedOn >= day * 27) {
@@ -708,8 +714,10 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
             if ((new Date()).getTime() - day * 365 <= expires) {
               activeBans++
               if (expires - issuedOn >= day * 85) {
+                if (active3m || active1m) two_active_hist_bans = true;
                 active3m = true
               } else if (expires - issuedOn >= day * 27) {
+                if (active1m || active3m) two_active_hist_bans = true;
                 active1m = true
               }
             }
@@ -720,32 +728,32 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
             html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd'
           }
           // Length checks
-          if ((bans3m >= 2) || (activeBans >= 5 && active3m && active1m)) {
+          if (two_active_hist_bans || (activeBans >= 4 && active1m)) {
             html += ' style="color: rgb(212, 63, 58)">Permanent'
-          } else if (bans1m >= 2 || (activeBans >= 4 && active1m)) {
-            html += ' style="color: rgb(212, 63, 58)">3 months'
           } else if (activeBans >= 3) {
             html += ' style="color: rgb(212, 63, 58)">1 month'
           } else {
             html += '>You can choose :)'
           }
-          html += '</kbd></div>'
+          html += '</kbd><br /><br /><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div>'
           // Information
           html += '<div class="col-md-6 text-center">'
-          html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
+          //html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
           html += 'Active bans: ' + activeBans + '<br />'
+          html += 'Total bans: ' + totalBans + '<br />'
           html += '1 month bans: ' + bans1m + '<br />'
           html += '3 month bans: ' + bans3m + '<br />'
-          html += 'Active 1 month ban: ' + active1m + '<br />'
-          html += 'Active 3 month ban: ' + active3m
-          html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
+          html += 'Active 1 month ban: ' + (active1m || active3m)/* + '<br />'
+          html += 'Active 3 month ban: ' + active3m*/
+          //html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
+          html += '</div>'
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html)
 
           $('#loading-spinner').hide()
           $('div.loading-for-bans').hide()
         }
       })
-    })
+    }//)
 
   })
 

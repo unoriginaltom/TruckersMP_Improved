@@ -582,6 +582,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
       activeBans: 0,
       bans1m: 0,
       active1m: false,
+      twoActiveHistBans: false,
       nextBan: ""
   };
 
@@ -613,14 +614,13 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
           if ((new Date()).getTime() - day * 365 <= expires) {
               banStats.activeBans++;
               if (expires - issuedOn >= day * 27) {
-                  banStats.active1m = true;
+                if (banStats.active1m) banStats.twoActiveHistBans = true;  
+                banStats.active1m = true;
               }
           }
   
-          if (banStats.activeBans >= 4 && banStats.active1m) {
+          if (banStats.twoActiveHistBans || banStats.activeBans >= 4 && banStats.active1m) {
               banStats.nextBan = "Permanent";
-          } else if (banStats.activeBans >= 3) {
-              banStats.nextBan = "1 month";
           } else if (banStats.activeBans >= 3) {
               banStats.nextBan = "1 month";
           } else {
