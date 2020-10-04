@@ -416,8 +416,8 @@ function content_links() { // eslint-disable-line no-unused-vars
 
   $('a.jmdev_ca').on('click', function (event) {
     event.preventDefault();
-    var spinner = $("#loading-spinner");
-    spinner.show();
+    //var spinner = $("#loading-spinner");
+    //spinner.show();
     var link = String($(this).data("link"));
     var length = link.length;
 
@@ -430,7 +430,7 @@ function content_links() { // eslint-disable-line no-unused-vars
           timeout: 3000
         });
       }
-      spinner.hide();
+      //spinner.hide();
     } else {
       if (link.includes('youtube.com') || link.includes('youtu.be')) {
         copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
