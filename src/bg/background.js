@@ -85,3 +85,46 @@ chrome.runtime.onInstalled.addListener(function (details) {
     "color": [0, 113, 197, 255]
   })
 });
+
+function updateNotification (json) {
+  chrome.notifications.create({
+    type: 'basic',
+    iconUrl: chrome.extension.getURL('icons/icon128.png'),
+    title: "TruckersMP Improved Update",
+    message: "A new version has been released. Would you like to visit GitHub?",
+    contextMessage: "v" + chrome.runtime.getManifest().version + " => " + json.tag_name,
+    buttons: [{
+        title: 'Yes'
+      },
+      {
+        title: 'Skip this version'
+      }
+    ],
+    requireInteraction: true
+  }, function (id) {
+    notificationID = id
+  })
+
+  chrome.notifications.onButtonClicked.addListener(function (notifId, btnIdx) {
+    if (notifId === notificationID) {
+      if (btnIdx === 0) {
+        window.open('https://github.com/Flybel/TruckersMP_Improved/releases')
+      } else if (btnIdx === 1) {
+        chrome.storage.local.set({gitskip: json.id})
+      }
+    }
+
+    chrome.notifications.clear(notificationID)
+  })
+}
+
+chrome.storage.local.get(function (res) {
+  //get latest GitHub release for Flybel repo
+  fetch("https://api.github.com/repos/Flybel/TruckersMP_Improved/releases/latest", {
+        method: 'GET'
+      })
+        .then(response => response.json())
+        .then(json => {
+          if (json.tag_name != "v" + chrome.runtime.getManifest().version && json.id !== res.gitskip) updateNotification(json);
+        });
+})

@@ -211,7 +211,8 @@ function loadSettings(callBack) {
         enablefeedbackimprovement: true,
         viewfeedbackblank: true,
         separator: ','
-      }
+      },
+      gitskip: undefined
     }, function (items) {
       items.OwnReasons = parseItems(items.OwnReasons);
       if (syncAllowed && items.settings.local_storage) {

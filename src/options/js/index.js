@@ -53,6 +53,11 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       settings: data.settings
     };
 
+    // preserve skipped GitHub release
+    chrome.storage.local.get((res) => {
+      new_data.gitskip = res.gitskip;
+    })
+
     var steamapi_error = false;
     if (data.steamapi && data.steamapi !== 'none') {
       alert(data.steamapi)
