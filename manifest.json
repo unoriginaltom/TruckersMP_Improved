@@ -1,6 +1,6 @@
 ﻿{
   "name": "TruckersMP Improved",
-  "version": "1.15.6",
+  "version": "1.15.7",
   "manifest_version": 2,
   "description": "Useful functions for TruckersMP Staff. This extension is for helping TruckersMP Staff to be more productive",
   "icons": {
@@ -10,12 +10,7 @@
   },
 
   "minimum_chrome_version": "42",
-  "applications": {
-    "gecko": {
-      "id": "{941d69b4-e839-40ac-91e2-d63e41b35d98}",
-      "update_url": "https://gist.githubusercontent.com/LasseNiermann/cb14e65167acf3eba7c932c1d9e2b8e2/raw/f3fee9e87c0ce82728ae28e5ecb944a39105d05e/tmpimproved_firefox_updates.json"
-    }
-  },
+
   "permissions": [
     "https://*.truckersmp.com/*",
     "*://*.truckersmp.network/*",

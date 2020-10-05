@@ -118,6 +118,16 @@ function updateNotification (json) {
   })
 }
 
+function versionGt (greater, smaller) {
+  greater = greater.split(".");
+  smaller = smaller.split(".");
+  for (var i = 0; i < Math.min(greater.length, smaller.length); i++) {
+    if (greater[i] > smaller[i]) return true;
+    else if (greater[i] < smaller[i]) return false;
+  }
+  return greater.length > smaller.length;
+}
+
 chrome.storage.local.get(function (res) {
   //get latest GitHub release for Flybel repo
   fetch("https://api.github.com/repos/Flybel/TruckersMP_Improved/releases/latest", {
@@ -125,6 +135,6 @@ chrome.storage.local.get(function (res) {
       })
         .then(response => response.json())
         .then(json => {
-          if (json.tag_name != "v" + chrome.runtime.getManifest().version && json.id !== res.gitskip) updateNotification(json);
+          if (json.tag_name != "v" + chrome.runtime.getManifest().version && versionGt(json.tag_name.replace("v", ""), chrome.runtime.getManifest().version) && json.id !== res.gitskip) updateNotification(json);
         });
 })

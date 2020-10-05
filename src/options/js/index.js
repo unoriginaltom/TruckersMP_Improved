@@ -252,7 +252,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   }
 
   function _imp() {
-    var _data = JSON.parse(this.result);
+    var _data = JSON.parse(this.result[0] == '"' ? this.result.slice(1, -1).replaceAll('\\\\', '\\').replaceAll('\\"', '"').replaceAll("Â§", "§").replaceAll("ยง", "§") : this.result);
 
     var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
     if (compare === 1) {

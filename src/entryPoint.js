@@ -3,9 +3,9 @@ var version = chrome.runtime.getManifest().version;
 var syncAllowed = false;
 
 console.log('TMP Improved (entryPoint)');
-if (window.location.protocol === 'chrome-extension:' && window.location.pathname !== '/src/bg/background.html') {
+/*if (window.location.protocol === 'chrome-extension:' && window.location.pathname !== '/src/bg/background.html') {
   var database = firebase.database();
-}
+}*/
 
 storage = chrome.storage.local;
 
@@ -226,7 +226,7 @@ function loadSettings(callBack) {
   }
 }
 
-function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
+/*function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
   if (isSignedIn) { // eslint-disable-line no-undef
     database.ref('data/' + firebase.auth().currentUser.uid).once('value')
       .then(function (snapshot) {
@@ -249,7 +249,7 @@ function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
   } else {
     alert('Stop! You are not logged in!')
   }
-}
+}*/
 
 function saveSettings(storage, data, with_message) { // eslint-disable-line no-unused-vars
   data.OwnReasons = parseItems(data.OwnReasons);
@@ -263,9 +263,9 @@ function saveSettings(storage, data, with_message) { // eslint-disable-line no-u
     }
   });
 
-  if (isSignedIn) { // eslint-disable-line no-undef
+  /*if (isSignedIn) { // eslint-disable-line no-undef
     database.ref('data/' + firebase.auth().currentUser.uid).set(JSON.stringify(data));
-  }
+  }*/
 }
 
 function val_init() {
