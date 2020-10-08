@@ -393,7 +393,7 @@ function content_links() { // eslint-disable-line no-unused-vars
           embedlink += "&t=" + vidinfos[1]
         }
       } else if (sub.contains(["twitch.tv"])) {
-        clipid =  sub.match(/^.*twitch.tv\/.*\/clip\/(.*)\?/);
+        clipid =  sub.match(/^.*twitch.tv\/.*\/clip\/(.*)/);
         if (clipid) {
           embedlink = `https://clips.twitch.tv/embed?clip=${clipid[1]}&autoplay=false&parent=truckersmp.com`;
         }
