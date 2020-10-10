@@ -251,40 +251,8 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     var comment
 
     if (!settings.own_comment) {
-      switch (report_language) {
-        case 'German':
-          comment = 'Wir bedanken uns für deinen Report :) Es ist zu bedenken, dass die zur Verfügung gestellten Beweise sowohl für die gesamte Dauer des Banns als auch einen Monat darüber hinaus verfügbar sein müssen.'
-          break;
-        case 'Turkish':
-          comment = 'Raporunuz için teşekkürler :) Lütfen sunduğunuz kanıtın, yasağın uygulandığı ve takiben gelen bir(1) aylık süreç boyunca kullanılabilir olması gerektiğini lütfen unutmayın.'
-          break;
-        case 'Norwegian':
-          comment = 'Takk for rapporten :) Vennligst husk at bevis må være tilgjengelig for hele bannlysningspreioden pluss 1 måned'
-          break;
-        case 'Spanish':
-          comment = 'Muchas gracias por tu reporte :) Recuerda que las pruebas/evidencias deben estar disponibles durante toda la vigencia de la prohibicion y más 1 mes.'
-          break;
-        case 'Dutch':
-          comment = 'Bedankt voor je rapport :) Onthoud alsjeblieft dat het bewijs beschikbaar moet zijn voor de volledige lengte van de ban PLUS 1 maand.'
-          break;
-        case 'Polish':
-          comment = 'Dziękuję za report :) Proszę pamiętać o tym że dowód musi być dostępny przez cały okres bana, plus jeden miesiąc. '
-          break;
-        case 'Russian':
-          comment = 'Спасибо за репорт :) Помните, что доказательства должны быть доступны весь период бана ПЛЮС 1 месяц.'
-          break;
-        case 'French':
-          comment = 'Merci pour votre rapport :) Notez que la preuve doit être disponible durant toute la durée du ban PLUS 1 mois.'
-          break;
-        case 'Lithuanian':
-          comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.'
-          break;
-        case 'Portuguese':
-          comment = 'Obrigado por seu relatório :) Por favor, lembre-se que as provas devem estar disponíveis para a duração total da proibição MAIS 1 mês.'
-          break;
-        default:
-          comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.'
-      }
+      var admin_name = ($('body > div.wrapper > div.header > div.container > div > ul > li.hoverSelector > span').text());
+      comment = "Hello,\n\nThank you for taking the time to file a report. I have reviewed the evidence and took action against the user. Please make sure the evidence you submitted remains available for the entire length of the issued ban, plus an additional month.\n\n---\n\n**§1.4 — Reporting users**\n> The evidence you provide us must be available for the length of the ban applied, plus one month. Evidence for permanent bans must be available forever.\n\nYou can find the full set of our rules [here](https://truckersmp.com/rules/)\n\n---\n\nKind regards,  " + admin_name;
     } else {
       comment = settings.own_comment
     }
