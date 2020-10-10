@@ -664,19 +664,18 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
       var userProfileLink = $(injects.summary.perpetrator_link).attr('href')
       $.ajax({
-        url: 'https://truckersmp.com' + userProfileLink,
+        url: userProfileLink,
         type: 'GET',
         success: function (data) {
           // Gets all bans
           var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 > li')
           var activeBans = 0,
-            bans1m = 0,
-            bans3m = 0
-          var active1m = false,
-            active3m = false
+            bans1m = 0
+          var active1m = false
           // If the user is banned
           var banned = false
-          if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text() === 'Banned') {
+          console.log($(data).find('.profile-body .panel-profile .profile-bio .label-red').text());
+          if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text().includes("Banned")) {
             banned = true
           }
 
@@ -696,16 +695,12 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
             }
             var expires = Date.parse(fixDate(dateExp))
 
-            if (expires - issuedOn >= day * 85) {
-              bans3m++
-            } else if (expires - issuedOn >= day * 27) {
+            if (expires - issuedOn >= day * 27) {
               bans1m++
             }
             if ((new Date()).getTime() - day * 365 <= expires) {
               activeBans++
-              if (expires - issuedOn >= day * 85) {
-                active3m = true
-              } else if (expires - issuedOn >= day * 27) {
+              if (expires - issuedOn >= day * 27) {
                 active1m = true
               }
             }
@@ -716,10 +711,8 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
             html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd'
           }
           // Length checks
-          if ((bans3m >= 2) || (activeBans >= 5 && active3m && active1m)) {
+          if ((active1m >= 2) || (activeBans >= 4 && active1m)) {
             html += ' style="color: rgb(212, 63, 58)">Permanent'
-          } else if (bans1m >= 2 || (activeBans >= 4 && active1m)) {
-            html += ' style="color: rgb(212, 63, 58)">3 months'
           } else if (activeBans >= 3) {
             html += ' style="color: rgb(212, 63, 58)">1 month'
           } else {
@@ -731,9 +724,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
           html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
           html += 'Active bans: ' + activeBans + '<br />'
           html += '1 month bans: ' + bans1m + '<br />'
-          html += '3 month bans: ' + bans3m + '<br />'
-          html += 'Active 1 month ban: ' + active1m + '<br />'
-          html += 'Active 3 month ban: ' + active3m
+          html += 'Two active history bans: ' + active1m + '<br />'
           html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
           $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html)
 
