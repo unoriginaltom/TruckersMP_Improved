@@ -601,7 +601,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
           }
           let date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 1]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text();
           let issuedOn = Date.parse(fixDate(date));
-          let dateExp = $(ban).find('.autolink').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
+          let dateExp = $(ban).find('.autolinkage').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
   
           if (dateExp === 'Never' || dateExp === 'Permanent') {
               dateExp = date;
