@@ -147,7 +147,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   $.fn.dataTable.moment('DD MMM YYYY HH:mm')
   var datatable = table.DataTable({
     paging: false,
-    stateSave: true,
+    stateSave: false,
     // TEMP BUGFIX
     /*
     fixedHeader: {

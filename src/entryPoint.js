@@ -582,6 +582,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
   let banStats = {
       activeBans: 0,
       bans1m: 0,
+      bans3m: 0,
       active1m: false,
       twoActiveHistBans: false,
       nextBan: ""
@@ -593,22 +594,24 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
 
   if (bans.length > 0) {
       $.each(bans, function(i, ban) {
-          let reason = $(ban).find('.cbp_tmlabel > .autolinkage').text().split(' : ')[1];
+          let reason = $(ban).find('.autolinkage').text().replaceAll(/(\s)+/g," ").replace("Reason: ","").trim();
   
           if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === "rgb(255, 0, 38)") {
               return;
           }
-          let date = $(ban).find('.cbp_tmtime span:last-of-type').text();
+          let date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 1]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text();
           let issuedOn = Date.parse(fixDate(date));
-          let dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
+          let dateExp = $(ban).find('.autolinkage').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
   
-          if (dateExp === 'Never') {
+          if (dateExp === 'Never' || dateExp === 'Permanent') {
               dateExp = date;
           }
   
           let expires = Date.parse(fixDate(dateExp));
   
-          if (expires - issuedOn >= day * 27) {
+          if (expires - issuedOn >= day * 85) {
+            banStats.bans3m++
+          } else if (expires - issuedOn >= day * 27) {
               banStats.bans1m++;
           }
   
