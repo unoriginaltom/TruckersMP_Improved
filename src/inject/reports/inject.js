@@ -691,16 +691,16 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
           $.each(bans, function (index, ban) {
             // @BANBYMISTAKE is not counted
-            var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1]
+            var reason = $(ban).find('.autolink').text().replaceAll(/(\s)+/g," ").replace("Reason: ","").trim()
             if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === 'rgb(255, 0, 38)') {
               return
             }
 
-            var date = $(ban).find('.cbp_tmtime span:last-of-type').text()
+            var date = $(ban).next().find('div.modalbody > div').children()[$(ban).next().find('div.modalbody > div').children().length - 1].text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text()
             var issuedOn = Date.parse(fixDate(date))
             
-            var dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
-            if (dateExp === 'Never') {
+            var dateExp = $(ban).find('.autolink').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
+            if (dateExp === 'Never' || dateExp === 'Permanent') {
               dateExp = date
             }
             var expires = Date.parse(fixDate(dateExp))

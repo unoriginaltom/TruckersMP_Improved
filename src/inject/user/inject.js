@@ -6,12 +6,12 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   let renderBanModal = (checked) => {
     let dict = {
       "keys": {
-        "active1m": "Active 1 month bans",
-        "active3m": "Active 3 month bans",
+        "active1m": "Active 1 month ban",
         "activeBans": "Total active bans",
         "banned": "Currently banned",
         "bans1m": "Total 1 month bans",
         "bans3m": "Total 3 month bans",
+        "twoActiveHistBans": "Two active history bans",
         "nextBan": "Next ban"
       },
       "vals": {
