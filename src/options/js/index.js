@@ -19,6 +19,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         viewappealblank: $('#viewappealblank').is(':checked'),
         viewreportblank: $('#viewreportblank').is(':checked'),
         enablebanlength: $('#enablebanlength').is(':checked'),
+        defaultratings: $('#defaultratings').is(':checked'),
         enablefeedbackimprovement: $('#enablefeedbackimprovement').is(':checked'),
         viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
       };
@@ -229,6 +230,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         $('#viewappealblank').prop("checked", items.settings.viewappealblank);
         $('#viewreportblank').prop("checked", items.settings.viewreportblank);
         $('#enablebanlength').prop("checked", items.settings.enablebanlength);
+        $('#defaultratings').prop("checked", items.settings.defaultratings);
         $('#enablefeedbackimprovement').prop("checked", items.settings.enablefeedbackimprovement);
         $('#viewfeedbackblank').prop("checked", items.settings.viewfeedbackblank);
       } catch (e) {

@@ -689,13 +689,15 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     rateAccept.find("label[for='rating.positive']").attr('for', 'accept.rating.positive')
     rateAccept.find("label[for='rating.negative']").attr('for', 'accept.rating.negative')
 
-    /* rateAccept.find("input[id='accept.rating.positive']").prop("checked", true); */
+    if (settings.defaultratings) rateAccept.find("input[id='accept.rating.positive']").prop("checked", true);
 
     var rateDecline = injects.decline.form.find(path)
     rateDecline.find("input[id='rating.positive']").attr('id', 'decline.rating.positive')
     rateDecline.find("input[id='rating.negative']").attr('id', 'decline.rating.negative')
     rateDecline.find("label[for='rating.positive']").attr('for', 'decline.rating.positive')
     rateDecline.find("label[for='rating.negative']").attr('for', 'decline.rating.negative')
+
+    if (settings.defaultratings) rateDecline.find("input[id='decline.rating.negative']").prop("checked", true);
 
     $('#loading-spinner').hide()
   }

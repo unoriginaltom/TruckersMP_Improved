@@ -208,6 +208,7 @@ function loadSettings(callBack) {
         viewappealblank: true,
         viewreportblank: true,
         enablebanlength: true,
+        defaultratings: false,
         enablefeedbackimprovement: true,
         viewfeedbackblank: true,
         separator: ','
