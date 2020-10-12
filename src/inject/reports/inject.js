@@ -750,6 +750,13 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       videoModal.find('.modal-body').html('')
     })
 
+    var occurred = tbody.find('tr:nth-child(5) > td:nth-child(2)');
+    var occurdate = Date.parse(fixDate(occurred.text()));
+    var now = (new Date()).getTime();
+    if (now - occurdate >= day * 32) occurred.css('color', 'red');
+    else if (now - occurdate >= day * 27) occurred.css('color', 'orange');
+    else occurred.css('color', 'green');
+
     if (settings.enablebanlength === true) {
       $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
     /*}
