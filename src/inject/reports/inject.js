@@ -118,14 +118,15 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   function accept_modal_init() {
     var reasonMax = 190
-    $("<div id='reasonCount'>0/" + reasonMax + '</div>').insertAfter(injects.accept.reason)
+    var reasonLength = (injects.accept.reason.val() ? injects.accept.reason.val().length : 0)
+    $('<div id="reasonCount">' + reasonLength + "/" + reasonMax + '</div>').insertAfter(injects.accept.reason)
     var reasonCount = $('#reasonCount')
 
     addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('accept') + '</div>')
     addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons('comments'))
 
     $(injects.date_buttons).html(construct_dates(OwnDates))
-    $('input[id="perma.false"]').prop('checked', true)
+    //$('input[id="perma.false"]').prop('checked', true)
 
     // ===== DateTime and Reason inputs checking =====
     injects.accept.form.on('submit', function (event) {
