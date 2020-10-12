@@ -32,6 +32,39 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     }
   }
 
+  const tbody = $("body > div.wrapper > div.container.content > div:nth-child(2) > div > div:nth-child(1) > table > tbody");
+
+  const users = {
+   reporter: tbody.find("tr:nth-child(1) > td:nth-child(2) a"),
+   perpetrator: tbody.find("tr:nth-child(2) > td:nth-child(2) a"),
+   admin: tbody.find("tr:nth-child(7) > td:nth-child(2) > a")
+  };
+
+  let cannedVariables = {
+    'report.language': tbody.find("tr:nth-child(9) > td:nth-child(2)").text().trim(),
+    'report.reason': tbody.find('tr:nth-child(8) > td:nth-child(2) > strong').text(),
+    'user.username': users.reporter.text(),
+    'user.id': users.reporter.attr('href').split('/')[4],
+    'perpetrator.username': users.perpetrator.text(),
+    'perpetrator.id': users.perpetrator.attr('href').split('/')[4],
+    'perpetrator.steam_id': tbody.find("tr:nth-child(3) > td:nth-child(2) > a").text().trim(),
+    'admin.username': users.admin.text(),
+    'admin.id': users.admin.attr('href').split('/')[4],
+    'admin.group.name': 'Staff Member'
+   };
+
+  function fetchAdminGroupName () {
+    $.ajax({
+      url: users.admin.attr('href'),
+      type: 'GET',
+      success: function (data) {
+        var profile = $(data).find('div.profile-bio');
+        cannedVariables["admin.group.name"] = profile.text().substr(profile.text().indexOf('Rank:')).split("\n")[0].replace("Rank: ","");
+        comment_language();
+      }
+    });
+  }
+
   // Fixes word dates
   var day = 60 * 60 * 24 * 1000
   var fixDate = function (date) {
@@ -272,6 +305,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   var lastinsertpos;
 
   function setReason(reason, reason_val) {
+    reason_val = updateMessageWithCannedVariables(reason_val);
     if ($(reason).val() == "") {
       $(reason).val(reason_val);
     } else {
@@ -280,6 +314,14 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       lastinsertpos = $(reason).prop('selectionStart');
     }
     $(reason).focus();
+  }
+
+  const updateMessageWithCannedVariables = original => {
+    let new_msg = original;
+    Object.keys(cannedVariables).forEach(k => {
+      new_msg = new_msg.replace(`%${k}%`, cannedVariables[k]);
+    });
+    return new_msg;
   }
 
   $('body').append("<div class='modal fade ets2mp-modal' id='videoModal' tabindex='-1' role='dialog''TMP Improved (inject/reports)',  aria-labelledby='videoModalLabel' aria-hidden='true'><div class='modal-dialog 'TMP Improved (inject/reports)', modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title' id='videoModalLabel'>Video preview</h4></div><div class='modal-body' style='padding:0;'></div></div></div></div>")
@@ -335,7 +377,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
           comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.'
       }
     } else {
-      comment = settings.own_comment
+      comment = updateMessageWithCannedVariables(settings.own_comment);
     }
     injects.accept.comment.val(comment)
   }
@@ -682,6 +724,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     viewReportBlankInit()
     evidencePasteInit()
     fixModals()
+    setTimeout(fetchAdminGroupName, 500)
   }
 
   var now = moment.utc() // Moment.js init
