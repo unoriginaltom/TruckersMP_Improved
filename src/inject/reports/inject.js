@@ -49,7 +49,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     'perpetrator.id': users.perpetrator.attr('href').split('/')[4],
     'perpetrator.steam_id': tbody.find("tr:nth-child(3) > td:nth-child(2) > a").text().trim(),
     'admin.username': users.admin.text(),
-    'admin.id': users.admin.attr('href').split('/')[4],
+    'admin.id': (!users.admin.text() ? 0 : users.admin.attr('href').split('/')[4]),
     'admin.group.name': 'Staff Member'
    };
 
@@ -60,7 +60,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       success: function (data) {
         var profile = $(data).find('div.profile-bio');
         cannedVariables["admin.group.name"] = profile.text().substr(profile.text().indexOf('Rank:')).split("\n")[0].replace("Rank: ","");
-        comment_language();
+        if (settings.localisedcomment) comment_language();
       }
     });
   }
