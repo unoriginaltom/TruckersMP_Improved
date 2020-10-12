@@ -47,7 +47,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     'user.id': users.reporter.attr('href').split('/')[4],
     'perpetrator.username': users.perpetrator.text(),
     'perpetrator.id': users.perpetrator.attr('href').split('/')[4],
-    'perpetrator.steam_id': tbody.find("tr:nth-child(3) > td:nth-child(2) > a").text().trim(),
+    'perpetrator.steam_id': tbody.find("tr:nth-child(3) > td > a").text().trim(),
     'admin.username': users.admin.text(),
     'admin.id': (!users.admin.text() ? 0 : users.admin.attr('href').split('/')[4]),
     'admin.group.name': 'Staff Member'
@@ -758,7 +758,35 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     }
 
     injects.summary.perpetrator_label.next().append('<br><kbd id="registerdate" style="margin-left: 2px;">Registered: ...</kbd>');
+    injects.summary.perpetrator_label.next().find('kbd:nth-child(1)').after('<a style="margin-left: 1px;" id="copyname"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy username"></i></a>');
+    injects.summary.perpetrator_label.next().find('span').after('<a style="margin-left: 1px;" id="copyid"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy TMP ID"></i></a>');
+    tbody.find('tr:nth-child(3) > td > a').append('<a id="copysteamid"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy SteamID"></i></a>');
     
+    $('#copyname').on('click', function (event) {
+      event.preventDefault()
+      copyToClipboard(cannedVariables["perpetrator.username"])
+      $(this).children().first().removeClass("fa-copy").addClass("fa-check");
+      setTimeout(() => {
+        $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+      },2000);
+    })
+    $('#copyid').on('click', function (event) {
+      event.preventDefault()
+      copyToClipboard(cannedVariables["perpetrator.id"])
+      $(this).children().first().removeClass("fa-copy").addClass("fa-check");
+      setTimeout(() => {
+        $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+      },2000);
+    })
+    $('#copysteamid').on('click', function (event) {
+      event.preventDefault()
+      copyToClipboard(cannedVariables["perpetrator.steam_id"])
+      $(this).children().first().removeClass("fa-copy").addClass("fa-check");
+      setTimeout(() => {
+        $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+      },2000);
+    })
+
     $('.youtube').YouTubeModal({
       autoplay: 0,
       width: 640,
