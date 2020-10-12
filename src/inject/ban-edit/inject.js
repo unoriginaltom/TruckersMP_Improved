@@ -185,20 +185,65 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   var reason_buttons = construct_buttons(OwnReasons);
   $('<div class="ban-reasons">' + reason_buttons + '</div>').insertAfter('input[name=reason]');
 
+  //check if input beginning is URL or non-alphanumeric
+  function checkUrlOrDelimiter(str) {
+    if (str.startsWith('http')) return true;
+    var code = str.charCodeAt(0);
+    if (!(code > 47 && code < 58) && // numeric (0-9)
+    !(code > 64 && code < 91) && // upper alpha (A-Z)
+    !(code > 96 && code < 123)) return true;// lower alpha (a-z)
+    return false;
+  }
+
   $('.plusreason').on('click', function (event) {
     event.preventDefault();
 
     var reason_val = reason.val();
     var sp = (settings.separator) ? settings.separator : ',';
 
-    if ($(this).data('place') == 'before') {
-      reason.val(decodeURI($(this).data("text")) + ' ' + reason_val.trim() + ' ');
-    } else if ($(this).data('place') == 'after-wo') {
-      reason.val(reason_val.trim() + ' ' + decodeURI($(this).data("text")) + ' ');
-    } else if (reason_val.length) {
-      reason.val(reason_val.trim() + sp + ' ' + decodeURI($(this).data("text")) + ' ');
-    } else {
-      reason.val(decodeURI($(this).data("text")) + ' ');
+    if ($(this).data('place') == 'before') { // prefixes
+      reason.val(decodeURI(String($(this).data('text'))) + ' ' + reason_val.trimStart())
+    } else if ($(this).data('place') == 'after-wo') { // suffixes
+      reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data('text'))))
+    } else if (reason_val.length) { // reasons non-empty
+      var pos = reason.prop('selectionStart');
+      
+      if (!pos) { //cursor at start
+        reason.val(reason_val.trimStart());
+        reason[0].setRangeText(decodeURI(String($(this).data('text'))) + (checkUrlOrDelimiter(reason_val.trim()) ? '' : sp) + (reason_val[0] === ' ' ? '' : ' '), 0, 0, 'end');
+      } else {
+        //move cursor out of suffix
+        if (reason_val.lastIndexOf(" // ") > reason_val.lastIndexOf(" || ")) {
+          pos = Math.min(pos, reason_val.length - reason_val.split(" // ").pop().length - 4);
+        } else if (reason_val.lastIndexOf(" // ") < reason_val.lastIndexOf(" || ")) {
+          pos = Math.min(pos, reason_val.length - reason_val.split(" || ").pop().length - 4);
+        }
+        //move cursor behind current word
+        var new_pos = reason_val.trimEnd().length;
+        [',',' - http',' http',' /'].forEach(el => {
+          if (reason_val.indexOf(el, pos-2) > -1) new_pos = Math.min(new_pos, reason_val.indexOf(el, pos-2));
+        });
+        pos = reason_val[new_pos] == ',' ? new_pos + 1 : new_pos;
+        //Insert
+        var before = reason_val.substring(0, pos).trimEnd();
+        var len = before.length - 1
+        switch (before[len]) {
+          case ',':
+            reason[0].setRangeText(before + ' ' + decodeURI(String($(this).data('text'))) + (checkUrlOrDelimiter(reason_val.substr(pos).trim()) ? '' : sp) + ' ', 0, pos + 1, 'end');
+            break;
+          case '/': case '+':
+            if (before[len - 1] === " ") {
+              reason[0].setRangeText(before + ' ' + decodeURI(String($(this).data('text'))) + (checkUrlOrDelimiter(reason_val.substr(pos).trim()) ? '' : sp) + ' ', 0, pos + 1, 'end');
+              break;
+            }
+          default:
+            if (before.split(" ").pop().startsWith('http')) reason[0].setRangeText(before + ' / ' + decodeURI(String($(this).data('text'))) + ' ', 0, pos + 1, 'end');
+            else reason[0].setRangeText(before + sp + ' ' + decodeURI(String($(this).data('text'))) + ' ', 0, pos + 1, 'end');
+            break;
+        }
+      }
+    } else { // reasons empty
+      reason.val(decodeURI(String($(this).data('text'))) + ' ')
     }
     reason.focus();
     reasonMaxLength();

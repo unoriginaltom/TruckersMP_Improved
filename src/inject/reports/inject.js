@@ -187,7 +187,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
           //move cursor behind current word
           var new_pos = reason_val.trimEnd().length;
           [',',' - http',' http',' /'].forEach(el => {
-            if (reason_val.indexOf(el, pos-1) > -1) new_pos = Math.min(new_pos, reason_val.indexOf(el, pos-1));
+            if (reason_val.indexOf(el, pos-2) > -1) new_pos = Math.min(new_pos, reason_val.indexOf(el, pos-2));
           });
           pos = reason_val[new_pos] == ',' ? new_pos + 1 : new_pos;
           //Insert
