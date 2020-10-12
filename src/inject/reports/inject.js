@@ -51,7 +51,21 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     'admin.username': users.admin.text(),
     'admin.id': (!users.admin.text() ? 0 : users.admin.attr('href').split('/')[4]),
     'admin.group.name': 'Staff Member'
-   };
+  };
+
+  var perpetratorProfile;
+
+  function fetchPerpetratorProfile () {
+    $.ajax({
+      url: $(injects.summary.perpetrator_link).attr('href'),
+      type: 'GET',
+      success: function (data) {
+        perpetratorProfile = data;
+        checkBanLength();
+        registered();
+      }
+    });
+  }
 
   function fetchAdminGroupName () {
     $.ajax({
@@ -63,6 +77,12 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         if (settings.localisedcomment) comment_language();
       }
     });
+  }
+
+  function registered () {
+    var profile = $(perpetratorProfile).find('div.profile-bio');
+    var regDate = profile.text().substr(profile.text().indexOf('Member since:')).split("\n")[0].replace("Member since: ","");
+    injects.summary.perpetrator_label.next().find('#registerdate').text('Registered: ' + regDate);
   }
 
   // Fixes word dates
@@ -715,6 +735,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   function init() {
     content_links()
+    fetchPerpetratorProfile()
     if (settings.localisedcomment) comment_language()
     //bans_count_fetch()
     ban_history_table_improving()
@@ -734,6 +755,9 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     if (settings.wide !== false) {
       $('div.container.content').css('width', '85%')
     }
+
+    injects.summary.perpetrator_label.next().append('<br><kbd id="registerdate" style="margin-left: 2px;">Registered: ...</kbd>');
+    
     $('.youtube').YouTubeModal({
       autoplay: 0,
       width: 640,
@@ -758,101 +782,97 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     else occurred.css('color', 'green');
 
     if (settings.enablebanlength === true) {
-      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
-    /*}
+      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div>' + /*<a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a> + */'</div></div>');
+    }
     $('#check-ban-length').click(function (e) {
-      e.preventDefault()*/
-      $('#loading-spinner').show()
-      $('#check-ban-length').remove()
-      $('div.loading-for-bans').show()
-
-      var userProfileLink = $(injects.summary.perpetrator_link).attr('href')
-      $.ajax({
-        url: /*'https://truckersmp.com' + */userProfileLink,
-        type: 'GET',
-        success: function (data) {
-          // Gets all bans
-          var bans = $(data).find('.profile-body .panel-profile:last-child .timeline-v2 > li')
-          var activeBans = 0,
-            bans1m = 0,
-            bans3m = 0,
-            totalBans = 0
-          var active1m = false,
-            two_active_hist_bans = false,
-            active3m = false
-          // If the user is banned
-          var banned = false
-          if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text().toLowerCase().includes('banned')) {
-            banned = true
-          }
-
-          $.each(bans, function (index, ban) {
-            // @BANBYMISTAKE is not counted
-            var reason = $(ban).find('.autolink').text().replaceAll(/(\s)+/g," ").replace("Reason: ","").trim()
-            if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === 'rgb(255, 0, 38)') {
-              return
-            }
-
-            var date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 1]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text()
-            var issuedOn = Date.parse(fixDate(date))
-            
-            var dateExp = $(ban).find('.autolink').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
-            if (dateExp === 'Never' || dateExp === 'Permanent') {
-              dateExp = date
-            }
-            var expires = Date.parse(fixDate(dateExp))
-
-            totalBans++;
-            if (expires - issuedOn >= day * 85) {
-              bans3m++
-            } else if (expires - issuedOn >= day * 27) {
-              bans1m++
-            }
-            if ((new Date()).getTime() - day * 365 <= expires) {
-              activeBans++
-              if (expires - issuedOn >= day * 85) {
-                if (active3m || active1m) two_active_hist_bans = true;
-                active3m = true
-              } else if (expires - issuedOn >= day * 27) {
-                if (active1m || active3m) two_active_hist_bans = true;
-                active1m = true
-              }
-            }
-          })
-
-          var html = '<div class="col-md-6 text-center" style="align-self: center"><kbd'
-          if (banned) {
-            html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd'
-          }
-          // Length checks
-          if (two_active_hist_bans || (activeBans >= 4 && active1m)) {
-            html += ' style="color: rgb(212, 63, 58)">Permanent'
-          } else if (activeBans >= 3) {
-            html += ' style="color: rgb(212, 63, 58)">1 month'
-          } else {
-            html += '>You can choose :)'
-          }
-          html += '</kbd><br /><br /><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div>'
-          // Information
-          html += '<div class="col-md-6 text-center">'
-          //html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
-          html += 'Active bans: ' + activeBans + '<br />'
-          html += 'Total bans: ' + totalBans + '<br />'
-          html += '1 month bans: ' + bans1m + '<br />'
-          html += '3 month bans: ' + bans3m + '<br />'
-          html += 'Active 1 month ban: ' + (active1m || active3m)/* + '<br />'
-          html += 'Active 3 month ban: ' + active3m*/
-          //html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
-          html += '</div>'
-          $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html)
-
-          $('#loading-spinner').hide()
-          $('div.loading-for-bans').hide()
-        }
-      })
-    }//)
-
+      e.preventDefault()
+      checkBanLength()
+    })
   })
+
+  function checkBanLength () {
+    $('#loading-spinner').show()
+    //$('#check-ban-length').remove()
+    $('div.loading-for-bans').show()
+
+    // Gets all bans
+    var bans = $(perpetratorProfile).find('.profile-body .panel-profile:last-child .timeline-v2 > li')
+    var activeBans = 0,
+      bans1m = 0,
+      bans3m = 0,
+      totalBans = 0
+    var active1m = false,
+      two_active_hist_bans = false,
+      active3m = false
+    // If the user is banned
+    var banned = false
+    if ($(perpetratorProfile).find('.profile-body .panel-profile .profile-bio .label-red').text().toLowerCase().includes('banned')) {
+      banned = true
+    }
+
+    $.each(bans, function (index, ban) {
+      // @BANBYMISTAKE is not counted
+      var reason = $(ban).find('.autolink').text().replaceAll(/(\s)+/g," ").replace("Reason: ","").trim()
+      if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === 'rgb(255, 0, 38)') {
+        return
+      }
+
+      var date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 1]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text()
+      var issuedOn = Date.parse(fixDate(date))
+      
+      var dateExp = $(ban).find('.autolink').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
+      if (dateExp === 'Never' || dateExp === 'Permanent') {
+        dateExp = date
+      }
+      var expires = Date.parse(fixDate(dateExp))
+
+      totalBans++;
+      if (expires - issuedOn >= day * 85) {
+        bans3m++
+      } else if (expires - issuedOn >= day * 27) {
+        bans1m++
+      }
+      if ((new Date()).getTime() - day * 365 <= expires) {
+        activeBans++
+        if (expires - issuedOn >= day * 85) {
+          if (active3m || active1m) two_active_hist_bans = true;
+          active3m = true
+        } else if (expires - issuedOn >= day * 27) {
+          if (active1m || active3m) two_active_hist_bans = true;
+          active1m = true
+        }
+      }
+    })
+
+    var html = '<div class="col-md-6 text-center" style="align-self: center"><kbd'
+    if (banned) {
+      html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd'
+    }
+    // Length checks
+    if (two_active_hist_bans || (activeBans >= 4 && active1m)) {
+      html += ' style="color: rgb(212, 63, 58)">Permanent'
+    } else if (activeBans >= 3) {
+      html += ' style="color: rgb(212, 63, 58)">1 month'
+    } else {
+      html += '>You can choose :)'
+    }
+    html += '</kbd><br /><br /><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div>'
+    // Information
+    html += '<div class="col-md-6 text-center">'
+    //html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
+    html += 'Active bans: ' + activeBans + '<br />'
+    html += 'Total bans: ' + totalBans + '<br />'
+    html += '1 month bans: ' + bans1m + '<br />'
+    html += '3 month bans: ' + bans3m + '<br />'
+    html += 'Active 1 month ban: ' + (active1m || active3m)/* + '<br />'
+    html += 'Active 3 month ban: ' + active3m*/
+    //html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
+    html += '</div>'
+    $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html)
+
+    $('#loading-spinner').hide()
+    $('div.loading-for-bans').hide()
+  }
 
   init()
 
