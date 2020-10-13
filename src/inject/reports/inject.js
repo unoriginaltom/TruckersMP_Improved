@@ -84,15 +84,92 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   }
 
   function fetchAdminGroupName () {
-    $.ajax({
-      url: users.admin.attr('href'),
-      type: 'GET',
-      success: function (data) {
-        var profile = $(data).find('div.profile-bio');
-        cannedVariables["admin.group.name"] = profile.text().substr(profile.text().indexOf('Rank:')).split("\n")[0].replace("Rank: ","");
+    switch (users.admin.css('color').replaceAll(" ","")){
+      case 'rgb(244,67,54)':
+        cannedVariables["admin.group.name"] = 'Game Moderator';
         if (settings.localisedcomment) comment_language();
-      }
-    });
+        break;
+      case 'rgb(255,82,82)':
+        cannedVariables["admin.group.name"] = 'Report Moderator';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(211,47,47)':
+        cannedVariables["admin.group.name"] = 'Game Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(183,28,28)':
+        cannedVariables["admin.group.name"] = 'Senior Game Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,184,212)':
+        cannedVariables["admin.group.name"] = 'Translation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,166,212)':
+        cannedVariables["admin.group.name"] = 'Senior Translation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(21,101,192)':
+        cannedVariables["admin.group.name"] = 'Event Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(13,71,161)':
+        cannedVariables["admin.group.name"] = 'Senior Event Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(255,143,0)':
+        cannedVariables["admin.group.name"] = 'Media Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,131,143)':
+        cannedVariables["admin.group.name"] = 'Community Moderation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,96,100)':
+        cannedVariables["admin.group.name"] = 'Senior Community Moderation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(236,64,122)':
+        cannedVariables["admin.group.name"] = 'Support Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(216,27,96)':
+        cannedVariables["admin.group.name"] = 'Senior Support Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(230,74,25)':
+        cannedVariables["admin.group.name"] = 'Community Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(191,54,12)':
+        cannedVariables["admin.group.name"] = 'Senior Community Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(126,87,194)':
+        cannedVariables["admin.group.name"] = 'Add-On Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(96,125,139)':
+        cannedVariables["admin.group.name"] = 'Service and Data Analyst';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(103,58,183)':
+        cannedVariables["admin.group.name"] = 'Developer';
+        if (settings.localisedcomment) comment_language();
+        break;
+      default:     
+        $.ajax({
+          url: users.admin.attr('href'),
+          type: 'GET',
+          success: function (data) {
+            console.log('admin role unknown or ambiguous, profile fetched');
+            var profile = $(data).find('div.profile-bio');
+            cannedVariables["admin.group.name"] = profile.text().substr(profile.text().indexOf('Rank:')).split("\n")[0].replace("Rank: ","");
+            if (settings.localisedcomment) comment_language();
+          }
+        });
+        break;
+    }
   }
 
   function registered () {
@@ -764,7 +841,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     viewReportBlankInit()
     evidencePasteInit()
     fixModals()
-    setTimeout(fetchAdminGroupName, 500)
+    if (users.admin.text()) setTimeout(fetchAdminGroupName, 500)
   }
 
   var now = moment.utc() // Moment.js init
@@ -829,10 +906,10 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     if (settings.enablebanlength === true) {
       $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div>' + /*<a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a> + */'</div></div>');
     }
-    $('#check-ban-length').click(function (e) {
+    /*$('#check-ban-length').click(function (e) {
       e.preventDefault()
       checkBanLength()
-    })
+    })*/
   })
 
   function checkBanLength () {
