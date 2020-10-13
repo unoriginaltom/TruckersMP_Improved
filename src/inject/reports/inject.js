@@ -77,7 +77,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       type: 'GET',
       success: function (data) {
         perpetratorProfile = data;
-        checkBanLength();
+        if (settings.enablebanlength === true) checkBanLength();
         registered();
       }
     });
