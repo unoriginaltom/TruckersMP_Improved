@@ -939,7 +939,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         return
       }
 
-      var date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 1]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text()
+      var date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 2]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text()
       var issuedOn = Date.parse(fixDate(date))
       
       var dateExp = $(ban).find('.autolink').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
