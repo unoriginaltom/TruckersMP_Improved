@@ -854,6 +854,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     injects.summary.perpetrator_label.next().find('kbd:nth-child(1)').after('<a style="margin-left: 1px;" id="copyname"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy username"></i></a>');
     injects.summary.perpetrator_label.next().find('span').after('<a style="margin-left: 1px;" id="copyid"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy TMP ID"></i></a>');
     tbody.find('tr:nth-child(3) > td > a').append('<a id="copysteamid"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy SteamID"></i></a>');
+    injects.accept.reason.attr('autocomplete','off');
     
     $('#copyname').on('click', function (event) {
       event.preventDefault()
