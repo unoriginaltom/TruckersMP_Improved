@@ -32,7 +32,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     }
   }
 
-  const tbody = $("body > div.wrapper > div.container.content > div:nth-child(2) > div > div:nth-child(1) > table > tbody");
+  const tbody = $('html').find('tbody').first();
 
   const users = {
    reporter: tbody.find("tr:nth-child(1) > td:nth-child(2) a"),
@@ -44,14 +44,30 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     'report.language': tbody.find("tr:nth-child(9) > td:nth-child(2)").text().trim(),
     'report.reason': tbody.find('tr:nth-child(8) > td:nth-child(2) > strong').text(),
     'user.username': users.reporter.text(),
-    'user.id': users.reporter.attr('href').split('/')[4],
+    'user.id': 0,
     'perpetrator.username': users.perpetrator.text(),
-    'perpetrator.id': users.perpetrator.attr('href').split('/')[4],
+    'perpetrator.id': 0,
     'perpetrator.steam_id': tbody.find("tr:nth-child(3) > td > a").text().trim(),
     'admin.username': users.admin.text(),
-    'admin.id': (!users.admin.text() ? 0 : users.admin.attr('href').split('/')[4]),
+    'admin.id': 0,
     'admin.group.name': 'Staff Member'
   };
+
+  try {
+    cannedVariables["user.id"] = users.reporter.attr('href').split('/')[4]
+  } catch (e) {
+    console.log("Couldn't set canned variables for reporter ID: " + e.toString())
+  }
+  try {
+    cannedVariables["perpetrator.id"] = users.perpetrator.attr('href').split('/')[4]
+  } catch (e) {
+    console.log("Couldn't set canned variables for perpetrator ID: " + e.toString())
+  }
+  try {
+    cannedVariables["admin.id"] = (!users.admin.text() ? 0 : users.admin.attr('href').split('/')[4])
+  } catch (e) {
+    console.log("Couldn't set canned variables for admin ID: " + e.toString())
+  }
 
   var perpetratorProfile;
 
