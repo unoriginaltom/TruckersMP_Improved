@@ -28,7 +28,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
    'ban.expires': tbody.find("tr:nth-child(5) > td:nth-child(2) > strong").text(),
    'ban.reason': tbody.find('.autolinkage').text(),
    'ban.user.username': users.banned.text(),
-   'ban.user.id': users.banned.attr('href').split('/')[2],
+   'ban.user.id': (!users.banned.text() ? 0 : users.banned.attr('href').split('/')[4]),
    'ban.user.steam_id': tbody.find("tr:nth-child(2) > td:nth-child(2) > a").text().trim()
   };
 
@@ -37,7 +37,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     cannedVariables['admin.id'] = "";
   } else {
     cannedVariables['admin.username'] = users.admin.text();
-    cannedVariables['admin.id'] = users.admin.attr('href').split('/')[2];
+    cannedVariables['admin.id'] = users.admin.attr('href').split('/')[4];
   }
 
   function construct_buttons(type) {
@@ -180,7 +180,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     //   });
     // }
 
-    var perpetrator_id = perpetrator_link.attr('href').replace('https://truckersmp.com/user/', '');
+    var perpetrator_id = cannedVariables["ban.user.id"];
     $.ajax({
       url: "https://api.truckersmp.com/v2/player/" + perpetrator_id,
       type: "GET",
@@ -253,7 +253,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     });
     
     // Add user's ID to the table
-    var banned_id = perpetrator_link.attr('href').replace('https://truckersmp.com/user/', '');
+    var banned_id = cannedVariables["ban.user.id"];
     perpetrator_link.parent().append(' <span class="badge badge-u">ID ' + banned_id + '</span>');
 
     // $.ajax({
