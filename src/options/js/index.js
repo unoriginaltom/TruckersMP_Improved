@@ -14,10 +14,12 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         separator: $('#separator').val(),
         own_comment: $('#own_comment').val().trim(),
         autoinsertsep: $('#autoinsertsep').is(':checked'),
+        localisedcomment: $('#localisedcomment').is(':checked'),
         enablelinknotifications: $('#enablelinknotifications').is(':checked'),
         viewappealblank: $('#viewappealblank').is(':checked'),
         viewreportblank: $('#viewreportblank').is(':checked'),
         enablebanlength: $('#enablebanlength').is(':checked'),
+        defaultratings: $('#defaultratings').is(':checked'),
         enablefeedbackimprovement: $('#enablefeedbackimprovement').is(':checked'),
         viewfeedbackblank: $('#viewfeedbackblank').is(':checked')
       };
@@ -51,6 +53,11 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       OwnDates: data.OwnDates,
       settings: data.settings
     };
+
+    // preserve skipped GitHub release
+    chrome.storage.local.get((res) => {
+      new_data.gitskip = res.gitskip;
+    })
 
     var steamapi_error = false;
     if (data.steamapi && data.steamapi !== 'none') {
@@ -218,10 +225,12 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         $('#img_previews').prop("checked", items.settings.img_previews);
         $('#wide').prop("checked", items.settings.wide);
         $('#autoinsertsep').prop("checked", items.settings.autoinsertsep);
+        $('#localisedcomment').prop("checked", items.settings.localisedcomment);
         $('#enablelinknotifications').prop("checked", items.settings.enablelinknotifications);
         $('#viewappealblank').prop("checked", items.settings.viewappealblank);
         $('#viewreportblank').prop("checked", items.settings.viewreportblank);
         $('#enablebanlength').prop("checked", items.settings.enablebanlength);
+        $('#defaultratings').prop("checked", items.settings.defaultratings);
         $('#enablefeedbackimprovement').prop("checked", items.settings.enablefeedbackimprovement);
         $('#viewfeedbackblank').prop("checked", items.settings.viewfeedbackblank);
       } catch (e) {
@@ -245,7 +254,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
   }
 
   function _imp() {
-    var _data = JSON.parse(this.result);
+    var _data = JSON.parse(this.result[0] == '"' ? this.result.slice(1, -1).replaceAll('\\\\', '\\').replaceAll('\\"', '"').replaceAll("Â§", "§").replaceAll("ยง", "§") : this.result);
 
     var compare = versionCompare(_data.last_version, chrome.runtime.getManifest().version);
     if (compare === 1) {

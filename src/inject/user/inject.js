@@ -9,7 +9,9 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         "active1m": "Active 1 month ban",
         "activeBans": "Total active bans",
         "banned": "Currently banned",
-        "bans1m": "Total history bans",
+        "bans1m": "Total 1 month bans",
+        "bans3m": "Total 3 month bans",
+        "twoActiveHistBans": "Two active history bans",
         "nextBan": "Next ban"
       },
       "vals": {
@@ -36,7 +38,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     <div class="modal-dialog" role="document">
       <div class="modal-content">
         <div class="modal-header">
-          <h5 class="modal-title" id="exampleModalLongTitle">Ban Length Check</h5>
+          <h5 class="modal-title" id="exampleModalLongTitle">Ban Stats</h5>
           <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
           </button>

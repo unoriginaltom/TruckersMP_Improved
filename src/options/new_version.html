@@ -28,11 +28,14 @@
         </p>
 
         <p>
-          Developed and supported by
+          Originally developed and supported by
           <a href="https://github.com/cjmaxik" target="_blank" rel="noreferrer nofollow noopener">CJMAXiK</a> in
           collaboration with
           <a href="https://github.com/ShawnCZek" target="_blank" rel="noreferrer nofollow noopener">ShawnCZek</a> and <a
             href="https://github.com/dequeues" target="_blank" rel="noreferrer nofollow noopener">Nathan</a>
+          <br>
+          Now maintained by
+          <a href="https://github.com/Flybel" target="_blank" rel="noreferrer nofollow noopener">Flybel</a>
           <br>
           <small>
             Huge thanks to
@@ -40,14 +43,16 @@
             <a href="https://github.com/math-98" target="_blank" rel="noreferrer nofollow noopener">math-98</a>,
             <a href="https://github.com/AlexKERNEL" target="_blank" rel="noreferrer nofollow noopener">AlexKERNEL</a>,
             <a href="https://github.com/CaptainKostaZ" target="_blank" rel="noreferrer nofollow noopener">CaptainKostaZ</a>,
-            <a href="https://github.com/jean8mathieu" target="_blank" rel="noreferrer nofollow noopener">J-M</a>.
+            <a href="https://github.com/jean8mathieu" target="_blank" rel="noreferrer nofollow noopener">J-M</a>,
+            <a href="https://github.com/LasseNiermann" target="_blank" rel="noreferrer nofollow noopener">Lasse</a>,
+            <a href="https://github.com/mrnat7471" target="_blank" rel="noreferrer nofollow noopener">Nathan7471</a>.
           </small>
         </p>
 
         <p>
           <strong>Any issues? Ideas? Suggestions?
-            <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" class="btn"
-              target="_blank" rel="noreferrer nofollow noopener">let us know!</a>
+            <a href="https://forum.truckersmp.com/index.php?/topic/99421-truckersmp-improved-lives/" class="btn"
+              target="_blank" rel="noreferrer nofollow noopener">let me know!</a>
           </strong>
         </p>
       </div>
@@ -57,12 +62,49 @@
       <div class="col">
         <h3 class="text-center">Changelog</h3>
         <ul class="disc changelog">
+          <h5>1.15.10</h5>
+          <li>Fixed issues that I introduced with canned messages</li>
+          <li>The occurred date in reports is now colorised to indicate whether the situation is too old to ban for</li>
+          <li>Show the date of registration for the perpetrator</li>
+          <li>Fixed ban length showing 0 initially when accepting a report against a banned player</li>
+          <li>Fixed ban length being set to temporary when accepting a report against a permanently banned player</li>
+          <li>Added copy buttons to perpetrator name, TMPID and SteamID in reports (useful when checking logs)</li>
+          
+          <h5>1.15.9</h5>
+          <li>Fixed ban length calculations, again</li>
+          <li>Added intelligent insertion of ban reasons near the cursor</li>
+          <li>Added canned variables to report comments and the auto-insert own comment</li>
+          <li>Added the option to automatically preselect positive rating for report accepts and negative for declines</li>
+          
+          <h5>1.15.8</h5>
+          <li>Ban length calculation support for the new bans UI</li>
+          <li>Sorting tables by clicking on a column is now temporary</li>
+          
+          <h5>1.15.7</h5>
+          <li>Removed online storage/login capabilities as they are not working</li>
+          <li>Importing old online storage settings sent by CJ on Discord is now possible</li>
+          <li>Fixed multiple links to old forum topics (thanks novice for reporting)</li>
+          <li>Fixed the update notification when being on a newer version that release</li>
+          
+          <h5>1.15.6</h5>
+          <li>Fixed the endless loading spinner when copying long YouTube URLs</li>
+          <li>Added a notification when a new release is created on Flybel's GitHub</li>
+          
+          <h5>1.15.5</h5>
+          <li>Fixed an issue where the ban reason dropdown menu would be very narrow when containing too many "|" symbols (thanks Patriktanki for reporting this)</li>
+          <li>Disabled obsolete enhancement of the "Previous bans" table in reports</li>
+          <li>Fixed the "Next ban" calculation logic in both reports and user profiles, removed extensions of 3 months (again)</li>
+          <li>Improved the layout of "Next ban" calculation in reports, removing redundancy and adding "Total bans" statistic</li>
+          <li>Always showing the "Next ban" information in reports if the functionality is enabled in the settings</li>
+          
           <h5>1.15.4</h5>
-          <li>Fixed "Check ban length" in reports</li>
-          <li>Removed 3m extension from "Next ban" on profiles</li>
-          <li>Updated links and icons in quick links widget</li>
-          <li>Updated and personalized default report accept message</li>
-
+          <li>Added option to disable automatic report comments completely (localised and own)</li>
+          <li>Reduced the amount of notifications when Link notifications option is turned off</li>
+          <li>The URL "Shorten + to clipboard" icon will now turn into a check mark to indicate copying was successful</li>
+          <li>Comments from the extension are now inserted at the position of the cursor instead of the end. Inserting multiple comments will add line breaks between them</li>
+          <li>The view button for reports now has a small bar on the right that indicates whether you have looked at the report before (red) or not (grey)</li>
+          <li>Fixed bilibili.com videos not being embedded due to a / at the end of the URL</li>
+          
           <h5>1.15.3</h5>
           <li>Added support for the timezone functionality on the website</li>
           <li>Fixed the year showing incorrectly or falsely not showing at all when using UTC</li>

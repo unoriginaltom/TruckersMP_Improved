@@ -14,7 +14,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       reason: accept_modal.find('div > div > form > div.modal-body > div:nth-child(6) > input')
     },
     bans: {
-      table: $('#ban a[href="#ban"]'),
+      table: $('#ban > div > table > tbody > tr'),
       header: $('#bans > div:nth-child(1) > h4 > a'),
       ban_toggler: $('#expired_bans_toggler').find('i')
     },
@@ -30,6 +30,152 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       reporter_link: $('table > tbody > tr:nth-child(1) > td:nth-child(2) > kbd > a'),
       reporter_label: $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(1) > table > tbody > tr:nth-child(1) > td:nth-child(1)')
     }
+  }
+
+  const tbody = $('html').find('tbody').first();
+
+  const users = {
+   reporter: tbody.find("tr:nth-child(1) > td:nth-child(2) a"),
+   perpetrator: tbody.find("tr:nth-child(2) > td:nth-child(2) a"),
+   admin: tbody.find("tr:nth-child(7) > td:nth-child(2) > a")
+  };
+
+  let cannedVariables = {
+    'report.language': tbody.find("tr:nth-child(9) > td:nth-child(2)").text().trim(),
+    'report.reason': tbody.find('tr:nth-child(8) > td:nth-child(2) > strong').text(),
+    'user.username': users.reporter.text(),
+    'user.id': 0,
+    'perpetrator.username': users.perpetrator.text(),
+    'perpetrator.id': 0,
+    'perpetrator.steam_id': tbody.find("tr:nth-child(3) > td > a").text().trim(),
+    'admin.username': users.admin.text(),
+    'admin.id': 0,
+    'admin.group.name': 'Staff Member'
+  };
+
+  try {
+    cannedVariables["user.id"] = users.reporter.attr('href').split('/')[4]
+  } catch (e) {
+    console.log("Couldn't set canned variables for reporter ID: " + e.toString())
+  }
+  try {
+    cannedVariables["perpetrator.id"] = users.perpetrator.attr('href').split('/')[4]
+  } catch (e) {
+    console.log("Couldn't set canned variables for perpetrator ID: " + e.toString())
+  }
+  try {
+    cannedVariables["admin.id"] = (!users.admin.text() ? 0 : users.admin.attr('href').split('/')[4])
+  } catch (e) {
+    console.log("Couldn't set canned variables for admin ID: " + e.toString())
+  }
+
+  var perpetratorProfile;
+
+  function fetchPerpetratorProfile () {
+    $.ajax({
+      url: $(injects.summary.perpetrator_link).attr('href'),
+      type: 'GET',
+      success: function (data) {
+        perpetratorProfile = data;
+        if (settings.enablebanlength === true) checkBanLength();
+        registered();
+      }
+    });
+  }
+
+  function fetchAdminGroupName () {
+    switch (users.admin.css('color').replaceAll(" ","")){
+      case 'rgb(244,67,54)':
+        cannedVariables["admin.group.name"] = 'Game Moderator';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(255,82,82)':
+        cannedVariables["admin.group.name"] = 'Report Moderator';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(211,47,47)':
+        cannedVariables["admin.group.name"] = 'Game Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(183,28,28)':
+        cannedVariables["admin.group.name"] = 'Senior Game Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,184,212)':
+        cannedVariables["admin.group.name"] = 'Translation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,166,212)':
+        cannedVariables["admin.group.name"] = 'Senior Translation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(21,101,192)':
+        cannedVariables["admin.group.name"] = 'Event Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(13,71,161)':
+        cannedVariables["admin.group.name"] = 'Senior Event Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(255,143,0)':
+        cannedVariables["admin.group.name"] = 'Media Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,131,143)':
+        cannedVariables["admin.group.name"] = 'Community Moderation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(0,96,100)':
+        cannedVariables["admin.group.name"] = 'Senior Community Moderation Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(236,64,122)':
+        cannedVariables["admin.group.name"] = 'Support Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(216,27,96)':
+        cannedVariables["admin.group.name"] = 'Senior Support Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(230,74,25)':
+        cannedVariables["admin.group.name"] = 'Community Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(191,54,12)':
+        cannedVariables["admin.group.name"] = 'Senior Community Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(126,87,194)':
+        cannedVariables["admin.group.name"] = 'Add-On Manager';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(96,125,139)':
+        cannedVariables["admin.group.name"] = 'Service and Data Analyst';
+        if (settings.localisedcomment) comment_language();
+        break;
+      case 'rgb(103,58,183)':
+        cannedVariables["admin.group.name"] = 'Developer';
+        if (settings.localisedcomment) comment_language();
+        break;
+      default:     
+        $.ajax({
+          url: users.admin.attr('href'),
+          type: 'GET',
+          success: function (data) {
+            console.log('admin role unknown or ambiguous, profile fetched');
+            var profile = $(data).find('div.profile-bio');
+            cannedVariables["admin.group.name"] = profile.text().substr(profile.text().indexOf('Rank:')).split("\n")[0].replace("Rank: ","");
+            if (settings.localisedcomment) comment_language();
+          }
+        });
+        break;
+    }
+  }
+
+  function registered () {
+    var profile = $(perpetratorProfile).find('div.profile-bio');
+    var regDate = profile.text().substr(profile.text().indexOf('Member since:')).split("\n")[0].replace("Member since: ","");
+    injects.summary.perpetrator_label.next().find('#registerdate').text('Registered: ' + regDate);
   }
 
   // Fixes word dates
@@ -65,14 +211,15 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   function accept_modal_init() {
     var reasonMax = 190
-    $("<div id='reasonCount'>0/" + reasonMax + '</div>').insertAfter(injects.accept.reason)
+    var reasonLength = (injects.accept.reason.val() ? injects.accept.reason.val().length : 0)
+    $('<div id="reasonCount">' + reasonLength + "/" + reasonMax + '</div>').insertAfter(injects.accept.reason)
     var reasonCount = $('#reasonCount')
 
     addButtons($('input[name=reason]'), '<div class="ban-reasons">' + construct_buttons('accept') + '</div>')
     addButtons($('div.container.content').find('textarea[name=comment]'), construct_buttons('comments'))
 
     $(injects.date_buttons).html(construct_dates(OwnDates))
-    $('input[id="perma.false"]').prop('checked', true)
+    //$('input[id="perma.false"]').prop('checked', true)
 
     // ===== DateTime and Reason inputs checking =====
     injects.accept.form.on('submit', function (event) {
@@ -113,13 +260,48 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
         sp = (settings.separator) ? settings.separator : ',';
       }
 
-      if ($(this).data('place') == 'before') {
-        injects.accept.reason.val(decodeURI(String($(this).data('text'))) + ' ' + reason_val.trim() + ' ')
-      } else if ($(this).data('place') == 'after-wo') {
-        injects.accept.reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data('text'))) + ' ')
-      } else if (reason_val.length) {
-        injects.accept.reason.val(reason_val.trim() + sp + ' ' + decodeURI(String($(this).data('text'))) + ' ')
-      } else {
+      if ($(this).data('place') == 'before') { // prefixes
+        injects.accept.reason.val(decodeURI(String($(this).data('text'))) + ' ' + reason_val.trimStart())
+      } else if ($(this).data('place') == 'after-wo') { // suffixes
+        injects.accept.reason.val(reason_val.trim() + ' ' + decodeURI(String($(this).data('text'))))
+      } else if (reason_val.length) { // reasons non-empty
+        var pos = injects.accept.reason.prop('selectionStart');
+        
+        if (!pos) { //cursor at start
+          injects.accept.reason.val(reason_val.trimStart());
+          injects.accept.reason[0].setRangeText(decodeURI(String($(this).data('text'))) + (checkUrlOrDelimiter(reason_val.trim()) ? '' : sp) + (reason_val[0] === ' ' ? '' : ' '), 0, 0, 'end');
+        } else {
+          //move cursor out of suffix
+          if (reason_val.lastIndexOf(" // ") > reason_val.lastIndexOf(" || ")) {
+            pos = Math.min(pos, reason_val.length - reason_val.split(" // ").pop().length - 4);
+          } else if (reason_val.lastIndexOf(" // ") < reason_val.lastIndexOf(" || ")) {
+            pos = Math.min(pos, reason_val.length - reason_val.split(" || ").pop().length - 4);
+          }
+          //move cursor behind current word
+          var new_pos = reason_val.trimEnd().length;
+          [',',' - http',' http',' /'].forEach(el => {
+            if (reason_val.indexOf(el, pos-2) > -1) new_pos = Math.min(new_pos, reason_val.indexOf(el, pos-2));
+          });
+          pos = reason_val[new_pos] == ',' ? new_pos + 1 : new_pos;
+          //Insert
+          var before = reason_val.substring(0, pos).trimEnd();
+          var len = before.length - 1
+          switch (before[len]) {
+            case ',':
+              injects.accept.reason[0].setRangeText(before + ' ' + decodeURI(String($(this).data('text'))) + (checkUrlOrDelimiter(reason_val.substr(pos).trim()) ? '' : sp) + ' ', 0, pos + 1, 'end');
+              break;
+            case '/': case '+':
+              if (before[len - 1] === " ") {
+                injects.accept.reason[0].setRangeText(before + ' ' + decodeURI(String($(this).data('text'))) + (checkUrlOrDelimiter(reason_val.substr(pos).trim()) ? '' : sp) + ' ', 0, pos + 1, 'end');
+                break;
+              }
+            default:
+              if (before.split(" ").pop().startsWith('http')) injects.accept.reason[0].setRangeText(before + ' / ' + decodeURI(String($(this).data('text'))) + ' ', 0, pos + 1, 'end');
+              else injects.accept.reason[0].setRangeText(before + sp + ' ' + decodeURI(String($(this).data('text'))) + ' ', 0, pos + 1, 'end');
+              break;
+          }
+        }
+      } else { // reasons empty
         injects.accept.reason.val(decodeURI(String($(this).data('text'))) + ' ')
       }
       injects.accept.reason.focus()
@@ -175,6 +357,16 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       reasonCount.html(injects.accept.reason.val().length + '/' + reasonMax)
     }
 
+    //check if input beginning is URL or non-alphanumeric
+    function checkUrlOrDelimiter(str) {
+      if (str.startsWith('http')) return true;
+      var code = str.charCodeAt(0);
+      if (!(code > 47 && code < 58) && // numeric (0-9)
+      !(code > 64 && code < 91) && // upper alpha (A-Z)
+      !(code > 96 && code < 123)) return true;// lower alpha (a-z)
+      return false;
+    }
+
     injects.accept.reason.keyup(function () {
       checkReasonLength()
     })
@@ -224,13 +416,26 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     })
   }
 
+  var lastinsertpos;
+
   function setReason(reason, reason_val) {
-    if ($(reason).val() == '') {
-      $(reason).val(reason_val + ' ')
+    reason_val = updateMessageWithCannedVariables(reason_val);
+    if ($(reason).val() == "") {
+      $(reason).val(reason_val);
     } else {
-      $(reason).val($(reason).val().trim() + ' ' + reason_val + ' ')
+      var pos = $(reason).prop('selectionStart');
+      $(reason)[0].setRangeText((lastinsertpos === pos ? "\n\n" : "") + reason_val, pos, pos, 'end');
+      lastinsertpos = $(reason).prop('selectionStart');
     }
-    $(reason).focus()
+    $(reason).focus();
+  }
+
+  const updateMessageWithCannedVariables = original => {
+    let new_msg = original;
+    Object.keys(cannedVariables).forEach(k => {
+      new_msg = new_msg.replace(`%${k}%`, cannedVariables[k]);
+    });
+    return new_msg;
   }
 
   $('body').append("<div class='modal fade ets2mp-modal' id='videoModal' tabindex='-1' role='dialog''TMP Improved (inject/reports)',  aria-labelledby='videoModalLabel' aria-hidden='true'><div class='modal-dialog 'TMP Improved (inject/reports)', modal-lg' role='document'><div class='modal-content'><div class='modal-header'><button type='button' class='close' data-dismiss='modal' aria-label='Close'><span aria-hidden='true'>&times;</span></button><h4 class='modal-title' id='videoModalLabel'>Video preview</h4></div><div class='modal-body' style='padding:0;'></div></div></div></div>")
@@ -251,16 +456,50 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     var comment
 
     if (!settings.own_comment) {
-      var admin_name = ($('body > div.wrapper > div.header > div.container > div > ul > li.hoverSelector > span').text());
-      comment = "Hello,\n\nThank you for taking the time to file a report. I have reviewed the evidence and took action against the user. Please make sure the evidence you submitted remains available for the entire length of the issued ban, plus an additional month.\n\n---\n\n**§1.4 — Reporting users**\n> The evidence you provide us must be available for the length of the ban applied, plus one month. Evidence for permanent bans must be available forever.\n\nYou can find the full set of our rules [here](https://truckersmp.com/rules/)\n\n---\n\nKind regards,  " + admin_name;
+      switch (report_language) {
+        case 'German':
+          comment = 'Wir bedanken uns für deinen Report :) Es ist zu bedenken, dass die zur Verfügung gestellten Beweise sowohl für die gesamte Dauer des Banns als auch einen Monat darüber hinaus verfügbar sein müssen.'
+          break;
+        case 'Turkish':
+          comment = 'Raporunuz için teşekkürler :) Lütfen sunduğunuz kanıtın, yasağın uygulandığı ve takiben gelen bir(1) aylık süreç boyunca kullanılabilir olması gerektiğini lütfen unutmayın.'
+          break;
+        case 'Norwegian':
+          comment = 'Takk for rapporten :) Vennligst husk at bevis må være tilgjengelig for hele bannlysningspreioden pluss 1 måned'
+          break;
+        case 'Spanish':
+          comment = 'Muchas gracias por tu reporte :) Recuerda que las pruebas/evidencias deben estar disponibles durante toda la vigencia de la prohibicion y más 1 mes.'
+          break;
+        case 'Dutch':
+          comment = 'Bedankt voor je rapport :) Onthoud alsjeblieft dat het bewijs beschikbaar moet zijn voor de volledige lengte van de ban PLUS 1 maand.'
+          break;
+        case 'Polish':
+          comment = 'Dziękuję za report :) Proszę pamiętać o tym że dowód musi być dostępny przez cały okres bana, plus jeden miesiąc. '
+          break;
+        case 'Russian':
+          comment = 'Спасибо за репорт :) Помните, что доказательства должны быть доступны весь период бана ПЛЮС 1 месяц.'
+          break;
+        case 'French':
+          comment = 'Merci pour votre rapport :) Notez que la preuve doit être disponible durant toute la durée du ban PLUS 1 mois.'
+          break;
+        case 'Lithuanian':
+          comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.'
+          break;
+        case 'Portuguese':
+          comment = 'Obrigado por seu relatório :) Por favor, lembre-se que as provas devem estar disponíveis para a duração total da proibição MAIS 1 mês.'
+          break;
+        default:
+          comment = 'Thank you for your report :) Please, remember that evidence must be available for the full duration of the ban PLUS 1 month.'
+      }
     } else {
-      comment = settings.own_comment
+      comment = updateMessageWithCannedVariables(settings.own_comment);
     }
     injects.accept.comment.val(comment)
   }
 
   function bans_count_fetch() {
     function getUnbanTime(unban_time_td, banned_reason_td) {
+      var content = unban_time_td.split(/:\d\d/)
+      unban_time_td = unban_time_td.replace(content[1], "")
       var unban_time
       now = moment.utc()
       if (unban_time_td.indexOf('Today') !== -1) {
@@ -297,6 +536,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     var bans_count = 0
     var expired_bans_count = 0
     var nb_parts
+    console.log(injects.bans.table)
     injects.bans.table.each(function () {
       var ban_time_td = $(this).find('td:nth-child(1)').text()
       var unban_time_td = $(this).find('td:nth-child(2)').text()
@@ -563,13 +803,15 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     rateAccept.find("label[for='rating.positive']").attr('for', 'accept.rating.positive')
     rateAccept.find("label[for='rating.negative']").attr('for', 'accept.rating.negative')
 
-    /* rateAccept.find("input[id='accept.rating.positive']").prop("checked", true); */
+    if (settings.defaultratings) rateAccept.find("input[id='accept.rating.positive']").prop("checked", true);
 
     var rateDecline = injects.decline.form.find(path)
     rateDecline.find("input[id='rating.positive']").attr('id', 'decline.rating.positive')
     rateDecline.find("input[id='rating.negative']").attr('id', 'decline.rating.negative')
     rateDecline.find("label[for='rating.positive']").attr('for', 'decline.rating.positive')
     rateDecline.find("label[for='rating.negative']").attr('for', 'decline.rating.negative')
+
+    if (settings.defaultratings) rateDecline.find("input[id='decline.rating.negative']").prop("checked", true);
 
     $('#loading-spinner').hide()
   }
@@ -587,8 +829,9 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
 
   function init() {
     content_links()
-    comment_language()
-    bans_count_fetch()
+    fetchPerpetratorProfile()
+    if (settings.localisedcomment) comment_language()
+    //bans_count_fetch()
     ban_history_table_improving()
     accept_modal_init()
     decline_modal_init()
@@ -598,6 +841,7 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     viewReportBlankInit()
     evidencePasteInit()
     fixModals()
+    if (users.admin.text()) setTimeout(fetchAdminGroupName, 500)
   }
 
   var now = moment.utc() // Moment.js init
@@ -605,6 +849,38 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
     if (settings.wide !== false) {
       $('div.container.content').css('width', '85%')
     }
+
+    injects.summary.perpetrator_label.next().append('<br><kbd id="registerdate" style="margin-left: 2px;">Registered: ...</kbd>');
+    injects.summary.perpetrator_label.next().find('kbd:nth-child(1)').after('<a style="margin-left: 1px;" id="copyname"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy username"></i></a>');
+    injects.summary.perpetrator_label.next().find('span').after('<a style="margin-left: 1px;" id="copyid"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy TMP ID"></i></a>');
+    tbody.find('tr:nth-child(3) > td > a').append('<a id="copysteamid"><i class="fas fa-copy fa-fw" data-toggle="tooltip" title="" data-original-title="Copy SteamID"></i></a>');
+    injects.accept.reason.attr('autocomplete','off');
+    
+    $('#copyname').on('click', function (event) {
+      event.preventDefault()
+      copyToClipboard(cannedVariables["perpetrator.username"])
+      $(this).children().first().removeClass("fa-copy").addClass("fa-check");
+      setTimeout(() => {
+        $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+      },2000);
+    })
+    $('#copyid').on('click', function (event) {
+      event.preventDefault()
+      copyToClipboard(cannedVariables["perpetrator.id"])
+      $(this).children().first().removeClass("fa-copy").addClass("fa-check");
+      setTimeout(() => {
+        $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+      },2000);
+    })
+    $('#copysteamid').on('click', function (event) {
+      event.preventDefault()
+      copyToClipboard(cannedVariables["perpetrator.steam_id"])
+      $(this).children().first().removeClass("fa-copy").addClass("fa-check");
+      setTimeout(() => {
+        $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+      },2000);
+    })
+
     $('.youtube').YouTubeModal({
       autoplay: 0,
       width: 640,
@@ -621,88 +897,105 @@ let inject_init = () => { // eslint-disable-line no-unused-vars
       videoModal.find('.modal-body').html('')
     })
 
+    var occurred = tbody.find('tr:nth-child(5) > td:nth-child(2)');
+    var occurdate = Date.parse(fixDate(occurred.text()));
+    var now = (new Date()).getTime();
+    if (now - occurdate >= day * 32) occurred.css('color', 'red');
+    else if (now - occurdate >= day * 27) occurred.css('color', 'orange');
+    else occurred.css('color', 'green');
+
     if (settings.enablebanlength === true) {
-      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div><a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a></div></div>');
+      $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append('<hr class="small" /><h4>Recommended Ban length</h4><div style="display: flex"><div class="col-md-12"><div class="text-center"><div class="loading-for-bans" style="display: none;">Loading...</div>' + /*<a class="btn btn-block btn-success" href="#" id="check-ban-length">Check the recommended length of the next ban</a> + */'</div></div>');
     }
-    $('#check-ban-length').click(function (e) {
+    /*$('#check-ban-length').click(function (e) {
       e.preventDefault()
-      $('#loading-spinner').show()
-      $('#check-ban-length').remove()
-      $('div.loading-for-bans').show()
+      checkBanLength()
+    })*/
+  })
 
-      var userProfileLink = $(injects.summary.perpetrator_link).attr('href')
-      $.ajax({
-        url: userProfileLink,
-        type: 'GET',
-        success: function (data) {
-          // Gets all bans
-          var bans = $(data).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 > li')
-          var activeBans = 0,
-            bans1m = 0
-          var active1m = false
-          // If the user is banned
-          var banned = false
-          console.log($(data).find('.profile-body .panel-profile .profile-bio .label-red').text());
-          if ($(data).find('.profile-body .panel-profile .profile-bio .label-red').text().includes("Banned")) {
-            banned = true
-          }
+  function checkBanLength () {
+    $('#loading-spinner').show()
+    //$('#check-ban-length').remove()
+    $('div.loading-for-bans').show()
 
-          $.each(bans, function (index, ban) {
-            // @BANBYMISTAKE is not counted
-            var reason = $(ban).find('.cbp_tmlabel > .autolink').text().split(' : ')[1]
-            if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === 'rgb(255, 0, 38)') {
-              return
-            }
+    // Gets all bans
+    var bans = $(perpetratorProfile).find('.profile-body .panel-profile:last-child .timeline-v2 > li')
+    var activeBans = 0,
+      bans1m = 0,
+      bans3m = 0,
+      totalBans = 0
+    var active1m = false,
+      two_active_hist_bans = false,
+      active3m = false
+    // If the user is banned
+    var banned = false
+    if ($(perpetratorProfile).find('.profile-body .panel-profile .profile-bio .label-red').text().toLowerCase().includes('banned')) {
+      banned = true
+    }
 
-            var date = $(ban).find('.cbp_tmtime span:last-of-type').text()
-            var issuedOn = Date.parse(fixDate(date))
-            
-            var dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
-            if (dateExp === 'Never') {
-              dateExp = date
-            }
-            var expires = Date.parse(fixDate(dateExp))
+    $.each(bans, function (index, ban) {
+      // @BANBYMISTAKE is not counted
+      var reason = $(ban).find('.autolink').text().replaceAll(/(\s)+/g," ").replace("Reason: ","").trim()
+      if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === 'rgb(255, 0, 38)') {
+        return
+      }
 
-            if (expires - issuedOn >= day * 27) {
-              bans1m++
-            }
-            if ((new Date()).getTime() - day * 365 <= expires) {
-              activeBans++
-              if (expires - issuedOn >= day * 27) {
-                active1m = true
-              }
-            }
-          })
+      var date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 2]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text()
+      var issuedOn = Date.parse(fixDate(date))
+      
+      var dateExp = $(ban).find('.autolink').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1]
+      if (dateExp === 'Never' || dateExp === 'Permanent') {
+        dateExp = date
+      }
+      var expires = Date.parse(fixDate(dateExp))
 
-          var html = '<div class="col-md-6 text-center" style="align-self: center"><kbd'
-          if (banned) {
-            html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd'
-          }
-          // Length checks
-          if ((active1m >= 2) || (activeBans >= 4 && active1m)) {
-            html += ' style="color: rgb(212, 63, 58)">Permanent'
-          } else if (activeBans >= 3) {
-            html += ' style="color: rgb(212, 63, 58)">1 month'
-          } else {
-            html += '>You can choose :)'
-          }
-          html += '</kbd></div>'
-          // Information
-          html += '<div class="col-md-6 text-center">'
-          html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
-          html += 'Active bans: ' + activeBans + '<br />'
-          html += '1 month bans: ' + bans1m + '<br />'
-          html += 'Two active history bans: ' + active1m + '<br />'
-          html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
-          $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html)
-
-          $('#loading-spinner').hide()
-          $('div.loading-for-bans').hide()
+      totalBans++;
+      if (expires - issuedOn >= day * 85) {
+        bans3m++
+      } else if (expires - issuedOn >= day * 27) {
+        bans1m++
+      }
+      if ((new Date()).getTime() - day * 365 <= expires) {
+        activeBans++
+        if (expires - issuedOn >= day * 85) {
+          if (active3m || active1m) two_active_hist_bans = true;
+          active3m = true
+        } else if (expires - issuedOn >= day * 27) {
+          if (active1m || active3m) two_active_hist_bans = true;
+          active1m = true
         }
-      })
+      }
     })
 
-  })
+    var html = '<div class="col-md-6 text-center" style="align-self: center"><kbd'
+    if (banned) {
+      html += ' style="color: rgb(212, 63, 58)">The user is already banned!</kbd><br />Length of the next ban: <kbd'
+    }
+    // Length checks
+    if (two_active_hist_bans || (activeBans >= 4 && active1m)) {
+      html += ' style="color: rgb(212, 63, 58)">Permanent'
+    } else if (activeBans >= 3) {
+      html += ' style="color: rgb(212, 63, 58)">1 month'
+    } else {
+      html += '>You can choose :)'
+    }
+    html += '</kbd><br /><br /><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div>'
+    // Information
+    html += '<div class="col-md-6 text-center">'
+    //html += 'Banned: <kbd' + (banned ? ' style="color: rgb(212, 63, 58)">yes' : '>no') + '</kbd><br />'
+    html += 'Active bans: ' + activeBans + '<br />'
+    html += 'Total bans: ' + totalBans + '<br />'
+    html += '1 month bans: ' + bans1m + '<br />'
+    html += '3 month bans: ' + bans3m + '<br />'
+    html += 'Active 1 month ban: ' + (active1m || active3m)/* + '<br />'
+    html += 'Active 3 month ban: ' + active3m*/
+    //html += '<br/><br/></div><div class="text-center"><em>This tool is very accurate, but please check the profile to avoid mistakes.</em></div></div>'
+    html += '</div>'
+    $('body > div.wrapper > div.container.content > div > div.clearfix > div:nth-child(2)').append(html)
+
+    $('#loading-spinner').hide()
+    $('div.loading-for-bans').hide()
+  }
 
   init()
 

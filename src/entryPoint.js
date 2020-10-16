@@ -3,9 +3,9 @@ var version = chrome.runtime.getManifest().version;
 var syncAllowed = false;
 
 console.log('TMP Improved (entryPoint)');
-if (window.location.protocol === 'chrome-extension:' && window.location.pathname !== '/src/bg/background.html') {
+/*if (window.location.protocol === 'chrome-extension:' && window.location.pathname !== '/src/bg/background.html') {
   var database = firebase.database();
-}
+}*/
 
 storage = chrome.storage.local;
 
@@ -16,10 +16,10 @@ var default_OwnReasons = {
   reasons: [
     ["Ramming", "Blocking", "Incorrect Way", "Insulting Users", "Insulting Administration"],
     ["Change your TruckersMP name and make a ban appeal"],
-    ["Horn Spamming", "Inappropriate License/Interior Plates", "Impressionating Administration", "Inappropriate Overtaking", "Profanity", "Chat Spamming", "Hacking", "Speedhacking", "Bug Abusing", "Ban Evading", "Exiting Map Boundaries", "Inappropriate Convoy Management", "Bullying/Harrassment", "Trolling", "CB Abuse", "Excessive Save Editing", "Reckless Driving"]
+    ["Horn Spamming", "Inappropriate License/Interior Plates", "Impressionating Administration", "Racing", "Inappropriate Overtaking", "Profanity", "Chat Spamming", "Hacking", "Speedhacking", "Bug Abusing", "Inappropriate Parking", "Unsupported Mods", "Ban Evading", "Driving w/o lights", "Exiting Map Boundaries", "Inappropriate Convoy Management", "Bullying/Harrassment", "Trolling", "CB Abuse", "Car w/ trailer", "Excessive Save Editing", "Reckless Driving"]
   ],
   postfixes: [
-    ["// 1 m due to history"],
+    ["// 1 m due to history", "// 3 m due to history"],
     ["// Perma due to history"]
   ],
   declines: [{
@@ -58,7 +58,7 @@ var default_OwnReasons = {
 var default_OwnDates = {
   white: "3,h,+3 hrs; 1,d,+1 day; 3,d",
   yellow: "1,w,+1 week",
-  red: "1,M,+1 month",
+  red: "1,M,+1 month; 3,M",
   other: "current_utc"
 };
 
@@ -203,14 +203,17 @@ function loadSettings(callBack) {
         img_previews: true,
         wide: true,
         autoinsertsep: true,
+        localisedcomment: true,
         enablelinknotifications: true,
         viewappealblank: true,
         viewreportblank: true,
         enablebanlength: true,
+        defaultratings: false,
         enablefeedbackimprovement: true,
         viewfeedbackblank: true,
         separator: ','
-      }
+      },
+      gitskip: undefined
     }, function (items) {
       items.OwnReasons = parseItems(items.OwnReasons);
       if (syncAllowed && items.settings.local_storage) {
@@ -224,7 +227,7 @@ function loadSettings(callBack) {
   }
 }
 
-function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
+/*function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
   if (isSignedIn) { // eslint-disable-line no-undef
     database.ref('data/' + firebase.auth().currentUser.uid).once('value')
       .then(function (snapshot) {
@@ -247,7 +250,7 @@ function loadSettingsFromFirebase() { // eslint-disable-line no-unused-vars
   } else {
     alert('Stop! You are not logged in!')
   }
-}
+}*/
 
 function saveSettings(storage, data, with_message) { // eslint-disable-line no-unused-vars
   data.OwnReasons = parseItems(data.OwnReasons);
@@ -261,9 +264,9 @@ function saveSettings(storage, data, with_message) { // eslint-disable-line no-u
     }
   });
 
-  if (isSignedIn) { // eslint-disable-line no-undef
+  /*if (isSignedIn) { // eslint-disable-line no-undef
     database.ref('data/' + firebase.auth().currentUser.uid).set(JSON.stringify(data));
-  }
+  }*/
 }
 
 function val_init() {
@@ -376,7 +379,7 @@ function content_links() { // eslint-disable-line no-unused-vars
         embedlink = "https://www.dailymotion.com/embed/video/" + clipid;
 	  } else if (sub.contains(["https://www.bilibili.com"])) {
         clipid = sub.match(/^.*bilibili\.com\/video\/(.*)/)[1];
-        embedlink = "https://player.bilibili.com/player.html?aid=753848162&bvid=" + clipid + "&page=1";
+        embedlink = "https://player.bilibili.com/player.html?aid=753848162&bvid=" + clipid.replace("/","") + "&page=1";
       } else if (sub.contains(["vimeo.com"])) {
         clipid = sub.match(/^.*vimeo\.com\/(.*)/)[1];
         embedlink = "https://player.vimeo.com/video/" + clipid;
@@ -391,7 +394,7 @@ function content_links() { // eslint-disable-line no-unused-vars
           embedlink += "&t=" + vidinfos[1]
         }
       } else if (sub.contains(["twitch.tv"])) {
-        clipid =  sub.match(/^.*twitch.tv\/.*\/clip\/(.*)\?/);
+        clipid =  sub.match(/^.*twitch.tv\/.*\/clip\/(.*)/);
         if (clipid) {
           embedlink = `https://clips.twitch.tv/embed?clip=${clipid[1]}&autoplay=false&parent=truckersmp.com`;
         }
@@ -415,8 +418,8 @@ function content_links() { // eslint-disable-line no-unused-vars
 
   $('a.jmdev_ca').on('click', function (event) {
     event.preventDefault();
-    var spinner = $("#loading-spinner");
-    spinner.show();
+    //var spinner = $("#loading-spinner");
+    //spinner.show();
     var link = String($(this).data("link"));
     var length = link.length;
 
@@ -429,18 +432,24 @@ function content_links() { // eslint-disable-line no-unused-vars
           timeout: 3000
         });
       }
-      spinner.hide();
+      //spinner.hide();
     } else {
       if (link.includes('youtube.com') || link.includes('youtu.be')) {
         copyToClipboard('https://youtu.be/' + getYouTubeIdFromUrl(link) + checkTimestamps(link));
-        chrome.runtime.sendMessage({
-          msg: "URL just being shorted! Check your clipboard!",
-          contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
-        });
+        if (settings.enablelinknotifications) {
+          chrome.runtime.sendMessage({
+            msg: "URL just being shorted! Check your clipboard!",
+            contextMessage: moment().format("YYYY-MM-DD HH:mm:ss")
+          });
+        }
       } else {
         urlShorter(link);
       }
     }
+    $(this).children().first().removeClass("fa-copy").addClass("fa-check"); //displaying a check mark after copying shortened or not shortened link
+    setTimeout(() => {
+      $(this).children().first().removeClass("fa-check").addClass("fa-copy");
+    },2000);
   });
 }
 
@@ -566,7 +575,7 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
         return date;
     };
 
-  let bans = $(document).find('.profile-body .panel-profile:nth-child(4) .timeline-v2 > li');
+  let bans = $(document).find('.profile-body .panel-profile:last-child .timeline-v2 > li');
   if (removeFirstBan === true) {
       bans = bans.slice(1);
   }
@@ -574,7 +583,9 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
   let banStats = {
       activeBans: 0,
       bans1m: 0,
+      bans3m: 0,
       active1m: false,
+      twoActiveHistBans: false,
       nextBan: ""
   };
 
@@ -584,36 +595,37 @@ let checkBans = (removeFirstBan) => { // eslint-disable-line no-unused-vars
 
   if (bans.length > 0) {
       $.each(bans, function(i, ban) {
-          let reason = $(ban).find('.cbp_tmlabel > .autolinkage').text().split(' : ')[1];
+          let reason = $(ban).find('.autolinkage').text().replaceAll(/(\s)+/g," ").replace("Reason: ","").trim();
   
           if (reason === '@BANBYMISTAKE' || $(ban).find('.cbp_tmicon').css('background-color') === "rgb(255, 0, 38)") {
               return;
           }
-          let date = $(ban).find('.cbp_tmtime span:last-of-type').text();
+          let date = $($(ban).next().find('div.modal-body > div').children()[$(ban).next().find('div.modal-body > div').children().length - 2]).text().split(/:\s/)[0].trim() //$(ban).find('.cbp_tmtime span:last-of-type').text();
           let issuedOn = Date.parse(fixDate(date));
-          let dateExp = getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
+          let dateExp = $(ban).find('.autolinkage').next().text().replaceAll(/(\s)+/g," ").replace("Expires ","").trim() //getKeyValueByNameFromBanRows($(ban).find('.cbp_tmlabel > p'), "Expires", ': ')[1];
   
-          if (dateExp === 'Never') {
+          if (dateExp === 'Never' || dateExp === 'Permanent') {
               dateExp = date;
           }
   
           let expires = Date.parse(fixDate(dateExp));
   
-          if (expires - issuedOn >= day * 27) {
+          if (expires - issuedOn >= day * 85) {
+            banStats.bans3m++
+          } else if (expires - issuedOn >= day * 27) {
               banStats.bans1m++;
           }
   
           if ((new Date()).getTime() - day * 365 <= expires) {
               banStats.activeBans++;
               if (expires - issuedOn >= day * 27) {
-                  banStats.active1m = true;
+                if (banStats.active1m) banStats.twoActiveHistBans = true;  
+                banStats.active1m = true;
               }
           }
   
-          if (banStats.activeBans >= 4 && banStats.active1m) {
+          if (banStats.twoActiveHistBans || banStats.activeBans >= 4 && banStats.active1m) {
               banStats.nextBan = "Permanent";
-          } else if (banStats.activeBans >= 3) {
-              banStats.nextBan = "1 month";
           } else if (banStats.activeBans >= 3) {
               banStats.nextBan = "1 month";
           } else {

@@ -7,12 +7,12 @@
   <link id="favicon" rel="shortcut icon" type="image/png" href="/icons/icon48.png" />
   <link rel="stylesheet" type="text/css" href="/vendor/css/bootstrap.paper.min.css">
   <link rel="stylesheet" type="text/css" href="/vendor/css/font-awesome.min.css">
-  <link type="text/css" rel="stylesheet" href="/vendor/css/firebaseui.css" />
+  <!-- <link type="text/css" rel="stylesheet" href="/vendor/css/firebaseui.css" /> -->
   <link rel="stylesheet" type="text/css" href="css/index.css">
 
   <script src="/vendor/js/jquery.min.js"></script>
   <script src="/vendor/js/bootstrap.min.js"></script>
-  <script src="/vendor/js/firebase.js"></script>
+  <!-- <script src="/vendor/js/firebase.js"></script>
 
   <script src="/vendor/js/firebaseui.js"></script>
   <script src="../firebase/config.js"></script>
@@ -43,7 +43,7 @@
         <div class="collapse navbar-collapse" id="navbar-collapse">
           <ul class="nav navbar-nav navbar-left">
             <li class="">
-              <a href="https://forum.truckersmp.com/index.php?/topic/26484-truckersmp-improved-extension/" target="_blank">Forum topic/Issue tracker</a>
+              <a href="https://forum.truckersmp.com/index.php?/topic/99421-truckersmp-improved-lives/" target="_blank">Forum topic/Issue tracker</a>
             </li>
             <li class="">
               <a class="version_detected" href="#" target="_blank">Changelog</a>
@@ -65,7 +65,7 @@
     <div class="container-fluid">
       <div class="col-md-10 col-md-offset-1">
         <div class="row">
-          <div class="col-md-12">
+          <!-- <div class="col-md-12">
             <div class="row">
               <div class="col-md-12">
                 <div class="panel panel-primary storage-settings">
@@ -138,7 +138,7 @@
                 </div>
               </div>
             </div>
-          </div>
+          </div> -->
 
           <div class="col-md-12">
             <div class="panel panel-danger">
@@ -176,6 +176,15 @@
                 </li>
 
                 <li class="list-group-item">
+                  Auto-insert report comments
+                  <small class="text-muted">When accepting reports, insert either a localised or own (see "Other settings") accept message</small>
+                  <div class="material-switch pull-left">
+                    <input id="localisedcomment" name="wide" type="checkbox">
+                    <label for="localisedcomment" class="label-primary"></label>
+                  </div>
+                </li>
+
+                <li class="list-group-item">
                   Link notifications
                   <small class="text-muted">Small "pop-up" when a link is copied. It does not affect the error alert</small>
                   <div class="material-switch pull-left">
@@ -208,6 +217,15 @@
                   <div class="material-switch pull-left">
                     <input id="enablebanlength" name="wide" type="checkbox">
                     <label for="enablebanlength" class="label-primary"></label>
+                  </div>
+                </li>
+
+                <li class="list-group-item">
+                  Preselect default ratings
+                  <small class="text-muted">In reports, preselect positive rating for accepts, negative rating for declines</small>
+                  <div class="material-switch pull-left">
+                    <input id="defaultratings" name="wide" type="checkbox">
+                    <label for="defaultratings" class="label-primary"></label>
                   </div>
                 </li>
 
@@ -570,7 +588,7 @@
                       <i class="text-muted">instead of localised comment in reports</i>
                     </label>
                     <div class="col-lg-10">
-                      <textarea name="own_comment" id="own_comment" rows="5" class="form-control"></textarea>
+                      <textarea name="own_comment" id="own_comment" rows="5" class="form-control" placeholder="Available canned variables: %user.username%, %user.id%, %perpetrator.username%, %perpetrator.id%, %perpetrator.steam_id%, %admin.username%, %admin.id%, %admin.group.name%, %report.reason%, %report.language%"></textarea>
                     </div>
                   </div>
 
@@ -598,10 +616,10 @@
             <h4 class="modal-title">Import or export settings</h4>
           </div>
           <div class="modal-body">
-            <p>This action will import/export your settings AND rewrite settings in Online storage (if applicable)!</p>
+            <p>This action will import/export your settings<!-- AND rewrite settings in Online storage (if applicable)-->!</p>
             <div class="btn-group btn-group-justified" role="group" aria-label="...">
               <div class="btn-group" role="group">
-                <input type="file" id="import_file" accept=".json" style="display: none;" />
+                <input type="file" id="import_file" accept=".json,.txt" style="display: none;" />
                 <button type="button" id="import" class="btn btn-danger">Import</button>
               </div>
               <div class="btn-group" role="group">
@@ -610,7 +628,7 @@
             </div>
           </div>
           <div class="modal-footer">
-            <button type="button" class="btn btn-primary" data-dismiss="modal">Nah...</button>
+            <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
           </div>
         </div>
       </div>
